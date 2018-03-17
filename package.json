@@ -4,6 +4,7 @@
   "description": "Companion vue package for spatie/laravel-query-builder",
   "main": "build/index.js",
   "scripts": {
+    "build": "babel src -d build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +24,18 @@
   "bugs": {
     "url": "https://github.com/robsontenorio/vue-api-query/issues"
   },
-  "homepage": "https://github.com/robsontenorio/vue-api-query#readme"
+  "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-latest": "^6.24.1",
+    "eslint": "^4.17.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^6.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
 }
