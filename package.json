@@ -1,0 +1,27 @@
+{
+  "name": "vue-api-query",
+  "version": "0.1.0",
+  "description": "Companion vue package for spatie/laravel-query-builder",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robsontenorio/vue-api-query.git"
+  },
+  "keywords": [
+    "vue",
+    "api",
+    "rest",
+    "query",
+    "builder",
+    "laravel"
+  ],
+  "author": "Robson Tenório",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robsontenorio/vue-api-query/issues"
+  },
+  "homepage": "https://github.com/robsontenorio/vue-api-query#readme"
+}
