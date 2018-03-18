@@ -1,6 +1,6 @@
 {
   "name": "vue-api-query",
-  "version": "0.1.5",
+  "version": "0.1.4",
   "description": "Companion vue package for spatie/laravel-query-builder",
   "main": "build/index.js",
   "scripts": {
