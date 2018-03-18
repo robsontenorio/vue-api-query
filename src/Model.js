@@ -1,7 +1,6 @@
 import axios from 'axios'
 import Builder from './Builder';
 
-
 export default class Model {
 
   static get () {
