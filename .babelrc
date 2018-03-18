@@ -1,16 +1,11 @@
 {
   "presets": [
-    "es2015"
+    [
+      "env"
+    ]
   ],
   "plugins": [
     "transform-object-rest-spread",
-    "transform-async-to-generator",
-    [
-      "transform-runtime",
-      {
-        "polyfill": false,
-        "regenerator": true
-      }
-    ]
+    "transform-async-to-generator"
   ]
 }

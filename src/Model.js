@@ -8,6 +8,7 @@ export default class Model {
     return new Builder(this).get()
   }
 
+
   static find (id) {
     return new Builder(this).find(id)
   }
