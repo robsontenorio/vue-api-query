@@ -1,0 +1,11 @@
+{
+  "presets": [
+    [
+      "env"
+    ]
+  ],
+  "plugins": [
+    "transform-object-rest-spread",
+    "transform-async-to-generator"
+  ]
+}
