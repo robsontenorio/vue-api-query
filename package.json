@@ -24,11 +24,5 @@
   "bugs": {
     "url": "https://github.com/robsontenorio/vue-api-query/issues"
   },
-  "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
-  }
+  "homepage": "https://github.com/robsontenorio/vue-api-query#readme"
 }

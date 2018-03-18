@@ -54,7 +54,7 @@ export default class Model {
   }
 
   update () {
-    alert(22222)
+    alert(4444)
     return axios.put(this.endpoint(), this).then(response => {
       let self = Object.assign(this, response.data)
       return self
