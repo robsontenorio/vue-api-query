@@ -33,25 +33,25 @@ export default class Parser {
 
   includes () {
     if (!this.hasIncludes()) {
-      return ''
+      return
     }
 
-    this.uri = this.prepend() + 'include=' + this.builder.includes
+    this.uri += this.prepend() + 'include=' + this.builder.includes
   }
 
   sorts () {
     if (!this.hasSorts()) {
-      return ''
+      return
     }
 
-    this.uri = this.prepend() + 'sort=' + this.builder.sorts
+    this.uri += this.prepend() + 'sort=' + this.builder.sorts
   }
 
   filters () {
     if (!this.hasFilters()) {
-      return ''
+      return
     }
 
-    this.uri = this.prepend() + qs.stringify(this.builder.filters)
+    this.uri += this.prepend() + qs.stringify(this.builder.filters)
   }
 }

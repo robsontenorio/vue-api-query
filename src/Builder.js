@@ -22,12 +22,16 @@ export default class Builder {
     }
   }
 
+  query () {
+    return this.parser.query()
+  }
+
   find (id) {
     if (id === undefined) {
       throw new Error('The "id" is required on find() method')
     }
 
-    let url = `${this.model.baseURL()}/${this.model.resource()}/${id}${this.parser.uri()}`
+    let url = `${this.model.baseURL()}/${this.model.resource()}/${id}${this.query()}`
 
     return axios.get(`${url}`).then(response => {
       this.model = Object.assign(this.model, response.data)
@@ -36,7 +40,7 @@ export default class Builder {
   }
 
   get () {
-    let url = `${this.model.baseURL()}/${this.model.resource()}${this.parser.uri()}`
+    let url = `${this.model.baseURL()}/${this.model.resource()}${this.query()}`
 
     return axios.get(`${url}`).then(response => {
       return response.data
