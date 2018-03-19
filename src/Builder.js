@@ -33,7 +33,10 @@ export default class Builder {
 
     let url = `${this.model.baseURL()}/${this.model.resource()}/${id}${this.query()}`
 
-    return axios.get(`${url}`).then(response => {
+    return this.model.request({
+      url,
+      method: 'GET'
+    }).then(response => {
       this.model = Object.assign(this.model, response.data)
       return this.model
     })
@@ -42,7 +45,10 @@ export default class Builder {
   get () {
     let url = `${this.model.baseURL()}/${this.model.resource()}${this.query()}`
 
-    return axios.get(`${url}`).then(response => {
+    return this.model.request({
+      url,
+      method: 'GET'
+    }).then(response => {
       return response.data
     })
   }

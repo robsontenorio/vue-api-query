@@ -3,10 +3,13 @@ import Builder from './Builder';
 
 export default class Model {
 
+  request (config) {
+    // to be implemented on base model
+  }
+
   static get () {
     return new Builder(this).get()
   }
-
 
   static find (id) {
     return new Builder(this).find(id)
