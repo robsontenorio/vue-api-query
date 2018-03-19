@@ -4,41 +4,54 @@ export default class Parser {
 
   constructor(builder) {
     this.builder = builder
+    this.uri = ''
   }
 
-  uri () {
-    let includes = this.includes()
-    let filters = this.filters()
-    let sorts = this.sorts()
+  query () {
+    this.includes()
+    this.filters()
+    this.sorts()
 
-    return `${includes}${filters}${sorts}`
+    return this.uri
+  }
+
+  hasFilters () {
+    return Object.keys(this.builder.filters.filter).length > 0
+  }
+
+  hasIncludes () {
+    return this.builder.includes.length > 0
+  }
+
+  hasSorts () {
+    return this.builder.sorts.length > 0
   }
 
   prepend () {
-    return (this.builder.includes.length) ? '&' : '?'
+    return (this.uri === '') ? '?' : '&'
   }
 
   includes () {
-    if (this.builder.includes.length === 0) {
+    if (!this.hasIncludes()) {
       return ''
     }
 
-    return '?include=' + this.builder.includes
+    this.uri = this.prepend() + 'include=' + this.builder.includes
   }
 
   sorts () {
-    if (this.builder.sorts.length === 0) {
+    if (!this.hasSorts()) {
       return ''
     }
 
-    return this.prepend() + 'sort=' + this.builder.sorts
+    this.uri = this.prepend() + 'sort=' + this.builder.sorts
   }
 
   filters () {
-    if (Object.keys(this.builder.filters.filter).length === 0) {
+    if (!this.hasFilters()) {
       return ''
     }
 
-    return this.prepend() + qs.stringify(this.builder.filters)
+    this.uri = this.prepend() + qs.stringify(this.builder.filters)
   }
 }
