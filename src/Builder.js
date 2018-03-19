@@ -49,7 +49,7 @@ export default class Builder {
       url,
       method: 'GET'
     }).then(response => {
-      return response.data
+      return response
     })
   }
 
