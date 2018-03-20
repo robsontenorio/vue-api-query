@@ -10,6 +10,7 @@ export default class Parser {
   query () {
     this.includes()
     this.filters()
+    this.appends()
     this.sorts()
 
     return this.uri
@@ -21,6 +22,10 @@ export default class Parser {
 
   hasIncludes () {
     return this.builder.includes.length > 0
+  }
+
+  hasAppends () {
+    return this.builder.appends.length > 0
   }
 
   hasSorts () {
@@ -37,6 +42,15 @@ export default class Parser {
     }
 
     this.uri += this.prepend() + 'include=' + this.builder.includes
+  }
+
+
+  appends () {
+    if (!this.hasAppends()) {
+      return
+    }
+
+    this.uri += this.prepend() + 'append=' + this.builder.appends
   }
 
   sorts () {

@@ -27,6 +27,10 @@ export default class Model {
     return new Builder(this).whereIn(field, array)
   }
 
+  static append (...args) {
+    return new Builder(this).append(args)
+  }
+
   static orderBy (...args) {
     return new Builder(this).orderBy(args)
   }

@@ -6,6 +6,7 @@ export default class Builder {
   constructor(model) {
     this.model = new (model)
     this.includes = []
+    this.appends = []
     this.sorts = []
     this.filters = {
       filter: {}
@@ -76,6 +77,12 @@ export default class Builder {
       throw new Error('The second argument on whereIn() method must be an array')
 
     this.filters.filter[key] = array.join(',')
+
+    return this
+  }
+
+  append (...args) {
+    this.appends = args
 
     return this
   }
