@@ -1,3 +1,13 @@
+/**
+ *  Handle static calls for all methods.
+ * 
+ *  Instead `let users = new User().with('country').get()`
+ *  You cand do `let users = User.with('conutry').get()` 
+ *  
+ * 
+ * 
+ */
+
 export default class StaticModel {
 
   static with (...args) {
@@ -40,15 +50,15 @@ export default class StaticModel {
     return self
   }
 
-  static find () {
+  static find (id) {
     let self = typeof this === 'object' ? this : new this
 
-    self.find()
+    return self.find(id)
   }
 
   static get () {
     let self = typeof this === 'object' ? this : new this
 
-    self.get()
+    return self.get()
   }
 }

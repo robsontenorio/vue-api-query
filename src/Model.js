@@ -4,9 +4,10 @@ import StaticModel from './StaticModel';
 
 export default class Model extends StaticModel {
 
-  constructor() {
+  constructor(...atributtes) {
     super()
     this.builder = new Builder()
+    Object.assign(this, ...atributtes)
 
     if (this.baseURL === undefined) {
       throw new Error('You must declare baseURL() method (ex: http://site.com/api)')
@@ -23,37 +24,45 @@ export default class Model extends StaticModel {
 
   with (...args) {
     this.builder.with(args)
-
     return this
   }
 
   where (field, value) {
     this.builder.where(field, value)
-
     return this
   }
 
   whereIn (field, array) {
     this.builder.whereIn(field, array)
-
     return this
   }
 
   append (...args) {
     this.builder.append(args)
-
     return this
   }
 
   orderBy (...args) {
     this.builder.orderBy(args)
-
     return this
   }
 
+
   find (id) {
-    console.log('find')
-    console.log(this)
+    if (id === undefined) {
+      throw new Error('The "id" is required on find() method')
+    }
+
+    let url = `${this.baseURL()}/${this.resource()}/${id}${this.builder.query()}`
+
+    return this.request({
+      url,
+      method: 'GET'
+    }).then(response => {
+      let item = new this.constructor(response.data)
+      delete item.builder
+      return item
+    })
   }
 
   get () {
@@ -63,8 +72,21 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      // TODO array de model      
-      return response
+      let collection = response.data.data || response.data
+
+      collection = collection.map(c => {
+        let item = new this.constructor(c)
+        delete item.builder
+        return item
+      })
+
+      if (response.data.data !== undefined) {
+        response.data.data = collection
+      } else {
+        response.data = collection
+      }
+
+      return response.data
     })
   }
 

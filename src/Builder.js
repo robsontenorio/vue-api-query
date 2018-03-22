@@ -3,7 +3,8 @@ import Parser from './Parser';
 
 export default class Builder {
 
-  constructor() {
+  constructor(model) {
+    this.model = model
     this.includes = []
     this.appends = []
     this.sorts = []
