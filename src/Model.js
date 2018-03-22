@@ -1,55 +1,87 @@
 import axios from 'axios'
 import Builder from './Builder';
+import StaticModel from './StaticModel';
 
-export default class Model {
+export default class Model extends StaticModel {
+
+  constructor() {
+    super()
+    this.builder = new Builder()
+
+    if (this.baseURL === undefined) {
+      throw new Error('You must declare baseURL() method (ex: http://site.com/api)')
+    }
+
+    if (this.resource === undefined) {
+      throw new Error('You must declare resource() method .')
+    }
+  }
 
   request (config) {
     // to be implemented on base model
   }
 
-  static get () {
-    return new Builder(this).get().then(response => response)
+  with (...args) {
+    this.builder.with(args)
+
+    return this
   }
 
-  static find (id) {
-    return new Builder(this).find(id)
+  where (field, value) {
+    this.builder.where(field, value)
+
+    return this
   }
 
-  static with (...args) {
-    return new Builder(this).with(args)
+  whereIn (field, array) {
+    this.builder.whereIn(field, array)
+
+    return this
   }
 
-  static where (field, value) {
-    return new Builder(this).where(field, value)
+  append (...args) {
+    this.builder.append(args)
+
+    return this
   }
 
-  static whereIn (field, array) {
-    return new Builder(this).whereIn(field, array)
+  orderBy (...args) {
+    this.builder.orderBy(args)
+
+    return this
   }
 
-  static append (...args) {
-    return new Builder(this).append(args)
+  find (id) {
+    console.log('find')
+    console.log(this)
   }
 
-  static orderBy (...args) {
-    return new Builder(this).orderBy(args)
+  get () {
+    let url = `${this.baseURL()}/${this.resource()}${this.builder.query()}`
+
+    return this.request({
+      url,
+      method: 'GET'
+    }).then(response => {
+      // TODO array de model      
+      return response
+    })
+  }
+
+  hasId () {
+    return this.id === undefined || this.id === 0 || this.id === ''
   }
 
   endpoint () {
-    if (this.id === undefined || this.id === 0 || this.id === '') {
-      return `${this.baseURL()}/${this.resource()}`
-    } else {
+    if (this.hasId()) {
       return `${this.baseURL()}/${this.resource()}/${this.id}`
-
+    } else {
+      return `${this.baseURL()}/${this.resource()}`
     }
   }
 
   save () {
-    if (this.id === undefined || this.id === 0 || this.id === '') {
-      return this.create()
-    } else {
-      return this.update()
-    }
+    return this.hasId() ? this.update() : this.create()
   }
 
   create () {

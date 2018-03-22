@@ -3,8 +3,7 @@ import Parser from './Parser';
 
 export default class Builder {
 
-  constructor(model) {
-    this.model = new (model)
+  constructor() {
     this.includes = []
     this.appends = []
     this.sorts = []
@@ -13,45 +12,10 @@ export default class Builder {
     }
 
     this.parser = new Parser(this)
-
-    if (this.model.baseURL === undefined) {
-      throw new Error('You must declare baseURL() method (ex: http://site.com/api)')
-    }
-
-    if (this.model.resource === undefined) {
-      throw new Error('You must declare resource() method .')
-    }
   }
 
   query () {
     return this.parser.query()
-  }
-
-  find (id) {
-    if (id === undefined) {
-      throw new Error('The "id" is required on find() method')
-    }
-
-    let url = `${this.model.baseURL()}/${this.model.resource()}/${id}${this.query()}`
-
-    return this.model.request({
-      url,
-      method: 'GET'
-    }).then(response => {
-      this.model = Object.assign(this.model, response.data)
-      return this.model
-    })
-  }
-
-  get () {
-    let url = `${this.model.baseURL()}/${this.model.resource()}${this.query()}`
-
-    return this.model.request({
-      url,
-      method: 'GET'
-    }).then(response => {
-      return response
-    })
   }
 
   with (...args) {
