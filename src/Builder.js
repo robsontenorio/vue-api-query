@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Parser from './Parser';
 
 export default class Builder {

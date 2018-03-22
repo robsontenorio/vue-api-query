@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Builder from './Builder';
 import StaticModel from './StaticModel';
 
@@ -91,7 +90,7 @@ export default class Model extends StaticModel {
   }
 
   hasId () {
-    return this.id === undefined || this.id === 0 || this.id === ''
+    return this.id !== undefined && this.id !== 0 && this.id !== ''
   }
 
   endpoint () {
@@ -103,18 +102,27 @@ export default class Model extends StaticModel {
   }
 
   save () {
+    console.log(this.hasId())
     return this.hasId() ? this.update() : this.create()
   }
 
   create () {
-    return axios.post(this.endpoint(), this).then(response => {
+    return this.request({
+      method: 'POST',
+      url: this.endpoint(),
+      data: this
+    }).then(response => {
       let self = Object.assign(this, response.data)
       return self
     })
   }
 
   update () {
-    return axios.put(this.endpoint(), this).then(response => {
+    return this.request({
+      method: 'PUT',
+      url: this.endpoint(),
+      data: this
+    }).then(response => {
       let self = Object.assign(this, response.data)
       return self
     })
