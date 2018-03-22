@@ -10,9 +10,15 @@
 
 export default class StaticModel {
 
+  static custom (resource) {
+    let self = typeof this === 'object' ? this : new this
+    self.custom(resource)
+
+    return self
+  }
+
   static with (...args) {
     let self = typeof this === 'object' ? this : new this
-
     self.with(...args)
 
     return self
@@ -20,7 +26,6 @@ export default class StaticModel {
 
   static where (field, value) {
     let self = typeof this === 'object' ? this : new this
-
     self.where(field, value)
 
     return self
@@ -28,7 +33,6 @@ export default class StaticModel {
 
   static whereIn (field, array) {
     let self = typeof this === 'object' ? this : new this
-
     self.whereIn(field, array)
 
     return self
@@ -36,7 +40,6 @@ export default class StaticModel {
 
   static append (...args) {
     let self = typeof this === 'object' ? this : new this
-
     self.append(args)
 
     return self
@@ -44,7 +47,6 @@ export default class StaticModel {
 
   static orderBy (...args) {
     let self = typeof this === 'object' ? this : new this
-
     self.orderBy(args)
 
     return self

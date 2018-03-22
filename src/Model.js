@@ -7,6 +7,7 @@ export default class Model extends StaticModel {
     super()
     this.builder = new Builder()
     this.from = null
+    this.customResource = null
     Object.assign(this, ...atributtes)
 
     if (this.baseURL === undefined) {
@@ -20,6 +21,12 @@ export default class Model extends StaticModel {
 
   request (config) {
     // to be implemented on base model
+  }
+
+  custom (resource) {
+    this.customResource = resource
+
+    return this
   }
 
   hasMany (model) {
@@ -80,6 +87,7 @@ export default class Model extends StaticModel {
       let item = new this.constructor(response.data)
       delete item.builder
       delete item.from
+      delete item.customResource
       return item
     })
   }
@@ -89,11 +97,12 @@ export default class Model extends StaticModel {
     return this.get().then(response => {
       let item
 
-      if (response.data.data) {
-        item = response.data.data[0]
-      } else {
+      if (response.data) {
         item = response.data[0]
+      } else {
+        item = response[0]
       }
+
       if (item)
         return item
       else
@@ -103,6 +112,7 @@ export default class Model extends StaticModel {
 
   get () {
     let base = this.from || `${this.baseURL()}/${this.resource()}`
+    base = this.customResource || base
     let url = `${base}${this.builder.query()}`
 
     return this.request({
@@ -110,11 +120,13 @@ export default class Model extends StaticModel {
       method: 'GET'
     }).then(response => {
       let collection = response.data.data || response.data
+      collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
         let item = new this.constructor(c)
         delete item.builder
         delete item.from
+        delete item.customResource
         return item
       })
 
