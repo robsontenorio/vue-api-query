@@ -37,7 +37,7 @@ let post = await Post
   .first()
 ```
 
-Nice! Now i want a specific object:
+Nice! Now I want a specific object:
 
 ```js
 // GET /posts/1
@@ -55,7 +55,7 @@ post.title = 'Awsome!'
 post.save()
 ```
 
-Lets create a new object and post it:
+Let's create a new object and post it:
 
 ```js
 let post = new Post()
@@ -372,7 +372,7 @@ export default {
 
 # Response from backend
 
-This package automatically handles the response from backend and convert it in an instance of a such Model.
+This package automatically handles the response from backend and convert it into an instance of a such Model.
 
 ## Single object
 
@@ -396,12 +396,12 @@ let user = await User.find(1)
 
 let user = await User.first()
 
-// will work, because a instance of User was created from response
+// will work, because an instance of User was created from response
 
 user.makeBirthday()
 ```
 
-This **WILL NOT** be converted into `User` model, becase the main data is not the root element.
+This **WILL NOT** be converted into `User` model, because the main data is not the root element.
 
 ```js
 user: {  
@@ -414,7 +414,7 @@ user: {
 
 ## Array of objects
 
-An array of itens from backend would be converted in the same way, **ONLY** if it responds in these formats:
+An array of items from backend would be converted in the same way, **ONLY** if it responds in these formats:
 
 ```js
 let user = await User.get()
