@@ -17,7 +17,7 @@ This is a draft. Do not use it yet. Stable release soon.
 Give me the result for a given criteria, include some entities, append extra fields and order the result!
 
 ```js
-// GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&&orderBy=-created_at,category_id
+// GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&orderBy=-created_at,category_id
 
 let posts = await Post
   .where('status', 'ACTIVE')
