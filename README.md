@@ -5,7 +5,7 @@ This is a draft. Do not use yet. Stable release soon.
 
 This package helps you quickly to build requests for REST APIs. This is **not** restricted by JSON API Specification. So, your API can respond with any pattern.
 
-💪  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
+🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
 # Basic usage
 
@@ -77,10 +77,6 @@ let posts = user
   .get()
 
 ```
-
-🔥 Something else? Yes!
-
-
 
 # Installation
 
@@ -157,7 +153,7 @@ export default class User extends Model {
 }
 ```
 
-If you need customize the resource name just implement the `resource()` method.
+If you need to customize the resource name just implement the `resource()` method.
 
 ```js
 import Model from './Model'
