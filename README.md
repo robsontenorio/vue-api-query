@@ -1,11 +1,15 @@
-# ❗️WARNING ❗️ 
-This is a draft. Do not use yet. Stable release soon.
+<p align="center">
+  <img height="100" src="feather.jpg">
+</p>
 
 # Elegant, easy and simple way to build requests for REST APIs. 
 
 This package helps you quickly to build requests for REST APIs. This is **not** restricted by JSON API Specification. So, your API can respond with any pattern.
 
 🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
+
+# WARNING ❗️ 
+This is a draft. Do not use yet. Stable release soon.
 
 # Basic usage
 
