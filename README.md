@@ -2,9 +2,10 @@
   <img src="bird.jpg">
 </p>
 
-# Elegant, easy and simple way to build requests for REST APIs. 
+# Elegant and easy way to build requests for REST APIs. 
 
-This package helps you quickly to build requests for REST APIs. This is **not** restricted by JSON API Specification. So, your API can respond with any pattern.
+This package helps you quickly to build requests for REST APIs. Keep your code clean and elegant.
+
 
 🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
