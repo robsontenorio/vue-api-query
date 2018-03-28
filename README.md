@@ -115,7 +115,20 @@ plugins: [
 
 
 ## VUE
-// TODO
+
+Set up on `src/main.js`
+
+```js
+[...]
+
+import axios from 'axios'
+import { Model } from 'vue-api-query'
+
+// inject global axios instance as http client to Model
+Model.$http = axios
+
+[...]
+```
 
 # Configuration
 
@@ -147,7 +160,7 @@ export default class Model extends BaseModel {
 
 Just extends from your base model... and done! 
 
-It automatically pluralizes based on class name. So REST API base resource for `User` class would be `/users`.
+It automatically pluralizes based on class name. So, REST API base resource for `User` class would be `/users`.
 
 
 **models/User.js**
@@ -357,6 +370,123 @@ export default {
 
 ```
 
+# Response from backend
+
+This package automatically handles the response from backend and convert it in an instance of a such Model.
+
+## Single object
+
+If your backend responds with a single object as a **ROOT ELEMENT**  like this:
+
+```js
+{
+  id: 1,
+  firstname: 'John',
+  lastname: 'Doe',
+  age: 25
+}
+```
+
+So, `find()` and `first()` methods automatically will convert the backend response into an instace of `User` model. 
+
+```js
+let user = await User.find(1)
+
+//or
+
+let user = await User.first()
+
+// will work, because a instance of User was created from response
+
+user.makeBirthday()
+```
+
+This **WILL NOT** be converted into `User` model, becase the main data is not the root element.
+
+```js
+user: {  
+    id: 1,
+    firstname: 'John',
+    lastname: 'Doe',
+    age: 25
+}
+```
+
+## Array of objects
+
+An array of itens from backend would be converted in the same way, **ONLY** if it responds in these formats:
+
+```js
+let user = await User.get()
+```
+
+```js
+// works - array of object is the root element
+[
+  {
+    id: 1,
+    firstname: 'John',
+    lastname: 'Doe',
+    age: 25
+  },
+  {
+    id: 2,
+    firstname: 'Mary',
+    lastname: 'Doe',
+    age: 22
+  }
+]
+```
+
+```js
+// works - `data` exists in the root and contains the array of objects 
+{
+  data: {
+    [
+      {
+        id: 1,
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+        },
+      {
+        id: 2,
+        firstname: 'Mary',
+        lastname: 'Doe',
+        age: 22
+      }
+    ]
+  },
+  someField: '',
+  anotherOne: '',  
+}
+```
+
+This **WILL NOT** be converted into an array of `User` model.
+
+```js
+{
+  users: {
+    [
+      {
+        id: 1,
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+        },
+      {
+        id: 2,
+        firstname: 'Mary',
+        lastname: 'Doe',
+        age: 22
+      }
+    ]
+  },
+  someField: '',
+  anotherOne: '',  
+}
+
+```
 
 
 # Thanks
@@ -366,7 +496,7 @@ export default {
 * Elegancy from [DavidDuwaer/coloquent](https://github.com/DavidDuwaer/Coloquent). 
 
 
-Why another package if we have those? Because currently (march, 2018) they restricted backend response to JSON API specification :(
+Why another package if we have those? Because currently (march, 2018) they restricted backend response to JSON API specification.
 
 # Contact
 

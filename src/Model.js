@@ -5,12 +5,15 @@ export default class Model extends StaticModel {
 
   constructor(...atributtes) {
     super()
-    this.builder = new Builder()
-    this.from = null
-    this.customResource = null
 
-    // TODO if new Object() , rip extra properties from model 
-    Object.assign(this, ...atributtes)
+    // Keep clean object if is a manual instance
+    if (atributtes.length === 0) {
+      this._builder = new Builder()
+      this._fromResource = null
+      this._customResource = null
+    } else {
+      Object.assign(this, ...atributtes)
+    }
 
     if (this.baseURL === undefined) {
       throw new Error('You must declare baseURL() method.')
@@ -34,13 +37,13 @@ export default class Model extends StaticModel {
   }
 
   custom (resource) {
-    this.customResource = resource
+    this._customResource = resource
 
     return this
   }
 
   _from (url) {
-    this.from = url
+    this._fromResource = url
   }
 
   hasMany (model) {
@@ -54,27 +57,27 @@ export default class Model extends StaticModel {
   }
 
   include (...args) {
-    this.builder.include(args)
+    this._builder.include(args)
     return this
   }
 
   where (field, value) {
-    this.builder.where(field, value)
+    this._builder.where(field, value)
     return this
   }
 
   whereIn (field, array) {
-    this.builder.whereIn(field, array)
+    this._builder.whereIn(field, array)
     return this
   }
 
   append (...args) {
-    this.builder.append(args)
+    this._builder.append(args)
     return this
   }
 
   orderBy (...args) {
-    this.builder.orderBy(args)
+    this._builder.orderBy(args)
     return this
   }
 
@@ -100,16 +103,16 @@ export default class Model extends StaticModel {
       throw new Error('The "id" must be a integer on find() method.')
     }
 
-    let url = `${this.baseURL()}/${this.resource()}/${id}${this.builder.query()}`
+    let url = `${this.baseURL()}/${this.resource()}/${id}${this._builder.query()}`
 
     return this.request({
       url,
       method: 'GET'
     }).then(response => {
       let item = new this.constructor(response.data)
-      delete item.builder
+      delete item._builder
       delete item.from
-      delete item.customResource
+      delete item._customResource
       delete item.$http
 
       return item
@@ -117,9 +120,9 @@ export default class Model extends StaticModel {
   }
 
   get () {
-    let base = this.from || `${this.baseURL()}/${this.resource()}`
-    base = this.customResource || base
-    let url = `${base}${this.builder.query()}`
+    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    base = this._customResource || base
+    let url = `${base}${this._builder.query()}`
 
     return this.request({
       url,
@@ -130,9 +133,9 @@ export default class Model extends StaticModel {
 
       collection = collection.map(c => {
         let item = new this.constructor(c)
-        delete item.builder
+        delete item._builder
         delete item.from
-        delete item.customResource
+        delete item._customResource
         delete item.$http
 
         return item
