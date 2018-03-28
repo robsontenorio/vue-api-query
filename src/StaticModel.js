@@ -17,9 +17,9 @@ export default class StaticModel {
     return self
   }
 
-  static with (...args) {
+  static include (...args) {
     let self = typeof this === 'object' ? this : new this
-    self.with(...args)
+    self.include(...args)
 
     return self
   }
@@ -50,6 +50,12 @@ export default class StaticModel {
     self.orderBy(args)
 
     return self
+  }
+
+  static first () {
+    let self = typeof this === 'object' ? this : new this
+
+    return self.first()
   }
 
   static find (id) {

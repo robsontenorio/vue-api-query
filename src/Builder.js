@@ -17,8 +17,14 @@ export default class Builder {
     return this.parser.query()
   }
 
-  with (...args) {
+  include (...args) {
     this.includes = args
+
+    return this
+  }
+
+  append (...args) {
+    this.appends = args
 
     return this
   }
@@ -40,12 +46,6 @@ export default class Builder {
       throw new Error('The second argument on whereIn() method must be an array')
 
     this.filters.filter[key] = array.join(',')
-
-    return this
-  }
-
-  append (...args) {
-    this.appends = args
 
     return this
   }

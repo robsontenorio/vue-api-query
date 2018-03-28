@@ -1,7 +1,7 @@
 {
   "name": "vue-api-query",
   "version": "0.1.16",
-  "description": "Elegant, easy and simple way to build requests for REST APIs",
+  "description": "Elegant and simple way to build requests for REST API",
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build",
@@ -14,6 +14,7 @@
   },
   "keywords": [
     "vue",
+    "nuxt",
     "api",
     "rest",
     "query",

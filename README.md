@@ -2,9 +2,9 @@
   <img src="bird.jpg">
 </p>
 
-# Elegant and easy way to build requests for REST APIs. 
+# Elegant and simple way to build requests for REST API
 
-This package helps you quickly to build requests for REST APIs. Keep your code clean and elegant.
+This package helps you quickly to build requests for REST API. Move your logic and backend requests to dedicated classes. Keep your code clean and elegant. 
 
 
 🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
@@ -59,6 +59,11 @@ Lets create a new object and post it:
 
 ```js
 let post = new Post()
+
+// or
+
+let post = new Post({title: 'Cool!'})
+
 
 // POST /post
 
@@ -206,6 +211,18 @@ export default class User extends Model {
 }
 ```
 
+It's ok if in some situations you need call a custom resource from a already defined model. You can override dynamically the default resource calling `custom()` method.
+
+```js
+// GET /posts
+let posts = await Post.get()
+
+// GET /posts/latest
+let latest = await Post
+  .custom('posts/latest')
+  .first()  
+```
+
 ## Full example
 
 **/models/Post.js**
@@ -295,6 +312,16 @@ let posts = await user
   .get()
 ```
 
+You also can do that:
+```js
+//GET /posts?filter[status]=ACTIVE,ARCHIVED
+
+let posts = await Post
+  .whereIn('status', ['ACTIVE', 'ARCHIVED'])
+  .get()
+
+```
+
 And in some page/component:
 
 ```js
@@ -339,7 +366,7 @@ export default {
 * Elegancy from [DavidDuwaer/coloquent](https://github.com/DavidDuwaer/Coloquent). 
 
 
-Why another package if we have those ... Because currently (march, 2018) they restricted backend response to JSON API Specification :(
+Why another package if we have those? Because currently (march, 2018) they restricted backend response to JSON API specification :(
 
 # Contact
 

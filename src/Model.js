@@ -9,6 +9,7 @@ export default class Model extends StaticModel {
     this.from = null
     this.customResource = null
 
+    // TODO if new Object() , rip extra properties from model 
     Object.assign(this, ...atributtes)
 
     if (this.baseURL === undefined) {
@@ -38,6 +39,10 @@ export default class Model extends StaticModel {
     return this
   }
 
+  _from (url) {
+    this.from = url
+  }
+
   hasMany (model) {
 
     let instance = new model
@@ -48,12 +53,8 @@ export default class Model extends StaticModel {
     return instance
   }
 
-  _from (url) {
-    this.from = url
-  }
-
-  with (...args) {
-    this.builder.with(args)
+  include (...args) {
+    this.builder.include(args)
     return this
   }
 
@@ -77,32 +78,7 @@ export default class Model extends StaticModel {
     return this
   }
 
-
-  find (id) {
-    return (id === undefined) ? this._first() : this._exact(id)
-  }
-
-  _exact (id) {
-    if (!Number.isInteger(id)) {
-      throw new Error('The "id" must be a integer')
-    }
-
-    let url = `${this.baseURL()}/${this.resource()}/${id}${this.builder.query()}`
-
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
-      let item = new this.constructor(response.data)
-      delete item.builder
-      delete item.from
-      delete item.customResource
-      return item
-    })
-  }
-
-  _first () {
-
+  first () {
     return this.get().then(response => {
       let item
 
@@ -116,6 +92,27 @@ export default class Model extends StaticModel {
         return item
       else
         throw new Error('No item found for specified params')
+    })
+  }
+
+  find (id) {
+    if (!Number.isInteger(id)) {
+      throw new Error('The "id" must be a integer on find() method.')
+    }
+
+    let url = `${this.baseURL()}/${this.resource()}/${id}${this.builder.query()}`
+
+    return this.request({
+      url,
+      method: 'GET'
+    }).then(response => {
+      let item = new this.constructor(response.data)
+      delete item.builder
+      delete item.from
+      delete item.customResource
+      delete item.$http
+
+      return item
     })
   }
 
@@ -136,6 +133,8 @@ export default class Model extends StaticModel {
         delete item.builder
         delete item.from
         delete item.customResource
+        delete item.$http
+
         return item
       })
 
