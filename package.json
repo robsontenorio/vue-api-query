@@ -1,11 +1,11 @@
 {
   "name": "vue-api-query",
   "version": "0.1.14",
-  "description": "Companion vue package for spatie/laravel-query-builder",
+  "description": "Elegant, easy and simple way to build requests for REST APIs",
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build",
-    "prepare": "yarn build",
+    "prepare": "yarn && yarn build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

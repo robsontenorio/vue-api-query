@@ -8,19 +8,28 @@ export default class Model extends StaticModel {
     this.builder = new Builder()
     this.from = null
     this.customResource = null
+
     Object.assign(this, ...atributtes)
 
     if (this.baseURL === undefined) {
-      throw new Error('You must declare baseURL() method (ex: http://site.com/api)')
+      throw new Error('You must declare baseURL() method.')
     }
 
-    if (this.resource === undefined) {
-      throw new Error('You must declare resource() method .')
+    if (this.request === undefined) {
+      throw new Error('You must declare request() method.')
+    }
+
+    if (this.$http === undefined) {
+      throw new Error('You must set $http property')
     }
   }
 
-  request (config) {
-    // to be implemented on base model
+  get $http () {
+    return Model.$http
+  }
+
+  resource () {
+    return `${this.constructor.name.toLowerCase()}s`
   }
 
   custom (resource) {
