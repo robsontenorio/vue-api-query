@@ -296,6 +296,42 @@ let posts = await user
   .get()
 ```
 
+And in some page/component:
+
+```js
+<template>
+  User: 
+  <code>
+    {{ user }}
+  </code>
+
+  Posts from user:
+  <code>
+    {{ posts }}
+  </code>
+</template>
+<script>
+import User from '@/models/User'
+
+export default {
+  data()
+  {
+    return {
+      user: {},
+      posts: {}
+    }
+  },
+  async mounted()
+  {
+    this.user = await User.find(1)
+    this.posts = await this.user.posts().get()
+  }
+}
+</script>
+
+```
+
+
 
 # Thanks
 
