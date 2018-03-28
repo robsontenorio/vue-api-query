@@ -16,6 +16,8 @@ This is a draft. Do not use it yet. Stable release soon.
 Give me the result for a given criteria, include some entities, append extra fields and order the result!
 
 ```js
+// GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&&orderBy=-created_at,category_id
+
 let posts = await Post
   .where('status', 'ACTIVE')
   .include('user', 'category')
@@ -24,37 +26,33 @@ let posts = await Post
   .orderBy('category_id')  
   .get()
 
-// GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&&orderBy=-created_at,category_id
-
 ```
 Just give me the first occurrence from response:
 
 ```js
+// GET /posts?filter[status]=ACTIVE
+
 let post = await Post
   .where('status', 'ACTIVE')
   .first()
-
-// GET /posts?filter[status]=ACTIVE
-
 ```
 
 Nice! Now i want a specific object:
 
 ```js
-let post = await Post.find(1)
-
 // GET /posts/1
+
+let post = await Post.find(1)
 ```
 
 
 Edit this and send it back:
 
 ```js
-post.title = 'Awsome!'
-post.save()
-
 // PUT /posts/1 
 
+post.title = 'Awsome!'
+post.save()
 ```
 
 Lets create a new object and post it:
@@ -62,10 +60,10 @@ Lets create a new object and post it:
 ```js
 let post = new Post()
 
+// POST /post
+
 post.title = 'Another one'
 post.save()
-
-// POST /post
 ```
 
 We can use relationships:
