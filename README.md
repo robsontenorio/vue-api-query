@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="feather.jpg">
+  <img src="bird.jpg">
 </p>
 
 # Elegant, easy and simple way to build requests for REST APIs. 
@@ -9,11 +9,11 @@ This package helps you quickly to build requests for REST APIs. This is **not** 
 🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
 # WARNING ❗️ 
-This is a draft. Do not use yet. Stable release soon.
+This is a draft. Do not use it yet. Stable release soon.
 
 # Basic usage
 
-Give me the result for a given creteria, include some entities, append extra fields and order it!
+Give me the result for a given criteria, include some entities, append extra fields and order the result!
 
 ```js
 let posts = await Post
@@ -27,7 +27,7 @@ let posts = await Post
 // GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&&orderBy=-created_at,category_id
 
 ```
-Just give me the first ocurrency from response:
+Just give me the first occurrence from response:
 
 ```js
 let post = await Post
@@ -57,7 +57,7 @@ post.save()
 
 ```
 
-Lets create a new object and post it
+Lets create a new object and post it:
 
 ```js
 let post = new Post()
@@ -68,7 +68,7 @@ post.save()
 // POST /post
 ```
 
-And about relationships? Yes!
+We can use relationships:
 
 ```js
 
@@ -102,7 +102,7 @@ export default function (ctx, injext) {
 }
 ```
 
-And register on `nuxt.config.js`
+And register it on `nuxt.config.js`
 
 ```js
 plugins: [
@@ -118,7 +118,7 @@ plugins: [
 
 ## Define a base model
 
-Your base model should extend from `vue-api-query` Model. Use base models is good pratice in order to abstract configurations from your domain models.
+Your base model should extend from `vue-api-query` Model. Use base models is good practice in order to abstract configurations from your domain models.
 
 **models/Model.js**
 
@@ -144,7 +144,7 @@ export default class Model extends BaseModel {
 
 Just extends from your base model... and done! 
 
-It automatically pluralizes based on class name. So the the REST API base resource for `User` class would be `/users`.
+It automatically pluralizes based on class name. So REST API base resource for `User` class would be `/users`.
 
 
 **models/User.js**
@@ -194,7 +194,8 @@ export default class User extends Model {
 }
 ```
 
-## Relationships
+You can set up relationships:
+
 ```js
 import Model from './Model'
 import Post from './Post'
@@ -207,7 +208,7 @@ export default class User extends Model {
 }
 ```
 
-## Full domain models
+## Full example
 
 **/models/Post.js**
 ```js
@@ -242,10 +243,10 @@ export default class User extends Model {
 }
 ```
 
-What means ...
+If the backend responds with ...
 
 ```js
-// response from API for user with id = 1
+// response from API for /users/1
 {
   id: 1,
   firstname: "John",
@@ -253,6 +254,8 @@ What means ...
   age: 25
 }
 ```
+
+We can do this:
 
 ```js
 //GET /users/1
@@ -262,24 +265,26 @@ console.log(user.fullname) // John Doe
 
 user.makeBirthday()
 user.save()
+```
 
+Then `save()` method will send back the new payload:
+
+```js
 // POST /users/1
-
-/* Our new payload 
 {
   firstname: "John",
   lastname: "Doe",
-  age: 26 <---
+  age: 26 //<--- changed
 }
-*/
 ```
 
-And do more ...
+Play with relationships:
 
 ```js
+// GET /users/1
 let user = await User.find(1)
 
-// give me all posts from user
+// GET /users/1/posts
 let posts = await user.posts().get()
 
 // Yes, you can do that before getting the posts
@@ -300,7 +305,7 @@ let posts = await user
 * Elegancy from [DavidDuwaer/coloquent](https://github.com/DavidDuwaer/Coloquent). 
 
 
-Why another package if we have those ... Because currently (March, 2018) they are restricted to JSON API Specification :(
+Why another package if we have those ... Because currently (march, 2018) they restricted backend response to JSON API Specification :(
 
 # Contact
 
