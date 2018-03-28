@@ -23,8 +23,7 @@ let posts = await Post
   .where('status', 'ACTIVE')
   .include('user', 'category')
   .append('likes')
-  .orderBy('-created_at')  
-  .orderBy('category_id')  
+  .orderBy('-created_at', 'category_id')  
   .get()
 
 ```
