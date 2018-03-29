@@ -6,7 +6,11 @@
   "scripts": {
     "build": "babel src -d build",
     "prepare": "yarn build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch --coverage"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   },
   "repository": {
     "type": "git",
@@ -31,6 +35,7 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "jest": "^22.4.3"
   }
 }

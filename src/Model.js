@@ -91,10 +91,7 @@ export default class Model extends StaticModel {
         item = response[0]
       }
 
-      if (item)
-        return item
-      else
-        throw new Error('No item found for specified params')
+      return item || {}
     })
   }
 

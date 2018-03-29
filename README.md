@@ -1,5 +1,16 @@
 <p align="center">
-  <img src="bird.jpg">
+  <img src="bird.png">  
+</p>
+<p align="center">
+  <a href="https://codecov.io/gh/robsontenorio/vue-api-query">
+      <img src="https://codecov.io/gh/robsontenorio/vue-api-query/branch/master/graph/badge.svg" />
+    </a>
+  <a href="https://www.npmjs.com/package/vue-api-query">
+    <img src="https://badge.fury.io/js/vue-api-query.svg" />
+  </a> 
+   <a href="https://github.com/robsontenorio/vue-api-query/blob/master/LICENSE">
+      <img src="https://img.shields.io/apm/l/vim-mode.svg" />
+    </a>     
 </p>
 
 # Elegant and simple way to build requests for REST API
@@ -9,8 +20,6 @@ This package helps you quickly to build requests for REST API. Move your logic a
 
 🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
-# WARNING ❗️ 
-This is a draft. Do not use it yet. Stable release soon.
 
 # Basic usage
 
