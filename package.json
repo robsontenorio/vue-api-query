@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel src -d build",
     "prepare": "yarn build",
-    "test": "jest --watch --coverage"
+    "test": "jest --watch --coverage",
+    "cc": "jest --coverage"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
