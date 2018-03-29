@@ -28,9 +28,9 @@ describe('Model methods', () => {
   })
 
   test('filters, include, append and orderBy are optionals', () => {
-    const post = Post.first()
+    const post = Post.whereIn('foo', [])
 
-    const query = ''
+    const query = encodeURI('?filter[foo]=')
 
     expect(post._builder.query()).toEqual(query)
   })
