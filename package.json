@@ -7,7 +7,7 @@
     "build": "babel src -d build",
     "prepare": "yarn build",
     "test": "jest --watch --coverage",
-    "cc": "jest --coverage"
+    "cc": "jest --coverage && codecov -t 954cd258-1f61-4ec1-b0ef-1db132f7a155"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
@@ -37,6 +37,7 @@
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "codecov": "^3.0.0",
     "jest": "^22.4.3"
   }
 }
