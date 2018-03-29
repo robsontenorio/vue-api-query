@@ -1,9 +1,16 @@
 import qs from 'qs'
 import Post from './dummy/models/Post'
+import { Model } from '../src'
+import axios from 'axios'
+import MockAdapter from 'axios-mock-adapter';
+import { Posts as postsArrayResponse } from './dummy/data/array'
+import { Post as postResponse } from './dummy/data/single'
 
 describe('Model methods', () => {
 
   let errorModel = {}
+  Model.$http = axios
+  let axiosMock = new MockAdapter(axios)
 
   test('it throws a error when find() has no parameters', () => {
     errorModel = () => {
@@ -27,11 +34,27 @@ describe('Model methods', () => {
 
   })
 
-  test('filters, include, append and orderBy are optionals', () => {
-    const post = Post.whereIn('foo', [])
+  test('first() returns first object in array as instance of such Model', async () => {
 
-    const query = encodeURI('?filter[foo]=')
+    axiosMock.onGet('http://localhost/posts').reply(200, {
+      data: postsArrayResponse
+    })
 
-    expect(post._builder.query()).toEqual(query)
+    const post = await Post.first()
+    expect(post).toEqual(postsArrayResponse[0])
+    expect(post).toBeInstanceOf(Post)
   })
+
+  test('find() returns a object as instance of such Model', async () => {
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+
+    const post = await Post.find(1)
+    expect(post).toEqual(postResponse)
+    // expect(post).toBeInstanceOf(Post)
+  })
+
+  test('get() method returns a array of objects as instace of suchModel', async () => {
+
+  })
+
 })

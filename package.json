@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build",
-    "prepare": "yarn build",
+    "prepare": "yarn build && yarn cc",
     "test": "jest --watch --coverage",
     "cc": "jest --coverage"
   },
@@ -33,11 +33,14 @@
   },
   "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
   "devDependencies": {
+    "axios": "^0.18.0",
+    "axios-mock-adapter": "^1.14.1",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "codecov": "^3.0.0",
-    "jest": "^22.4.3"
+    "jest": "^22.4.3",
+    "moxios": "^0.4.0"
   }
 }
