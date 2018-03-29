@@ -48,6 +48,13 @@ describe('Model methods', () => {
     expect(post).toBeInstanceOf(Post)
   })
 
+  test('first() method returns a empty object when no items have found', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, [])
+
+    const post = await Post.first()
+    expect(post).toEqual({})
+  })
+
   test('find() method returns a object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 

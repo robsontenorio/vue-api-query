@@ -1,71 +1,73 @@
 /**
- *  Handle static calls for all methods.
+ *  Provide static calls for all methods.
  * 
- *  Instead `let users = new User().with('country').get()`
- *  You cand do `let users = User.with('conutry').get()` 
- *  
- * 
+ *  Instead this: let users = new User().with('country').get()
+ *  We can do this: let users = User.with('conutry').get()
  * 
  */
 
 export default class StaticModel {
 
+  static instance () {
+    return new this
+  }
+
   static custom (resource) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.custom(resource)
 
     return self
   }
 
   static include (...args) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.include(...args)
 
     return self
   }
 
   static where (field, value) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.where(field, value)
 
     return self
   }
 
   static whereIn (field, array) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.whereIn(field, array)
 
     return self
   }
 
   static append (...args) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.append(...args)
 
     return self
   }
 
   static orderBy (...args) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
     self.orderBy(...args)
 
     return self
   }
 
   static first () {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
 
     return self.first()
   }
 
   static find (id) {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
 
     return self.find(id)
   }
 
   static get () {
-    let self = typeof this === 'object' ? this : new this
+    let self = this.instance()
 
     return self.get()
   }
