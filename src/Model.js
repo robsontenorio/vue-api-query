@@ -57,7 +57,7 @@ export default class Model extends StaticModel {
   }
 
   include (...args) {
-    this._builder.include(args)
+    this._builder.include(...args)
     return this
   }
 
@@ -72,12 +72,12 @@ export default class Model extends StaticModel {
   }
 
   append (...args) {
-    this._builder.append(args)
+    this._builder.append(...args)
     return this
   }
 
   orderBy (...args) {
-    this._builder.orderBy(args)
+    this._builder.orderBy(...args)
     return this
   }
 

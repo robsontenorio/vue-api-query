@@ -40,14 +40,14 @@ export default class StaticModel {
 
   static append (...args) {
     let self = typeof this === 'object' ? this : new this
-    self.append(args)
+    self.append(...args)
 
     return self
   }
 
   static orderBy (...args) {
     let self = typeof this === 'object' ? this : new this
-    self.orderBy(args)
+    self.orderBy(...args)
 
     return self
   }

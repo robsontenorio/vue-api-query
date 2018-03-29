@@ -1,4 +1,3 @@
-import qs from 'qs'
 import Post from './dummy/models/Post'
 import { Model } from '../src'
 import axios from 'axios'
@@ -11,6 +10,10 @@ describe('Model methods', () => {
   let errorModel = {}
   Model.$http = axios
   let axiosMock = new MockAdapter(axios)
+
+  beforeEach(() => {
+    axiosMock.reset()
+  })
 
   test('it throws a error when find() has no parameters', () => {
     errorModel = () => {
@@ -45,15 +48,67 @@ describe('Model methods', () => {
     expect(post).toBeInstanceOf(Post)
   })
 
-  test('find() returns a object as instance of such Model', async () => {
+  test('find() method returns a object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
     const post = await Post.find(1)
     expect(post).toEqual(postResponse)
-    // expect(post).toBeInstanceOf(Post)
+    expect(post).toBeInstanceOf(Post)
   })
 
   test('get() method returns a array of objects as instace of suchModel', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsArrayResponse)
+
+    const posts = await Post.get()
+
+    posts.forEach(post => {
+      expect(post).toBeInstanceOf(Post)
+    });
+  })
+
+  test('save() method makes a POST request when ID of object does not exists', async () => {
+
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, {}]
+    })
+
+    post = new Post({ title: 'Cool!' })
+    await post.save()
+
+  })
+
+  test('save() method makes a PUT request when ID of object exists', async () => {
+
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    await post.save()
+
+  })
+
+  test('custom() method hit the right resource', async () => {
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.url).toBe('postz')
+
+      return [200, {}]
+    })
+
+    const post = await Post.custom('postz').first()
 
   })
 
