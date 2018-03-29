@@ -26,4 +26,12 @@ describe('Model methods', () => {
     expect(post._builder.query()).toEqual(query)
 
   })
+
+  test('filters, include, append and orderBy are optionals', () => {
+    const post = Post.first()
+
+    const query = ''
+
+    expect(post._builder.query()).toEqual(query)
+  })
 })
