@@ -18,7 +18,7 @@
 This package helps you quickly to build requests for REST API. Move your logic and backend requests to dedicated classes. Keep your code clean and elegant. 
 
 
-🔥  If you use Laravel, this package matchs perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
+🔥  If you use Laravel, this package matches perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
 
 # Basic usage
@@ -233,7 +233,7 @@ export default class User extends Model {
 }
 ```
 
-It's ok if in some situations you need call a custom resource from a already defined model. You can override dynamically the default resource calling `custom()` method.
+It's ok if in some situations you need to call a custom resource from a already defined model. You can override dynamically the default resource calling `custom()` method.
 
 ```js
 // GET /posts
