@@ -5,4 +5,4 @@ node_js:
 install:
   - npm install -g codecov
 script:
-  - yarn cc && codecov
+  - yarn && yarn cc && codecov
