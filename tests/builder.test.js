@@ -4,7 +4,7 @@ import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
 
-describe('Static calls', () => {
+describe('Query builder', () => {
 
   let errorModel = {}
   Model.$http = axios
@@ -12,6 +12,21 @@ describe('Static calls', () => {
 
   beforeEach(() => {
     axiosMock.reset()
+  })
+
+  test('it builds a complex query', () => {
+    const post = Post
+      .where('title', 'Cool')
+      .where('status', 'ACTIVE')
+      .include('user')
+      .append('likes')
+      .page(3)
+      .limit(10)
+      .orderBy('created_at')
+
+    const query = encodeURI('?include=user&filter[title]=Cool&filter[status]=ACTIVE&append=likes&sort=created_at&page=3&limit=10')
+
+    expect(post._builder.query()).toEqual(query)
   })
 
   test('include() sets properly the builder', () => {
@@ -90,5 +105,33 @@ describe('Static calls', () => {
     expect(errorModel).toThrow('The second argument on whereIn() method must be an array.')
   })
 
+
+  test('page() sets properly the builder', () => {
+    let post = Post.page(3)
+
+    expect(post._builder.pageValue).toEqual(3)
+  })
+
+  test('page() throws a exception when value is not a number', () => {
+    let errorModel = () => {
+      const post = Post.page('foo')
+    }
+
+    expect(errorModel).toThrow('The VALUE must be an integer on page() method.')
+  })
+
+  test('limit() sets properly the builder', () => {
+    let post = Post.limit(10)
+
+    expect(post._builder.limitValue).toEqual(10)
+  })
+
+  test('limit() throws a exception when value is not a number', () => {
+    let errorModel = () => {
+      const post = Post.limit('foo')
+    }
+
+    expect(errorModel).toThrow('The VALUE must be an integer on limit() method.')
+  })
 
 })

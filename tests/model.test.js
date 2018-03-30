@@ -3,6 +3,7 @@ import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
 import { Posts as postsArrayResponse } from './dummy/data/array'
+import { Posts as postsArrayEmbedResponse } from './dummy/data/arrayEmbed'
 import { Post as postResponse } from './dummy/data/single'
 
 describe('Model methods', () => {
@@ -20,21 +21,7 @@ describe('Model methods', () => {
       const post = Post.find()
     }
 
-    expect(errorModel).toThrow('The "id" must be a integer on find() method.')
-  })
-
-  test('it builds a complexy query', () => {
-    const post = Post
-      .where('title', 'Cool')
-      .where('status', 'ACTIVE')
-      .include('user')
-      .append('likes')
-      .orderBy('created_at')
-
-    const query = encodeURI('?include=user&filter[title]=Cool&filter[status]=ACTIVE&append=likes&sort=created_at')
-
-    expect(post._builder.query()).toEqual(query)
-
+    expect(errorModel).toThrow('The ID must be an integer on find() method.')
   })
 
   test('first() returns first object in array as instance of such Model', async () => {
@@ -73,6 +60,24 @@ describe('Model methods', () => {
     });
   })
 
+  test('$get() fetch style request with "data" attribute', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsArrayEmbedResponse)
+
+    const posts = await Post.$get()
+
+    expect(posts).toEqual(postsArrayEmbedResponse.data)
+
+  })
+
+  test('$get() fetch style request without "data" attribute', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsArrayEmbedResponse.data)
+
+    const posts = await Post.$get()
+
+    expect(posts).toEqual(postsArrayEmbedResponse.data)
+
+  })
+
   test('save() method makes a POST request when ID of object does not exists', async () => {
 
     let post
@@ -107,7 +112,7 @@ describe('Model methods', () => {
 
   })
 
-  test('custom() method hit the right resource', async () => {
+  test('an request with custom() method hit the right resource', async () => {
 
     axiosMock.onAny().reply((config) => {
       expect(config.url).toBe('postz')
@@ -116,7 +121,5 @@ describe('Model methods', () => {
     })
 
     const post = await Post.custom('postz').first()
-
   })
-
 })

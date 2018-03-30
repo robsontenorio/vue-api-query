@@ -47,6 +47,20 @@ export default class StaticModel {
     return self
   }
 
+  static page (value) {
+    let self = this.instance()
+    self.page(value)
+
+    return self
+  }
+
+  static limit (value) {
+    let self = this.instance()
+    self.limit(value)
+
+    return self
+  }
+
   static orderBy (...args) {
     let self = this.instance()
     self.orderBy(...args)
@@ -70,5 +84,11 @@ export default class StaticModel {
     let self = this.instance()
 
     return self.get()
+  }
+
+  static $get () {
+    let self = this.instance()
+
+    return self.$get()
   }
 }

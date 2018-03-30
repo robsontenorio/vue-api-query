@@ -6,6 +6,8 @@ export default class Builder {
     this.includes = []
     this.appends = []
     this.sorts = []
+    this.pageValue = null
+    this.limitValue = null
     this.filters = {
       filter: {}
     }
@@ -25,6 +27,26 @@ export default class Builder {
 
   append (...args) {
     this.appends = args
+
+    return this
+  }
+
+  page (value) {
+    if (!Number.isInteger(value)) {
+      throw new Error('The VALUE must be an integer on page() method.')
+    }
+
+    this.pageValue = value
+
+    return this
+  }
+
+  limit (value) {
+    if (!Number.isInteger(value)) {
+      throw new Error('The VALUE must be an integer on limit() method.')
+    }
+
+    this.limitValue = value
 
     return this
   }

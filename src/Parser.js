@@ -12,6 +12,8 @@ export default class Parser {
     this.filters()
     this.appends()
     this.sorts()
+    this.page()
+    this.limit()
 
     return this.uri
   }
@@ -26,6 +28,14 @@ export default class Parser {
 
   hasAppends () {
     return this.builder.appends.length > 0
+  }
+
+  hasPage () {
+    return this.builder.pageValue !== null
+  }
+
+  hasLimit () {
+    return this.builder.limitValue !== null
   }
 
   hasSorts () {
@@ -44,13 +54,28 @@ export default class Parser {
     this.uri += this.prepend() + 'include=' + this.builder.includes
   }
 
-
   appends () {
     if (!this.hasAppends()) {
       return
     }
 
     this.uri += this.prepend() + 'append=' + this.builder.appends
+  }
+
+  page () {
+    if (!this.hasPage()) {
+      return
+    }
+
+    this.uri += this.prepend() + 'page=' + this.builder.pageValue
+  }
+
+  limit () {
+    if (!this.hasLimit()) {
+      return
+    }
+
+    this.uri += this.prepend() + 'limit=' + this.builder.limitValue
   }
 
   sorts () {

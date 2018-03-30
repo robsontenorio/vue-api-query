@@ -6,7 +6,10 @@
       <img src="https://codecov.io/gh/robsontenorio/vue-api-query/branch/master/graph/badge.svg" />
     </a>
   <a href="https://www.npmjs.com/package/vue-api-query">
-    <img src="https://badge.fury.io/js/vue-api-query.svg" />
+    <img src="https://img.shields.io/npm/dt/vue-api-query.svg" />
+    </a>
+  <a href="https://www.npmjs.com/package/vue-api-query">
+    <img src="https://img.shields.io/npm/v/vue-api-query.svg" />
   </a> 
    <a href="https://github.com/robsontenorio/vue-api-query/blob/master/LICENSE">
       <img src="https://img.shields.io/apm/l/vim-mode.svg" />
@@ -88,7 +91,7 @@ We can use relationships:
 let user = await User.find(1)
 
 // GET users/1/posts
-let posts = user
+let posts = await user
   .posts()
   .get()
 
@@ -245,7 +248,7 @@ let latest = await Post
   .first()  
 ```
 
-## Full example
+# Full example
 
 **/models/Post.js**
 ```js
@@ -344,6 +347,38 @@ let posts = await Post
 
 ```
 
+If you like the "promise way" just do it like this:
+
+```js
+
+// single object
+
+let user
+
+User
+  .where('status', 'ACTIVE')
+  .first()
+  .then(response => {
+    user = response
+  })
+
+// array of objects
+
+let users
+
+User
+  .where('status', 'ACTIVE')
+  .get()
+  .then(response => {
+    users = response
+    
+    // or (depending on backend response)
+
+    users = response.data 
+  })
+
+```
+
 And in some page/component:
 
 ```js
@@ -376,6 +411,19 @@ export default {
   }
 }
 </script>
+
+```
+
+# Pagination
+
+```js
+// GET /users?sort=firstname&page=1&limit=20
+
+let users = await User        
+        .orderBy('firstname')
+        .page(1) 
+        .limit(20)
+        .$get() // sometimes you will prefer $get()
 
 ```
 
@@ -450,47 +498,60 @@ let user = await User.get()
 ```js
 // works - `data` exists in the root and contains the array of objects 
 {
-  data: {
-    [
-      {
-        id: 1,
-        firstname: 'John',
-        lastname: 'Doe',
-        age: 25
-        },
-      {
-        id: 2,
-        firstname: 'Mary',
-        lastname: 'Doe',
-        age: 22
-      }
-    ]
-  },
+  data: [
+    {
+      id: 1,
+      firstname: 'John',
+      lastname: 'Doe',
+      age: 25
+      },
+    {
+      id: 2,
+      firstname: 'Mary',
+      lastname: 'Doe',
+      age: 22
+    }
+  ],
   someField: '',
   anotherOne: '',  
 }
+
+// Normally you would handle the response like this
+
+let response = User.get()
+let users = response.data
+
+
+// or like this
+
+const { data } = User.get()
+let users  = data
+
+// but you can use the "fetch style request" with "$get()"
+
+let users = await User
+  .where('status', 'ACTIVE')
+  .$get() // <---- HERE
 ```
 
 This **WILL NOT** be converted into an array of `User` model.
 
 ```js
 {
-  users: {
-    [
-      {
-        id: 1,
-        firstname: 'John',
-        lastname: 'Doe',
-        age: 25
-        },
-      {
-        id: 2,
-        firstname: 'Mary',
-        lastname: 'Doe',
-        age: 22
-      }
-    ]
-  },
+  users: [
+    {
+      id: 1,
+      firstname: 'John',
+      lastname: 'Doe',
+      age: 25
+      },
+    {
+      id: 2,
+      firstname: 'Mary',
+      lastname: 'Doe',
+      age: 22
+    }
+  ],
   someField: '',
   anotherOne: '',  
 }
@@ -509,5 +570,5 @@ Why another package if we have those? Because currently (march, 2018) they restr
 
 # Contact
 
-Twitter @robsontenorio
+Twitter [@robsontenorio](https://twitter.com/robsontenorio)
 

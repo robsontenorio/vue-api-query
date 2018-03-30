@@ -58,26 +58,43 @@ export default class Model extends StaticModel {
 
   include (...args) {
     this._builder.include(...args)
+
     return this
   }
 
   where (field, value) {
     this._builder.where(field, value)
+
     return this
   }
 
   whereIn (field, array) {
     this._builder.whereIn(field, array)
+
     return this
   }
 
   append (...args) {
     this._builder.append(...args)
+
+    return this
+  }
+
+  page (value) {
+    this._builder.page(value)
+
+    return this
+  }
+
+  limit (value) {
+    this._builder.limit(value)
+
     return this
   }
 
   orderBy (...args) {
     this._builder.orderBy(...args)
+
     return this
   }
 
@@ -97,7 +114,7 @@ export default class Model extends StaticModel {
 
   find (id) {
     if (!Number.isInteger(id)) {
-      throw new Error('The "id" must be a integer on find() method.')
+      throw new Error('The ID must be an integer on find() method.')
     }
 
     let url = `${this.baseURL()}/${this.resource()}/${id}${this._builder.query()}`
@@ -145,6 +162,20 @@ export default class Model extends StaticModel {
       }
 
       return response.data
+    })
+  }
+
+  $get () {
+    return this.get().then(response => {
+      let collection
+
+      if (response.data) {
+        collection = response.data
+      } else {
+        collection = response
+      }
+
+      return collection
     })
   }
 
