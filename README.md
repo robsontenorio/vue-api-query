@@ -310,7 +310,7 @@ user.save()
 Then `save()` method will send back the new payload:
 
 ```js
-// POST /users/1
+// PUT /users/1
 {
   firstname: "John",
   lastname: "Doe",
