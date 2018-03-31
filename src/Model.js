@@ -133,6 +133,21 @@ export default class Model extends StaticModel {
     })
   }
 
+  delete () {
+    if (!this.hasId()) {
+      throw new Error('This model has a empty ID.')
+    }
+
+    let url = `${this.baseURL()}/${this.resource()}/${this.id}`
+
+    return this.request({
+      url,
+      method: 'DELETE'
+    }).then(response => {
+      return response
+    })
+  }
+
   get () {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     base = this._customResource || base

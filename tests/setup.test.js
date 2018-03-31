@@ -51,12 +51,4 @@ describe('Setup models', () => {
 
     delete Post.prototype['resource']
   })
-
-  test('the hasMany() is set up', () => {
-    const user = new User({ id: 1 })
-    const posts = user.posts()
-
-    expect(posts).toBeInstanceOf(Post)
-    expect(posts._fromResource).toEqual(user.baseURL() + '/users/1/posts')
-  })
 })

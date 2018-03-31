@@ -1,4 +1,5 @@
 import Post from './dummy/models/Post'
+import User from './dummy/models/User'
 import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
@@ -79,7 +80,6 @@ describe('Model methods', () => {
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {
-
     let post
 
     axiosMock.onAny().reply((config) => {
@@ -109,10 +109,33 @@ describe('Model methods', () => {
 
     post = new Post({ id: 1, title: 'Cool!' })
     await post.save()
-
   })
 
-  test('an request with custom() method hit the right resource', async () => {
+  test('a request from delete() method hits the right resource', async () => {
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toBe('http://localhost/posts/1')
+
+      return [200, {}]
+    })
+
+    const post = new Post({ id: 1 })
+
+    post.delete()
+  })
+
+  test('a request from delete() method when model has not ID throws a exception', async () => {
+
+    errorModel = () => {
+      let post = new Post()
+      post.delete()
+    }
+
+    expect(errorModel).toThrow('This model has a empty ID.')
+  })
+
+  test('a request with custom() method hits the right resource', async () => {
 
     axiosMock.onAny().reply((config) => {
       expect(config.url).toBe('postz')
@@ -121,5 +144,32 @@ describe('Model methods', () => {
     })
 
     const post = await Post.custom('postz').first()
+  })
+
+  test('a request from hasMany() method hits right resource', async () => {
+    let user
+    let posts
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts')
+
+      return [200, {}]
+    })
+
+    user = new User({ id: 1 })
+    posts = await user.posts().get()
+  })
+
+  test('a request hasMany() method returns a array of Models', async () => {
+
+    axiosMock.onGet('http://localhost/users/1/posts').reply(200, postsArrayResponse)
+
+    const user = new User({ id: 1 })
+    const posts = await user.posts().get()
+
+    posts.forEach(post => {
+      expect(post).toBeInstanceOf(Post)
+    });
   })
 })
