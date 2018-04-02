@@ -67,6 +67,14 @@ post.title = 'Awsome!'
 post.save()
 ```
 
+Ops, delete it!
+
+```js
+// DELETE /posts/1
+
+post.delete()
+```
+
 Let's create a new object and post it:
 
 ```js
@@ -160,7 +168,7 @@ export default class Model extends BaseModel {
     return 'http://my-api.com'
   }
 
-  // implement a defult request method 
+  // implement a default request method 
   request (config) {
     return this.$http.request(config)
   }
