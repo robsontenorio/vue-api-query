@@ -216,7 +216,8 @@ import Model from './Model'
 export default class User extends Model {
   
   // computed properties are reactive -> user.fullname
-  get fullname()
+  // make sure to use "get" prefix 
+  get fullname()
   {
     return `${this.firstname} ${this.lastname}`
   }
@@ -434,6 +435,32 @@ let users = await User
         .$get() // sometimes you will prefer $get()
 
 ```
+
+# Nice trick
+
+You can build something like scoped queries.
+
+```js
+import Model from './Model'
+
+export default class Post extends Model {
+    
+   // make sure this is a static method
+   static active()  
+   {
+      // here you could chain more methods from vue-query-api
+      return this.where('status', 'active')
+   }
+}
+```
+So, you can do this:
+
+```js
+let activePosts = await Post
+  .active()
+  .get()
+```
+
 
 # Response from backend
 
