@@ -35,7 +35,7 @@ let posts = await Post
   .where('status', 'ACTIVE')
   .include('user', 'category')
   .append('likes')
-  .orderBy('-created_at', 'category_id')  
+  .orderBy('-created_at', 'category_id')
   .get()
 
 ```
@@ -79,6 +79,7 @@ Let's create a new object and post it:
 
 ```js
 let post = new Post()
+post.title = 'Cool!'
 
 // or
 
@@ -87,7 +88,6 @@ let post = new Post({title: 'Cool!'})
 
 // POST /post
 
-post.title = 'Another one'
 post.save()
 ```
 
@@ -432,7 +432,7 @@ let users = await User
         .orderBy('firstname')
         .page(1) 
         .limit(20)
-        .$get() // sometimes you will prefer $get()
+        .get()
 
 ```
 
@@ -564,9 +564,7 @@ let users  = data
 
 // but you can use the "fetch style request" with "$get()"
 
-let users = await User
-  .where('status', 'ACTIVE')
-  .$get() // <---- HERE
+let users = await User.$get()
 ```
 
 This **WILL NOT** be converted into an array of `User` model.
