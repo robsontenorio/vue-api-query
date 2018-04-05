@@ -35,7 +35,7 @@ let posts = await Post
   .where('status', 'ACTIVE')
   .include('user', 'category')
   .append('likes')
-  .orderBy('-created_at', 'category_id')
+  .orderBy('-created_at', 'category_id')  
   .get()
 
 ```
@@ -79,7 +79,6 @@ Let's create a new object and post it:
 
 ```js
 let post = new Post()
-post.title = 'Cool!'
 
 // or
 
@@ -88,6 +87,7 @@ let post = new Post({title: 'Cool!'})
 
 // POST /post
 
+post.title = 'Another one'
 post.save()
 ```
 
@@ -216,8 +216,7 @@ import Model from './Model'
 export default class User extends Model {
   
   // computed properties are reactive -> user.fullname
-  // make sure to use "get" prefix 
-  get fullname()
+  get fullname()
   {
     return `${this.firstname} ${this.lastname}`
   }
@@ -432,33 +431,48 @@ let users = await User
         .orderBy('firstname')
         .page(1) 
         .limit(20)
-        .get()
+        .$get() // sometimes you will prefer $get()
 
 ```
 
-# Nice trick
+# Selecting fields
 
-You can build something like scoped queries.
+Just want only some fields?
 
 ```js
-import Model from './Model'
+// GET posts?fields[posts]=title,content
 
-export default class Post extends Model {
-    
-   // make sure this is a static method
-   static active()  
-   {
-      // here you could chain more methods from vue-query-api
-      return this.where('status', 'active')
-   }
-}
+let post = await Post
+   .select(['title', 'content'])
+   .get() 
 ```
-So, you can do this:
+
+With related entities:
 
 ```js
-let activePosts = await Post
-  .active()
-  .get()
+// GET posts?include=user&fields[posts]=title,content&fields[user]=firstname,age
+
+let post = await Post
+   .select({
+      posts: ['title', 'content'],
+      user: ['age', 'firstname']
+    })
+   .include('user')
+   .get() 
+```
+
+**TIP:** If you are using spatie/laravel-query-builder, when using related entities, you must pass extra fields:
+
+```js
+// GET posts?include=user&fields[posts]=title,content,user_id&fields[user]=id,firstname,age
+
+let post = await Post
+   .select({
+      posts: ['title', 'content', 'user_id'],  //user_id
+      user: ['id', 'age', 'firstname']         //id
+    })
+   .include('user')
+   .get() 
 ```
 
 
@@ -564,7 +578,9 @@ let users  = data
 
 // but you can use the "fetch style request" with "$get()"
 
-let users = await User.$get()
+let users = await User
+  .where('status', 'ACTIVE')
+  .$get() // <---- HERE
 ```
 
 This **WILL NOT** be converted into an array of `User` model.

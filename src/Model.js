@@ -6,9 +6,9 @@ export default class Model extends StaticModel {
   constructor(...atributtes) {
     super()
 
-    // Keep clean object if is a manual instance
+    // Keep clean object if it is a manual instance
     if (atributtes.length === 0) {
-      this._builder = new Builder()
+      this._builder = new Builder(this)
       this._fromResource = null
       this._customResource = null
     } else {
@@ -27,6 +27,10 @@ export default class Model extends StaticModel {
       throw new Error('You must set $http property')
     }
   }
+
+  /**
+   *  Setup
+   */
 
   get $http () {
     return Model.$http
@@ -47,7 +51,6 @@ export default class Model extends StaticModel {
   }
 
   hasMany (model) {
-
     let instance = new model
     let url = `${this.baseURL()}/${this.resource()}/${this.id}/${instance.resource()}`
 
@@ -56,8 +59,40 @@ export default class Model extends StaticModel {
     return instance
   }
 
+  /**
+   * Helpers
+   */
+
+  hasId () {
+    return this.id !== undefined && this.id !== 0 && this.id !== ''
+  }
+
+  endpoint () {
+    if (this.hasId()) {
+      return `${this.baseURL()}/${this.resource()}/${this.id}`
+    } else {
+      return `${this.baseURL()}/${this.resource()}`
+    }
+  }
+
+  /**
+   *  Query
+   */
+
   include (...args) {
     this._builder.include(...args)
+
+    return this
+  }
+
+  append (...args) {
+    this._builder.append(...args)
+
+    return this
+  }
+
+  select (...fields) {
+    this._builder.select(...fields)
 
     return this
   }
@@ -74,8 +109,8 @@ export default class Model extends StaticModel {
     return this
   }
 
-  append (...args) {
-    this._builder.append(...args)
+  orderBy (...args) {
+    this._builder.orderBy(...args)
 
     return this
   }
@@ -92,11 +127,9 @@ export default class Model extends StaticModel {
     return this
   }
 
-  orderBy (...args) {
-    this._builder.orderBy(...args)
-
-    return this
-  }
+  /** 
+   * Result
+   */
 
   first () {
     return this.get().then(response => {
@@ -112,12 +145,12 @@ export default class Model extends StaticModel {
     })
   }
 
-  find (id) {
-    if (!Number.isInteger(id)) {
-      throw new Error('The ID must be an integer on find() method.')
+  find (identifier) {
+    if (identifier === undefined) {
+      throw new Error('You must specify the param on find() method.')
     }
 
-    let url = `${this.baseURL()}/${this.resource()}/${id}${this._builder.query()}`
+    let url = `${this.baseURL()}/${this.resource()}/${identifier}${this._builder.query()}`
 
     return this.request({
       url,
@@ -130,21 +163,6 @@ export default class Model extends StaticModel {
       delete item.$http
 
       return item
-    })
-  }
-
-  delete () {
-    if (!this.hasId()) {
-      throw new Error('This model has a empty ID.')
-    }
-
-    let url = `${this.baseURL()}/${this.resource()}/${this.id}`
-
-    return this.request({
-      url,
-      method: 'DELETE'
-    }).then(response => {
-      return response
     })
   }
 
@@ -194,16 +212,23 @@ export default class Model extends StaticModel {
     })
   }
 
-  hasId () {
-    return this.id !== undefined && this.id !== 0 && this.id !== ''
-  }
+  /**
+   * CRUD operations
+   */
 
-  endpoint () {
-    if (this.hasId()) {
-      return `${this.baseURL()}/${this.resource()}/${this.id}`
-    } else {
-      return `${this.baseURL()}/${this.resource()}`
+  delete () {
+    if (!this.hasId()) {
+      throw new Error('This model has a empty ID.')
     }
+
+    let url = `${this.baseURL()}/${this.resource()}/${this.id}`
+
+    return this.request({
+      url,
+      method: 'DELETE'
+    }).then(response => {
+      return response
+    })
   }
 
   save () {

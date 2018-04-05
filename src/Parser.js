@@ -1,3 +1,7 @@
+/**
+ * Parse attributes from Builder into query string
+ */
+
 import qs from 'qs'
 
 export default class Parser {
@@ -7,10 +11,12 @@ export default class Parser {
     this.uri = ''
   }
 
+  // final query string
   query () {
     this.includes()
-    this.filters()
     this.appends()
+    this.fields()
+    this.filters()
     this.sorts()
     this.page()
     this.limit()
@@ -18,9 +24,9 @@ export default class Parser {
     return this.uri
   }
 
-  hasFilters () {
-    return Object.keys(this.builder.filters.filter).length > 0
-  }
+  /**
+   * Helpers
+   */
 
   hasIncludes () {
     return this.builder.includes.length > 0
@@ -28,6 +34,18 @@ export default class Parser {
 
   hasAppends () {
     return this.builder.appends.length > 0
+  }
+
+  hasFields () {
+    return Object.keys(this.builder.fields.fields).length > 0
+  }
+
+  hasFilters () {
+    return Object.keys(this.builder.filters.filter).length > 0
+  }
+
+  hasSorts () {
+    return this.builder.sorts.length > 0
   }
 
   hasPage () {
@@ -38,13 +56,13 @@ export default class Parser {
     return this.builder.limitValue !== null
   }
 
-  hasSorts () {
-    return this.builder.sorts.length > 0
-  }
-
   prepend () {
     return (this.uri === '') ? '?' : '&'
   }
+
+  /**
+   * Parsers
+   */
 
   includes () {
     if (!this.hasIncludes()) {
@@ -62,6 +80,30 @@ export default class Parser {
     this.uri += this.prepend() + 'append=' + this.builder.appends
   }
 
+  fields () {
+    if (!this.hasFields()) {
+      return
+    }
+
+    this.uri += this.prepend() + qs.stringify(this.builder.fields, { encode: false })
+  }
+
+  filters () {
+    if (!this.hasFilters()) {
+      return
+    }
+
+    this.uri += this.prepend() + qs.stringify(this.builder.filters, { encode: false })
+  }
+
+  sorts () {
+    if (!this.hasSorts()) {
+      return
+    }
+
+    this.uri += this.prepend() + 'sort=' + this.builder.sorts
+  }
+
   page () {
     if (!this.hasPage()) {
       return
@@ -76,21 +118,5 @@ export default class Parser {
     }
 
     this.uri += this.prepend() + 'limit=' + this.builder.limitValue
-  }
-
-  sorts () {
-    if (!this.hasSorts()) {
-      return
-    }
-
-    this.uri += this.prepend() + 'sort=' + this.builder.sorts
-  }
-
-  filters () {
-    if (!this.hasFilters()) {
-      return
-    }
-
-    this.uri += this.prepend() + qs.stringify(this.builder.filters)
   }
 }

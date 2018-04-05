@@ -7,21 +7,27 @@
  */
 
 export default class StaticModel {
-
   static instance () {
     return new this
-  }
-
-  static custom (resource) {
-    let self = this.instance()
-    self.custom(resource)
-
-    return self
   }
 
   static include (...args) {
     let self = this.instance()
     self.include(...args)
+
+    return self
+  }
+
+  static append (...args) {
+    let self = this.instance()
+    self.append(...args)
+
+    return self
+  }
+
+  static select (...fields) {
+    let self = this.instance()
+    self.select(...fields)
 
     return self
   }
@@ -40,9 +46,9 @@ export default class StaticModel {
     return self
   }
 
-  static append (...args) {
+  static orderBy (...args) {
     let self = this.instance()
-    self.append(...args)
+    self.orderBy(...args)
 
     return self
   }
@@ -61,9 +67,9 @@ export default class StaticModel {
     return self
   }
 
-  static orderBy (...args) {
+  static custom (resource) {
     let self = this.instance()
-    self.orderBy(...args)
+    self.custom(resource)
 
     return self
   }

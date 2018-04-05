@@ -22,7 +22,7 @@ describe('Model methods', () => {
       const post = Post.find()
     }
 
-    expect(errorModel).toThrow('The ID must be an integer on find() method.')
+    expect(errorModel).toThrow('You must specify the param on find() method.')
   })
 
   test('first() returns first object in array as instance of such Model', async () => {

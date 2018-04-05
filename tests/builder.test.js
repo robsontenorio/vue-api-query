@@ -1,4 +1,3 @@
-
 import Post from './dummy/models/Post'
 import { Model } from '../src'
 import axios from 'axios'
@@ -16,15 +15,19 @@ describe('Query builder', () => {
 
   test('it builds a complex query', () => {
     const post = Post
-      .where('title', 'Cool')
-      .where('status', 'ACTIVE')
       .include('user')
       .append('likes')
+      .select({
+        posts: ['title', 'content'],
+        user: ['age', 'firstname']
+      })
+      .where('title', 'Cool')
+      .where('status', 'ACTIVE')
       .page(3)
       .limit(10)
       .orderBy('created_at')
 
-    const query = encodeURI('?include=user&filter[title]=Cool&filter[status]=ACTIVE&append=likes&sort=created_at&page=3&limit=10')
+    const query = '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10'
 
     expect(post._builder.query()).toEqual(query)
   })
@@ -132,6 +135,30 @@ describe('Query builder', () => {
     }
 
     expect(errorModel).toThrow('The VALUE must be an integer on limit() method.')
+  })
+
+  test('select() with no parameters', () => {
+    let errorModel = () => {
+      const post = Post.select()
+    }
+
+    expect(errorModel).toThrow('You must specify the fields on select() method.')
+  })
+
+  test('select() for single entity', () => {
+    let post = Post.select('age', 'firstname')
+
+    expect(post._builder.fields.fields.posts).toEqual('age,firstname')
+  })
+
+  test('select() for related entities', () => {
+    let post = Post.select({
+      posts: ['title', 'content'],
+      user: ['age', 'firstname']
+    })
+
+    expect(post._builder.fields.fields.posts).toEqual('title,content')
+    expect(post._builder.fields.fields.user).toEqual('age,firstname')
   })
 
 })
