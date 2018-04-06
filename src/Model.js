@@ -158,7 +158,7 @@ export default class Model extends StaticModel {
     }).then(response => {
       let item = new this.constructor(response.data)
       delete item._builder
-      delete item.from
+      delete item._fromResource
       delete item._customResource
       delete item.$http
 
@@ -181,7 +181,7 @@ export default class Model extends StaticModel {
       collection = collection.map(c => {
         let item = new this.constructor(c)
         delete item._builder
-        delete item.from
+        delete item._fromResource
         delete item._customResource
         delete item.$http
 
