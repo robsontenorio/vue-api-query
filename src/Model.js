@@ -68,6 +68,14 @@ export default class Model extends StaticModel {
   }
 
   endpoint () {
+    if (this._fromResource) {
+      if (this.hasId()) {
+        return `${this._fromResource}/${this.id}`
+      } else {
+        return this._fromResource
+      }
+    }
+
     if (this.hasId()) {
       return `${this.baseURL()}/${this.resource()}/${this.id}`
     } else {
@@ -156,13 +164,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let item = new this.constructor(response.data)
-      delete item._builder
-      delete item._fromResource
-      delete item._customResource
-      delete item.$http
-
-      return item
+      return new this.constructor(response.data)
     })
   }
 
@@ -180,10 +182,8 @@ export default class Model extends StaticModel {
 
       collection = collection.map(c => {
         let item = new this.constructor(c)
-        delete item._builder
-        delete item._fromResource
-        delete item._customResource
-        delete item.$http
+        Object.defineProperty(item, '_fromResource',
+          { get: () => this._fromResource })
 
         return item
       })
@@ -200,20 +200,12 @@ export default class Model extends StaticModel {
 
   $get () {
     return this.get().then(response => {
-      let collection
-
-      if (response.data) {
-        collection = response.data
-      } else {
-        collection = response
-      }
-
-      return collection
+      return response.data || response
     })
   }
 
   /**
-   * CRUD operations
+   * Common CRUD operations
    */
 
   delete () {
@@ -221,10 +213,8 @@ export default class Model extends StaticModel {
       throw new Error('This model has a empty ID.')
     }
 
-    let url = `${this.baseURL()}/${this.resource()}/${this.id}`
-
     return this.request({
-      url,
+      url: this.endpoint(),
       method: 'DELETE'
     }).then(response => {
       return response
@@ -256,4 +246,29 @@ export default class Model extends StaticModel {
       return self
     })
   }
+
+  /**
+   * Relationship operations
+   */
+
+  attach (params) {
+    return this.request({
+      method: 'POST',
+      url: this.endpoint(),
+      data: params
+    }).then(response => {
+      return response
+    })
+  }
+
+  sync (params) {
+    return this.request({
+      method: 'PUT',
+      url: this.endpoint(),
+      data: params
+    }).then(response => {
+      return response
+    })
+  }
+
 }
