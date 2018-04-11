@@ -79,6 +79,7 @@ Let's create a new object and post it:
 
 ```js
 let post = new Post()
+post.title = 'Another one'
 
 // or
 
@@ -87,7 +88,6 @@ let post = new Post({title: 'Cool!'})
 
 // POST /post
 
-post.title = 'Another one'
 post.save()
 ```
 
@@ -216,6 +216,7 @@ import Model from './Model'
 export default class User extends Model {
   
   // computed properties are reactive -> user.fullname
+  // make sure to use "get" prefix 
   get fullname()
   {
     return `${this.firstname} ${this.lastname}`
@@ -326,25 +327,6 @@ Then `save()` method will send back the new payload:
 }
 ```
 
-Play with relationships:
-
-```js
-// GET /users/1
-let user = await User.find(1)
-
-// GET /users/1/posts
-let posts = await user.posts().get()
-
-// Yes, you can do that before getting the posts
-let posts = await user
-  .posts()
-  .where(...)
-  .append(...)
-  .include(...)
-  .orderBy(...)
-  .get()
-```
-
 You also can do that:
 ```js
 //GET /posts?filter[status]=ACTIVE,ARCHIVED
@@ -422,6 +404,56 @@ export default {
 
 ```
 
+# Relationships
+
+```js
+// GET /users/1
+let user = await User.find(1)
+
+// GET /users/1/posts
+let posts = await user.posts().get()
+
+// Yes, you can do that before getting the posts
+let posts = await user
+  .posts()
+  .where(...)
+  .append(...)
+  .include(...)
+  .orderBy(...)
+  .get()
+```
+
+If you like nested relationships ...
+
+```js
+// Pick any comment from list and edit it
+
+this.comments = await this.post.comments()
+let comment = this.comments[0]
+comment.text = 'Changed!'
+
+// PUT /posts/{id_post}/comments/{id_comment}
+
+await comment.save() 
+
+// DELETE /posts/{id_post}/comments/{id_comment}
+
+await comment.delete() 
+```
+
+And just for convenience you can POST or PUT with any payload to backend:
+
+```js
+// POST /posts/{id_post}/comments
+
+await this.posts.comments().attach(payload) 
+
+// PUT /posts/{id_post}/comments
+
+await this.posts.comments().sync(payload) 
+```
+
+
 # Pagination
 
 ```js
@@ -431,7 +463,7 @@ let users = await User
         .orderBy('firstname')
         .page(1) 
         .limit(20)
-        .$get() // sometimes you will prefer $get()
+        .get()
 
 ```
 
@@ -578,9 +610,7 @@ let users  = data
 
 // but you can use the "fetch style request" with "$get()"
 
-let users = await User
-  .where('status', 'ACTIVE')
-  .$get() // <---- HERE
+let users = await User.$get()
 ```
 
 This **WILL NOT** be converted into an array of `User` model.
