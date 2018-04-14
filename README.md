@@ -426,10 +426,13 @@ let posts = await user
 If you like nested relationships ...
 
 ```js
+// GET /posts/{id_post}/comments
+
+let comments = await this.post.comments().get()
+
 // Pick any comment from list and edit it
 
-this.comments = await this.post.comments()
-let comment = this.comments[0]
+let comment = comments[0]
 comment.text = 'Changed!'
 
 // PUT /posts/{id_post}/comments/{id_comment}
