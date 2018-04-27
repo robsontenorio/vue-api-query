@@ -178,10 +178,7 @@ export default class Model extends BaseModel {
 
 ## Define your domain models
 
-Just extends from your base model... and done! 
-
-It automatically pluralizes based on class name. So, REST API base resource for `User` class would be `/users`.
-
+Just extends from your base model, implement the `resource()` method... and done! 
 
 **models/User.js**
 
@@ -189,22 +186,10 @@ It automatically pluralizes based on class name. So, REST API base resource for 
 import Model from './Model'
 
 export default class User extends Model {
-
-}
-```
-
-If you need to customize the resource name just implement the `resource()` method.
-
-```js
-import Model from './Model'
-
-export default class User extends Model {
-
   resource()
   {
-    return 'userz'
-  }
-
+    return 'users'
+  }
 }
 ```
 
@@ -265,6 +250,10 @@ import Model from './Model'
 
 export default class Post extends Model {
   // done :)
+  resource()
+  {
+    return 'posts'
+   }
 }
 ```
 **/models/User.js**
@@ -274,6 +263,11 @@ import Model from './Model'
 import Post from './Post'
 
 export default class User extends Model {  
+  resource()
+  {
+    return 'users'
+  }
+
   posts () {
     return this.hasMany(Post)
   }
