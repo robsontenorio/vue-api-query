@@ -51,4 +51,28 @@ describe('Setup models', () => {
 
     delete Post.prototype['resource']
   })
+
+  test('the primaryKey() method can be overrided', () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    const post = new Post()
+
+    expect(post.primaryKey()).toEqual('someId')
+
+    delete Post.prototype['primaryKey']
+  })
+
+  test('the baseURL() method can be overrided', () => {
+    Post.prototype['baseURL'] = () => {
+      return 'http://api.com'
+    }
+
+    const post = new Post()
+
+    expect(post.baseURL()).toEqual('http://api.com')
+
+    delete Post.prototype['baseURL']
+  })
 })

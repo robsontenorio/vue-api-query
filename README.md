@@ -193,6 +193,19 @@ export default class User extends Model {
 }
 ```
 
+But, if your model does not work with default primary key ('id'),you need to override the `primaryKey()` method:
+
+```js
+import Model from './Model'
+
+export default class User extends Model {
+  primaryKey()
+  {
+    return 'someId'
+  }
+}
+```
+
 Of course you can add extra methods and computed properties like this:
 
 ```js

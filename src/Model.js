@@ -40,6 +40,16 @@ export default class Model extends StaticModel {
     return `${this.constructor.name.toLowerCase()}s`
   }
 
+  primaryKey ()
+  {
+    return 'id'
+  }
+
+  getPrimaryKey ()
+  {
+    return this[this.primaryKey()]
+  }
+
   custom (resource) {
     this._customResource = resource
 
@@ -52,7 +62,7 @@ export default class Model extends StaticModel {
 
   hasMany (model) {
     let instance = new model
-    let url = `${this.baseURL()}/${this.resource()}/${this.id}/${instance.resource()}`
+    let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
     instance._from(url)
 
@@ -64,20 +74,21 @@ export default class Model extends StaticModel {
    */
 
   hasId () {
-    return this.id !== undefined && this.id !== 0 && this.id !== ''
+    const pk = this.getPrimaryKey()
+    return  pk !== undefined && pk !== 0 && pk !== ''
   }
 
   endpoint () {
     if (this._fromResource) {
       if (this.hasId()) {
-        return `${this._fromResource}/${this.id}`
+        return `${this._fromResource}/${this.getPrimaryKey()}`
       } else {
         return this._fromResource
       }
     }
 
     if (this.hasId()) {
-      return `${this.baseURL()}/${this.resource()}/${this.id}`
+      return `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}`
     } else {
       return `${this.baseURL()}/${this.resource()}`
     }

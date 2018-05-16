@@ -16,6 +16,9 @@ describe('Model methods', () => {
 
   beforeEach(() => {
     axiosMock.reset()
+    Post.prototype['primaryKey'] = () => {
+      return 'id'
+    }
   })
 
   test('it throws a error when find() has no parameters', () => {
@@ -62,6 +65,35 @@ describe('Model methods', () => {
     });
   })
 
+  test('get() hits right resource (nested object)', async () => {
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/posts/1/comments')
+
+      return [200, {}]
+    })
+
+    const post = new Post({ id: 1 })
+    await post.comments().get()    
+  })
+
+  test('get() hits right resource (nested object, custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+
+      return [200, {}]
+    })
+ 
+    post.comments().get()    
+  })
+
   test('$get() fetch style request with "data" attribute', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
@@ -78,6 +110,23 @@ describe('Model methods', () => {
 
     expect(posts).toEqual(postsEmbedResponse.data)
 
+  })
+
+  test('$get() hits right resource (nested object, custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+
+      return [200, {}]
+    })
+ 
+    post.comments().$get()    
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {
@@ -97,7 +146,6 @@ describe('Model methods', () => {
   })
 
   test('save() method makes a PUT request when ID of object exists', async () => {
-
     let post
 
     axiosMock.onAny().reply((config) => {
@@ -109,6 +157,24 @@ describe('Model methods', () => {
     })
 
     post = new Post({ id: 1, title: 'Cool!' })
+    await post.save()
+  })
+
+  test('save() method makes a PUT request when ID of object exists (custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    let post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}`)
+      expect(config.data).toEqual(JSON.stringify(post))
+
+      return [200, {}]
+    })
+    
     await post.save()
   })
 
@@ -131,6 +197,30 @@ describe('Model methods', () => {
     comment.save()
   })
 
+  test('save() method makes a PUT request when ID of object exists (nested object, customPK)', async () => {
+    let comment, post
+
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+
+    axiosMock.onGet(`http://localhost/posts/${post.someId}/comments`).reply(200, commentsResponse)
+
+    axiosMock.onPut().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(comment))
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments/1`)
+
+      return [200, {}]
+    })
+    
+    comment = await post.comments().first()
+    comment.text = 'Owh!'
+    comment.save()
+  })
+
   test('a request from delete() method hits the right resource', async () => {
 
     axiosMock.onAny().reply((config) => {
@@ -143,6 +233,23 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
 
     post.delete()
+  })
+
+  test('a request from delete() method hits the right resource (custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    let post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}`)
+
+      return [200, {}]
+    })
+    
+    await post.delete()
   })
 
   test('a request from delete() method when model has not ID throws a exception', async () => {
@@ -167,6 +274,28 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     const comment = await post.comments().first()
+    comment.delete()
+  })
+
+  test('a request from delete() method hits the right resource (nested object) (nested object, customPK)', async () => {
+    let comment, post
+
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+
+    axiosMock.onGet(`http://localhost/posts/${post.someId}/comments`).reply(200, commentsResponse)
+
+    axiosMock.onDelete().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments/1`)
+
+      return [200, {}]
+    })
+    
+    comment = await post.comments().first()
     comment.delete()
   })
 
@@ -222,6 +351,31 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
     let response = post.comments().attach(comment)
+  })
+
+  test('attach() method hits right endpoint with a POST request (custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+
+    let comment, post
+
+    post = new Post({ id: 1, someId: 'gt123-9gh23' })
+
+    axiosMock.onAny().reply(config => {
+      console.log(config)
+    })
+
+    axiosMock.onPost().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(comment))
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+
+      return [200, {}]
+    })
+    
+    comment = { text: 'hi!' }
+    post.comments().attach(comment)
   })
 
   test('sync() method hits right endpoint with a PUT request', async () => {
