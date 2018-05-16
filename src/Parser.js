@@ -19,7 +19,6 @@ export default class Parser {
     this.filters()
     this.sorts()
     this.page()
-    this.limit()
 
     return this.uri
   }
@@ -49,11 +48,7 @@ export default class Parser {
   }
 
   hasPage () {
-    return this.builder.pageValue !== null
-  }
-
-  hasLimit () {
-    return this.builder.limitValue !== null
+    return Object.keys(this.builder.pageSettings.page).length > 0
   }
 
   prepend () {
@@ -109,14 +104,6 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'page=' + this.builder.pageValue
-  }
-
-  limit () {
-    if (!this.hasLimit()) {
-      return
-    }
-
-    this.uri += this.prepend() + 'limit=' + this.builder.limitValue
+    this.uri += this.prepend() + qs.stringify(this.builder.pageSettings, { encode: false })
   }
 }

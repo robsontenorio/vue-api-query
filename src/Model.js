@@ -52,7 +52,7 @@ export default class Model extends StaticModel {
 
   hasMany (model) {
     let instance = new model
-    let url = `${this.baseURL()}/${this.resource()}/${this.id}/${instance.resource()}`
+    let url = `${this.baseURL()}/${this.resource()}/${this[this.getPrimaryKey()]}/${instance.resource()}`
 
     instance._from(url)
 
@@ -63,21 +63,29 @@ export default class Model extends StaticModel {
    * Helpers
    */
 
+  getPrimaryKey () {
+    if (this.primaryKey === undefined) {
+      return("id");
+    } else {
+      return(this.primaryKey());
+    }
+  }
+
   hasId () {
-    return this.id !== undefined && this.id !== 0 && this.id !== ''
+    return this[this.getPrimaryKey()] !== undefined && this[this.getPrimaryKey()] !== 0 && this[this.getPrimaryKey()] !== ''
   }
 
   endpoint () {
     if (this._fromResource) {
       if (this.hasId()) {
-        return `${this._fromResource}/${this.id}`
+        return `${this._fromResource}/${this[this.getPrimaryKey()]}`
       } else {
         return this._fromResource
       }
     }
 
     if (this.hasId()) {
-      return `${this.baseURL()}/${this.resource()}/${this.id}`
+      return `${this.baseURL()}/${this.resource()}/${this[this.getPrimaryKey()]}`
     } else {
       return `${this.baseURL()}/${this.resource()}`
     }
@@ -123,14 +131,8 @@ export default class Model extends StaticModel {
     return this
   }
 
-  page (value) {
-    this._builder.page(value)
-
-    return this
-  }
-
-  limit (value) {
-    this._builder.limit(value)
+  page (field, value) {
+    this._builder.page(field, value)
 
     return this
   }

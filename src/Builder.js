@@ -11,13 +11,14 @@ export default class Builder {
     this.includes = []
     this.appends = []
     this.sorts = []
-    this.pageValue = null
-    this.limitValue = null
     this.fields = {
       fields: {}
     }
     this.filters = {
       filter: {}
+    }
+    this.pageSettings = {
+	page: {}
     }
 
     this.parser = new Parser(this)
@@ -91,22 +92,17 @@ export default class Builder {
     return this
   }
 
-  page (value) {
-    if (!Number.isInteger(value)) {
-      throw new Error('The VALUE must be an integer on page() method.')
-    }
+  page (key, value) {
+    if (key === undefined || value === undefined)
+      throw new Error('The KEY and VALUE are required on page() method.')
 
-    this.pageValue = value
+    if (Array.isArray(value) || value instanceof Object)
+      throw new Error('The VALUE must be primitive on page() method.')
 
-    return this
-  }
+    if (key != "size" && key != "number" && key != "offset" && key != "limit" && key != "cursor")
+      throw new Error('The KEY must be "size", "number", "offset", "limit" or "cursor"')
 
-  limit (value) {
-    if (!Number.isInteger(value)) {
-      throw new Error('The VALUE must be an integer on limit() method.')
-    }
-
-    this.limitValue = value
+    this.pageSettings.page[key] = value
 
     return this
   }
