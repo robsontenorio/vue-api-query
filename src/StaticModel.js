@@ -60,13 +60,6 @@ export default class StaticModel {
     return self
   }
 
-  static limit (value) {
-    let self = this.instance()
-    self.limit(value)
-
-    return self
-  }
-
   static custom (resource) {
     let self = this.instance()
     self.custom(resource)

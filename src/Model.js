@@ -70,7 +70,7 @@ export default class Model extends StaticModel {
       return(this.primaryKey());
     }
   }
- 
+
   hasId () {
     return this[this.getPrimaryKey()] !== undefined && this[this.getPrimaryKey()] !== 0 && this[this.getPrimaryKey()] !== ''
   }
@@ -131,14 +131,8 @@ export default class Model extends StaticModel {
     return this
   }
 
-  page (value) {
-    this._builder.page(value)
-
-    return this
-  }
-
-  limit (value) {
-    this._builder.limit(value)
+  page (field, value) {
+    this._builder.page(field, value)
 
     return this
   }
