@@ -517,6 +517,34 @@ let post = await Post
    .get() 
 ```
 
+# Custom params
+
+If you need to pass any extra param not provided by `vue-api-query` pattern, just use the `params()` method while querying:
+
+```js
+// GET /users?doSomething=yes&process=no
+
+let users = await User
+  .params({
+    doSomething: 'yes',
+    process: 'no'
+  })
+  .get()
+```
+
+Of course you can chain it with other methods, including on relationships.
+
+```js
+// GET /posts/1/comments?include=user&blah=123
+
+let comments = await post
+  .comments()
+  .include('user')
+  .params({blah: 123})
+  .get()
+```
+
+
 
 # Response from backend
 
