@@ -20,6 +20,7 @@ export default class Parser {
     this.sorts()
     this.page()
     this.limit()
+    this.payload()
 
     return this.uri
   }
@@ -54,6 +55,10 @@ export default class Parser {
 
   hasLimit () {
     return this.builder.limitValue !== null
+  }
+
+  hasPayload () {
+    return this.builder.payload !== null
   }
 
   prepend () {
@@ -118,5 +123,13 @@ export default class Parser {
     }
 
     this.uri += this.prepend() + 'limit=' + this.builder.limitValue
+  }
+
+  payload () {
+    if (!this.hasPayload()) {
+      return
+    }
+
+    this.uri += this.prepend() + qs.stringify(this.builder.payload, { encode: false })
   }
 }

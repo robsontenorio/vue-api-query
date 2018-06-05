@@ -40,13 +40,11 @@ export default class Model extends StaticModel {
     return `${this.constructor.name.toLowerCase()}s`
   }
 
-  primaryKey ()
-  {
+  primaryKey () {
     return 'id'
   }
 
-  getPrimaryKey ()
-  {
+  getPrimaryKey () {
     return this[this.primaryKey()]
   }
 
@@ -75,7 +73,7 @@ export default class Model extends StaticModel {
 
   hasId () {
     const pk = this.getPrimaryKey()
-    return  pk !== undefined && pk !== 0 && pk !== ''
+    return pk !== undefined && pk !== 0 && pk !== ''
   }
 
   endpoint () {
@@ -142,6 +140,12 @@ export default class Model extends StaticModel {
 
   limit (value) {
     this._builder.limit(value)
+
+    return this
+  }
+
+  params (payload) {
+    this._builder.params(payload)
 
     return this
   }

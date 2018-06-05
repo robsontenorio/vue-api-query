@@ -13,6 +13,8 @@ export default class Builder {
     this.sorts = []
     this.pageValue = null
     this.limitValue = null
+    this.payload = null
+
     this.fields = {
       fields: {}
     }
@@ -107,6 +109,16 @@ export default class Builder {
     }
 
     this.limitValue = value
+
+    return this
+  }
+
+  params (payload) {
+    if (payload === undefined || payload.constructor !== Object) {
+      throw new Error('You must pass a payload/object as param.')
+    }
+
+    this.payload = payload
 
     return this
   }

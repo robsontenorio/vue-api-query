@@ -74,6 +74,13 @@ export default class StaticModel {
     return self
   }
 
+  static params (payload) {
+    let self = this.instance()
+    self.params(payload)
+
+    return self
+  }
+
   static first () {
     let self = this.instance()
 

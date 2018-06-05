@@ -26,8 +26,12 @@ describe('Query builder', () => {
       .page(3)
       .limit(10)
       .orderBy('created_at')
+      .params({
+        'doSomething': 'yes',
+        'process': 'no'
+      })
 
-    const query = '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10'
+    const query = '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10&doSomething=yes&process=no'
 
     expect(post._builder.query()).toEqual(query)
   })
@@ -161,4 +165,17 @@ describe('Query builder', () => {
     expect(post._builder.fields.fields.user).toEqual('age,firstname')
   })
 
+  test('params() sets properly the builder', () => {
+    let post = Post.params({ 'doSomething': 'yes' })
+
+    expect(post._builder.payload).toEqual({ 'doSomething': 'yes' })
+  })
+
+  test('params() throws a exception when the payload is not an object', () => {
+    let errorModel = () => {
+      const post = Post.params()
+    }
+
+    expect(errorModel).toThrow('You must pass a payload/object as param.')
+  })
 })
