@@ -6,11 +6,8 @@ export default class Model extends StaticModel {
   constructor(...atributtes) {
     super()
 
-    // Keep clean object if it is a manual instance
     if (atributtes.length === 0) {
       this._builder = new Builder(this)
-      this._fromResource = null
-      this._customResource = null
     } else {
       Object.assign(this, ...atributtes)
     }
@@ -54,10 +51,6 @@ export default class Model extends StaticModel {
     return this
   }
 
-  _from (url) {
-    this._fromResource = url
-  }
-
   hasMany (model) {
     let instance = new model
     let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
@@ -67,13 +60,37 @@ export default class Model extends StaticModel {
     return instance
   }
 
+  _from (url) {
+    Object.defineProperty(this, '_fromResource', { get: () => url })
+  }
+
+  for (object) {
+    if (object instanceof Model === false) {
+      throw new Error('The object referenced on for() method is not a valid Model.')
+    }
+
+    if (!this.isValidId(object.id)) {
+      throw new Error('The object referenced on for() method has a invalid id.')
+    }
+
+    let url = `${this.baseURL()}/${object.resource()}/${object.getPrimaryKey()}/${this.resource()}`
+
+    this._from(url)
+
+    return this
+  }
+
   /**
    * Helpers
    */
 
   hasId () {
-    const pk = this.getPrimaryKey()
-    return pk !== undefined && pk !== 0 && pk !== ''
+    const id = this.getPrimaryKey()
+    return this.isValidId(id)
+  }
+
+  isValidId (id) {
+    return id !== undefined && id !== 0 && id !== ''
   }
 
   endpoint () {
@@ -178,9 +195,7 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => {
-      return new this.constructor(response.data)
-    })
+    }).then(response => new this.constructor(response.data))
   }
 
   get () {
@@ -197,8 +212,7 @@ export default class Model extends StaticModel {
 
       collection = collection.map(c => {
         let item = new this.constructor(c)
-        Object.defineProperty(item, '_fromResource',
-          { get: () => this._fromResource })
+        Object.defineProperty(item, '_fromResource', { get: () => this._fromResource })
 
         return item
       })
@@ -214,9 +228,9 @@ export default class Model extends StaticModel {
   }
 
   $get () {
-    return this.get().then(response => {
-      return response.data || response
-    })
+    return this
+      .get()
+      .then(response => response.data || response)
   }
 
   /**
@@ -231,9 +245,7 @@ export default class Model extends StaticModel {
     return this.request({
       url: this.endpoint(),
       method: 'DELETE'
-    }).then(response => {
-      return response
-    })
+    }).then(response => response)
   }
 
   save () {
@@ -271,9 +283,7 @@ export default class Model extends StaticModel {
       method: 'POST',
       url: this.endpoint(),
       data: params
-    }).then(response => {
-      return response
-    })
+    }).then(response => response)
   }
 
   sync (params) {
@@ -281,9 +291,7 @@ export default class Model extends StaticModel {
       method: 'PUT',
       url: this.endpoint(),
       data: params
-    }).then(response => {
-      return response
-    })
+    }).then(response => response)
   }
 
 }

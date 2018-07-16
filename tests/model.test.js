@@ -74,7 +74,7 @@ describe('Model methods', () => {
     })
 
     const post = new Post({ id: 1 })
-    await post.comments().get()    
+    await post.comments().get()
   })
 
   test('get() hits right resource (nested object, custom PK)', async () => {
@@ -90,8 +90,8 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
- 
-    post.comments().get()    
+
+    post.comments().get()
   })
 
   test('$get() fetch style request with "data" attribute', async () => {
@@ -125,8 +125,8 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
- 
-    post.comments().$get()    
+
+    post.comments().$get()
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {
@@ -174,7 +174,7 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
-    
+
     await post.save()
   })
 
@@ -215,7 +215,7 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
-    
+
     comment = await post.comments().first()
     comment.text = 'Owh!'
     comment.save()
@@ -248,7 +248,7 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
-    
+
     await post.delete()
   })
 
@@ -294,7 +294,7 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
-    
+
     comment = await post.comments().first()
     comment.delete()
   })
@@ -373,7 +373,7 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
-    
+
     comment = { text: 'hi!' }
     post.comments().attach(comment)
   })
@@ -392,5 +392,55 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
     let response = post.comments().sync(comment)
+  })
+
+  test('for() method setup the right resource', async () => {
+
+    axiosMock.onPost().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.url).toEqual('http://localhost/users/1/posts')
+
+      return [200, {}]
+    })
+
+    const user = new User({ id: 1 })
+
+    const post = new Post({ text: 'Hello' }).for(user)
+    await post.save()
+  })
+
+  test('it throws a error when for() method does not recieve a instance of Model', () => {
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).for()
+    }
+
+    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).for({})
+    }
+
+    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).for('')
+    }
+
+    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).for(1)
+    }
+
+    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+  })
+
+  test('it throws a error when for() when referenced object has not a valid id', () => {
+    errorModel = () => {
+      const user = new User({ name: 'Mary' })
+      const post = new Post({ text: 'Hello' }).for(user)
+    }
+
+    expect(errorModel).toThrow('The object referenced on for() method has a invalid id.')
   })
 })

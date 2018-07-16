@@ -78,12 +78,12 @@ post.delete()
 Let's create a new object and post it:
 
 ```js
-let post = new Post()
-post.title = 'Another one'
+let post = new Post({title: 'Cool!'})
 
 // or
 
-let post = new Post({title: 'Cool!'})
+let post = new Post({})
+post.title = 'Another one'
 
 
 // POST /post
@@ -449,6 +449,20 @@ await comment.save()
 // DELETE /posts/{id_post}/comments/{id_comment}
 
 await comment.delete() 
+```
+
+Creating new related objects is easy. Just use the `for()` method,  passing the related object.
+
+```js  
+  let post = new Post({title: 'Woo!'})  
+
+  // POST /posts
+  await post.save()
+
+  let comment = new Comment({text: 'New one for this post'}).for(post)
+
+  // POST /posts/1/comments
+  await comment.save()
 ```
 
 And just for convenience you can POST or PUT with any payload to backend:
