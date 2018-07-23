@@ -91,6 +91,22 @@ post.title = 'Another one'
 post.save()
 ```
 
+if you want validation errors :
+
+```js
+import { FormTools } from 'vue-api-query'
+
+let formTools = new FormTools();
+post.save(formTools);
+
+//check name field has error
+if(formTools.errors.has('name')) {
+}
+
+//get name field error text
+formTools.errors.get('name')
+```
+
 We can use relationships:
 
 ```js
