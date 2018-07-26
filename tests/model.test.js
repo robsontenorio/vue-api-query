@@ -325,6 +325,20 @@ describe('Model methods', () => {
     posts = await user.posts().get()
   })
 
+  test('a request from hasMany() with a find() hits right resource', async () => {
+    let user
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1')
+      return [200, {}]
+    })
+
+    user = new User({ id: 1 })
+    post = await user.posts().find(1)
+  })
+
   test('a request hasMany() method returns a array of Models', async () => {
 
     axiosMock.onGet('http://localhost/users/1/posts').reply(200, postsResponse)

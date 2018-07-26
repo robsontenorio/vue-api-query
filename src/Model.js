@@ -167,7 +167,7 @@ export default class Model extends StaticModel {
     return this
   }
 
-  /** 
+  /**
    * Result
    */
 
@@ -191,6 +191,10 @@ export default class Model extends StaticModel {
     }
 
     let url = `${this.baseURL()}/${this.resource()}/${identifier}${this._builder.query()}`
+
+    if ('_fromResource' in this) {
+      url = `${this._fromResource}/${identifier}${this._builder.query()}`
+    }
 
     return this.request({
       url,
