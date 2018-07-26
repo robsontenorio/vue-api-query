@@ -189,12 +189,8 @@ export default class Model extends StaticModel {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
-
-    let url = `${this.baseURL()}/${this.resource()}/${identifier}${this._builder.query()}`
-
-    if ('_fromResource' in this) {
-      url = `${this._fromResource}/${identifier}${this._builder.query()}`
-    }
+    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    let url = `${base}/${identifier}${this._builder.query()}`
 
     return this.request({
       url,
