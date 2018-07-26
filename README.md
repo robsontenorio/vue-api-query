@@ -465,6 +465,19 @@ Creating new related objects is easy. Just use the `for()` method,  passing the 
   await comment.save()
 ```
 
+If you need to get a nested resource, without getting the parent model at first, you can do something like this.
+
+```js
+// GET /users/1/posts
+
+let User = new User({id: 1})
+let Post = await User.posts().get()
+
+// GET /users/1/posts/2
+let User = new User({id: 1})
+let Post = await User.posts().find(2)
+```
+
 And just for convenience you can POST or PUT with any payload to backend:
 
 ```js
