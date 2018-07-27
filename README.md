@@ -105,6 +105,46 @@ let posts = await user
 
 ```
 
+# FormTools utility
+
+this library has a FormTools utility for validation errors and busy state of `save` method.
+sample for vue :
+
+```vue
+<template>
+    <form @submit.prevent="save" @keydown="formTools.onKeydown($event)">
+        <input v-model="user.name" type="text" name="name" :class="{ 'is-danger': formTools.errors.has('name') }" />
+        <span v-if="formTools.has('name')" v-text="formTools.get('name')"></span>
+        <button type="submit" v-text="formTools.busy ? 'LOADING' : 'SEND'"></button>
+    </form>
+</template>
+
+<script>
+    import { FormTools } from 'vue-api-query'
+    import User from './User'
+
+    export default {
+        name: "sample",
+        data () {
+            return {
+                formTools: new FormTools(),
+                user: new User({name: ''})
+            }
+        },
+        methods: {
+            save () {
+                user.save(this.formTools)
+                    .then(response => {
+                        console.log('SUCCESS')
+                    }).catch(error => {
+                        console.log('ERROR')
+                    })
+            }
+        }
+    }
+</script>
+```
+
 # Installation
 
 ```js

@@ -1,5 +1,6 @@
 import Builder from './Builder';
 import StaticModel from './StaticModel';
+import FormTools from './FormTools'
 
 export default class Model extends StaticModel {
 
@@ -248,30 +249,60 @@ export default class Model extends StaticModel {
     }).then(response => response)
   }
 
-  save () {
-    return this.hasId() ? this._update() : this._create()
+  /**
+   * @param {FormTools} formTools object
+   */
+  save (formTools) {
+    return this.hasId() ? this._update(formTools) : this._create(formTools)
   }
 
-  _create () {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
-    })
+  /**
+   * @param {FormTools} formTools object
+   */
+  _create (formTools) {
+    return this._submit('POST', this.endpoint(), this, formTools)
+      .then(response => {
+        return Object.assign(this, response.data)
+      });
   }
 
-  _update () {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
-    })
+  /**
+   * @param {FormTools} formTools object
+   */
+  _update (formTools) {
+    return this._submit('PUT', this.endpoint(), this, formTools)
+      .then(response => {
+        return Object.assign(this, response.data)
+      });
+  }
+
+  /**
+   * @param {String} method
+   * @param {String} url
+   * @param {Object} data
+   * @param {FormTools} formTools object
+   */
+  _submit(method, url, data, formTools) {
+    if(formTools) {
+      formTools.startProcessing();
+    }
+    return new Promise((resolve, reject) => {
+        return this.request({
+            method: method,
+            url: url,
+            data: data
+        }).then(response => {
+          resolve(response)
+        }).catch(error => {
+            if(formTools) {
+                formTools.busy = false
+                if (error.response && error.response.data.errors && (error.response.status === 422)) {
+                    formTools.errors.record(error.response.data.errors)
+                }
+            }
+            reject(error)
+        })
+    });
   }
 
   /**
