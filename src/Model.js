@@ -69,7 +69,7 @@ export default class Model extends StaticModel {
       throw new Error('The object referenced on for() method is not a valid Model.')
     }
 
-    if (!this.isValidId(object.id)) {
+    if (!this.isValidId(object.getPrimaryKey())) {
       throw new Error('The object referenced on for() method has a invalid id.')
     }
 
