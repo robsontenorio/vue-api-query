@@ -465,6 +465,20 @@ Creating new related objects is easy. Just use the `for()` method,  passing the 
   await comment.save()
 ```
 
+The `for()` method can take multiple objects to build hierarchy levels.
+
+```js
+  let user = new User({id: 1})
+  let post = await user.posts().first()
+  
+  // Related objects go in order of their appearance in the URL.
+  let comment = new Comment({text: 'for() takes multiple objects.'}).for(user, post)
+
+  // POST /users/1/posts/1/comments
+  await comment.save()
+
+```
+
 If you need to get a nested resource, without getting the parent model at first, you can do something like this.
 
 ```js

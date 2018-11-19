@@ -64,16 +64,26 @@ export default class Model extends StaticModel {
     Object.defineProperty(this, '_fromResource', { get: () => url })
   }
 
-  for (object) {
-    if (object instanceof Model === false) {
-      throw new Error('The object referenced on for() method is not a valid Model.')
+  for (...args) {
+    if( args.length === 0 ) {
+      throw new Error('The for() method takes a minimum of one argument.')
     }
+    
+    let url = `${this.baseURL()}`;
+    
+    args.forEach(object => {
+      if (object instanceof Model === false) {
+        throw new Error('The object referenced on for() method is not a valid Model.')
+      }
+      
+      if (!this.isValidId(object.getPrimaryKey())) {
+        throw new Error('The object referenced on for() method has a invalid id.')
+      }
 
-    if (!this.isValidId(object.getPrimaryKey())) {
-      throw new Error('The object referenced on for() method has a invalid id.')
-    }
+      url += `/${object.resource()}/${object.getPrimaryKey()}`
+    })
 
-    let url = `${this.baseURL()}/${object.resource()}/${object.getPrimaryKey()}/${this.resource()}`
+    url += `/${this.resource()}`
 
     this._from(url)
 
