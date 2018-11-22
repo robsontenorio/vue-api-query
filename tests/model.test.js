@@ -1,5 +1,6 @@
 import Post from './dummy/models/Post'
 import User from './dummy/models/User'
+import Comment from './dummy/models/Comment'
 import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
@@ -423,12 +424,23 @@ describe('Model methods', () => {
     await post.save()
   })
 
+  test('Calling for() with multiple arguments productes the correct URL', () => {
+    const user = new User({ id: 1 })
+    const post = new Post({ id: 2 })
+    const comment = new Comment({
+      post_id: 2,
+      text: 'for() takes more than one argument now!'
+    }).for(user, post)
+
+    expect(comment.endpoint()).toEqual(`http://localhost/users/${user.id}/posts/${post.id}/comments`)
+  })
+
   test('it throws a error when for() method does not recieve a instance of Model', () => {
     errorModel = () => {
       const post = new Post({ text: 'Hello' }).for()
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+    expect(errorModel).toThrow('The for() method takes a minimum of one argument.')
 
     errorModel = () => {
       const post = new Post({ text: 'Hello' }).for({})
