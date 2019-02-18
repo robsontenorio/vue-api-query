@@ -119,6 +119,18 @@ export default class Model extends StaticModel {
     }
   }
 
+  parameterNames () {
+    return {
+      include: 'include',
+      filter: 'filter',
+      sort: 'sort',
+      fields: 'fields',
+      append: 'append',
+      page: 'page',
+      limit: 'limit'
+    }
+  }
+
   /**
    *  Query
    */
