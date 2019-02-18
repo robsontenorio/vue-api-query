@@ -38,11 +38,11 @@ export default class Parser {
   }
 
   hasFields() {
-    return Object.keys(this.builder.fields.fields).length > 0
+    return Object.keys(this.builder.fields).length > 0
   }
 
   hasFilters() {
-    return Object.keys(this.builder.filters.filter).length > 0
+    return Object.keys(this.builder.filters).length > 0
   }
 
   hasSorts() {
@@ -65,6 +65,10 @@ export default class Parser {
     return (this.uri === '') ? '?' : '&'
   }
 
+  parameterNames() {
+    return this.builder.model.parameterNames()
+  }
+
   /**
    * Parsers
    */
@@ -74,7 +78,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'include=' + this.builder.includes
+    this.uri += this.prepend() + this.parameterNames().include + '=' + this.builder.includes
   }
 
   appends() {
@@ -82,7 +86,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'append=' + this.builder.appends
+    this.uri += this.prepend() + this.parameterNames().append + '=' + this.builder.appends
   }
 
   fields() {
@@ -90,7 +94,8 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + qs.stringify(this.builder.fields, { encode: false })
+    let fields = { [this.parameterNames().fields]: this.builder.fields }
+    this.uri += this.prepend() + qs.stringify(fields, { encode: false })
   }
 
   filters() {
@@ -98,7 +103,8 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + qs.stringify(this.builder.filters, { encode: false })
+    let filters = { [this.parameterNames().filter]: this.builder.filters }
+    this.uri += this.prepend() + qs.stringify(filters, { encode: false })
   }
 
   sorts() {
@@ -106,7 +112,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'sort=' + this.builder.sorts
+    this.uri += this.prepend() + this.parameterNames().sort + '=' + this.builder.sorts
   }
 
   page() {
@@ -114,7 +120,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'page=' + this.builder.pageValue
+    this.uri += this.prepend() + this.parameterNames().page + '=' + this.builder.pageValue
   }
 
   limit() {
@@ -122,7 +128,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + 'limit=' + this.builder.limitValue
+    this.uri += this.prepend() + this.parameterNames().limit + '=' + this.builder.limitValue
   }
 
   payload() {

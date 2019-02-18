@@ -1,4 +1,5 @@
 import Post from './dummy/models/Post'
+import ModelWithParamNames from './dummy/models/ModelWithParamNames';
 import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
@@ -36,6 +37,25 @@ describe('Query builder', () => {
     expect(post._builder.query()).toEqual(query)
   })
 
+  test('it builds a complex query with custom param names', () => {
+    const post = ModelWithParamNames
+      .include('user')
+      .append('likes')
+      .select({
+        posts: ['title', 'content'],
+        user: ['age', 'firstname']
+      })
+      .where('title', 'Cool')
+      .where('status', 'ACTIVE')
+      .page(3)
+      .limit(10)
+      .orderBy('created_at')
+
+    const query = '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
+
+    expect(post._builder.query()).toEqual(query)
+  })
+
   test('include() sets properly the builder', () => {
     let post = Post.include('user')
 
@@ -69,11 +89,11 @@ describe('Query builder', () => {
   test('where() sets properly the builder', () => {
     let post = Post.where('id', 1)
 
-    expect(post._builder.filters.filter).toEqual({ id: 1 })
+    expect(post._builder.filters).toEqual({ id: 1 })
 
     post = Post.where('id', 1).where('title', 'Cool')
 
-    expect(post._builder.filters.filter).toEqual({ id: 1, title: 'Cool' })
+    expect(post._builder.filters).toEqual({ id: 1, title: 'Cool' })
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -101,7 +121,7 @@ describe('Query builder', () => {
   test('whereIn() sets properly the builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
-    expect(post._builder.filters.filter).toEqual({ status: 'ACTIVE,ARCHIVED' })
+    expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {
@@ -152,7 +172,7 @@ describe('Query builder', () => {
   test('select() for single entity', () => {
     let post = Post.select('age', 'firstname')
 
-    expect(post._builder.fields.fields.posts).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual('age,firstname')
   })
 
   test('select() for related entities', () => {
@@ -161,8 +181,8 @@ describe('Query builder', () => {
       user: ['age', 'firstname']
     })
 
-    expect(post._builder.fields.fields.posts).toEqual('title,content')
-    expect(post._builder.fields.fields.user).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual('title,content')
+    expect(post._builder.fields.user).toEqual('age,firstname')
   })
 
   test('params() sets properly the builder', () => {
