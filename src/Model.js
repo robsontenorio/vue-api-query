@@ -29,29 +29,29 @@ export default class Model extends StaticModel {
    *  Setup
    */
 
-  get $http () {
+  get $http() {
     return Model.$http
   }
 
-  resource () {
+  resource() {
     return `${this.constructor.name.toLowerCase()}s`
   }
 
-  primaryKey () {
+  primaryKey() {
     return 'id'
   }
 
-  getPrimaryKey () {
+  getPrimaryKey() {
     return this[this.primaryKey()]
   }
 
-  custom (resource) {
+  custom(resource) {
     this._customResource = resource
 
     return this
   }
 
-  hasMany (model) {
+  hasMany(model) {
     let instance = new model
     let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
@@ -60,22 +60,22 @@ export default class Model extends StaticModel {
     return instance
   }
 
-  _from (url) {
+  _from(url) {
     Object.defineProperty(this, '_fromResource', { get: () => url })
   }
 
-  for (...args) {
-    if( args.length === 0 ) {
+  for(...args) {
+    if (args.length === 0) {
       throw new Error('The for() method takes a minimum of one argument.')
     }
-    
+
     let url = `${this.baseURL()}`;
-    
+
     args.forEach(object => {
       if (object instanceof Model === false) {
         throw new Error('The object referenced on for() method is not a valid Model.')
       }
-      
+
       if (!this.isValidId(object.getPrimaryKey())) {
         throw new Error('The object referenced on for() method has a invalid id.')
       }
@@ -94,16 +94,16 @@ export default class Model extends StaticModel {
    * Helpers
    */
 
-  hasId () {
+  hasId() {
     const id = this.getPrimaryKey()
     return this.isValidId(id)
   }
 
-  isValidId (id) {
+  isValidId(id) {
     return id !== undefined && id !== 0 && id !== ''
   }
 
-  endpoint () {
+  endpoint() {
     if (this._fromResource) {
       if (this.hasId()) {
         return `${this._fromResource}/${this.getPrimaryKey()}`
@@ -123,55 +123,55 @@ export default class Model extends StaticModel {
    *  Query
    */
 
-  include (...args) {
+  include(...args) {
     this._builder.include(...args)
 
     return this
   }
 
-  append (...args) {
+  append(...args) {
     this._builder.append(...args)
 
     return this
   }
 
-  select (...fields) {
+  select(...fields) {
     this._builder.select(...fields)
 
     return this
   }
 
-  where (field, value) {
+  where(field, value) {
     this._builder.where(field, value)
 
     return this
   }
 
-  whereIn (field, array) {
+  whereIn(field, array) {
     this._builder.whereIn(field, array)
 
     return this
   }
 
-  orderBy (...args) {
+  orderBy(...args) {
     this._builder.orderBy(...args)
 
     return this
   }
 
-  page (value) {
+  page(value) {
     this._builder.page(value)
 
     return this
   }
 
-  limit (value) {
+  limit(value) {
     this._builder.limit(value)
 
     return this
   }
 
-  params (payload) {
+  params(payload) {
     this._builder.params(payload)
 
     return this
@@ -181,7 +181,7 @@ export default class Model extends StaticModel {
    * Result
    */
 
-  first () {
+  first() {
     return this.get().then(response => {
       let item
 
@@ -195,7 +195,7 @@ export default class Model extends StaticModel {
     })
   }
 
-  find (identifier) {
+  find(identifier) {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
@@ -208,7 +208,7 @@ export default class Model extends StaticModel {
     }).then(response => new this.constructor(response.data))
   }
 
-  get () {
+  get() {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     base = this._customResource || base
     let url = `${base}${this._builder.query()}`
@@ -237,7 +237,7 @@ export default class Model extends StaticModel {
     })
   }
 
-  $get () {
+  $get() {
     return this
       .get()
       .then(response => response.data || response)
@@ -247,7 +247,7 @@ export default class Model extends StaticModel {
    * Common CRUD operations
    */
 
-  delete () {
+  delete() {
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
@@ -258,11 +258,11 @@ export default class Model extends StaticModel {
     }).then(response => response)
   }
 
-  save () {
+  save() {
     return this.hasId() ? this._update() : this._create()
   }
 
-  _create () {
+  _create() {
     return this.request({
       method: 'POST',
       url: this.endpoint(),
@@ -273,7 +273,7 @@ export default class Model extends StaticModel {
     })
   }
 
-  _update () {
+  _update() {
     return this.request({
       method: 'PUT',
       url: this.endpoint(),
@@ -288,7 +288,7 @@ export default class Model extends StaticModel {
    * Relationship operations
    */
 
-  attach (params) {
+  attach(params) {
     return this.request({
       method: 'POST',
       url: this.endpoint(),
@@ -296,7 +296,7 @@ export default class Model extends StaticModel {
     }).then(response => response)
   }
 
-  sync (params) {
+  sync(params) {
     return this.request({
       method: 'PUT',
       url: this.endpoint(),

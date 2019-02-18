@@ -12,7 +12,7 @@ export default class Parser {
   }
 
   // final query string
-  query () {
+  query() {
     this.includes()
     this.appends()
     this.fields()
@@ -29,39 +29,39 @@ export default class Parser {
    * Helpers
    */
 
-  hasIncludes () {
+  hasIncludes() {
     return this.builder.includes.length > 0
   }
 
-  hasAppends () {
+  hasAppends() {
     return this.builder.appends.length > 0
   }
 
-  hasFields () {
+  hasFields() {
     return Object.keys(this.builder.fields.fields).length > 0
   }
 
-  hasFilters () {
+  hasFilters() {
     return Object.keys(this.builder.filters.filter).length > 0
   }
 
-  hasSorts () {
+  hasSorts() {
     return this.builder.sorts.length > 0
   }
 
-  hasPage () {
+  hasPage() {
     return this.builder.pageValue !== null
   }
 
-  hasLimit () {
+  hasLimit() {
     return this.builder.limitValue !== null
   }
 
-  hasPayload () {
+  hasPayload() {
     return this.builder.payload !== null
   }
 
-  prepend () {
+  prepend() {
     return (this.uri === '') ? '?' : '&'
   }
 
@@ -69,7 +69,7 @@ export default class Parser {
    * Parsers
    */
 
-  includes () {
+  includes() {
     if (!this.hasIncludes()) {
       return
     }
@@ -77,7 +77,7 @@ export default class Parser {
     this.uri += this.prepend() + 'include=' + this.builder.includes
   }
 
-  appends () {
+  appends() {
     if (!this.hasAppends()) {
       return
     }
@@ -85,7 +85,7 @@ export default class Parser {
     this.uri += this.prepend() + 'append=' + this.builder.appends
   }
 
-  fields () {
+  fields() {
     if (!this.hasFields()) {
       return
     }
@@ -93,7 +93,7 @@ export default class Parser {
     this.uri += this.prepend() + qs.stringify(this.builder.fields, { encode: false })
   }
 
-  filters () {
+  filters() {
     if (!this.hasFilters()) {
       return
     }
@@ -101,7 +101,7 @@ export default class Parser {
     this.uri += this.prepend() + qs.stringify(this.builder.filters, { encode: false })
   }
 
-  sorts () {
+  sorts() {
     if (!this.hasSorts()) {
       return
     }
@@ -109,7 +109,7 @@ export default class Parser {
     this.uri += this.prepend() + 'sort=' + this.builder.sorts
   }
 
-  page () {
+  page() {
     if (!this.hasPage()) {
       return
     }
@@ -117,7 +117,7 @@ export default class Parser {
     this.uri += this.prepend() + 'page=' + this.builder.pageValue
   }
 
-  limit () {
+  limit() {
     if (!this.hasLimit()) {
       return
     }
@@ -125,7 +125,7 @@ export default class Parser {
     this.uri += this.prepend() + 'limit=' + this.builder.limitValue
   }
 
-  payload () {
+  payload() {
     if (!this.hasPayload()) {
       return
     }

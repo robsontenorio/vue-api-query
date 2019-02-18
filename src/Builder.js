@@ -26,7 +26,7 @@ export default class Builder {
   }
 
   // query string parsed 
-  query () {
+  query() {
     return this.parser.query()
   }
 
@@ -34,19 +34,19 @@ export default class Builder {
    * Query builder
    */
 
-  include (...args) {
+  include(...args) {
     this.includes = args
 
     return this
   }
 
-  append (...args) {
+  append(...args) {
     this.appends = args
 
     return this
   }
 
-  select (...fields) {
+  select(...fields) {
     if (fields.length === 0) {
       throw new Error('You must specify the fields on select() method.')
     }
@@ -66,7 +66,7 @@ export default class Builder {
     return this
   }
 
-  where (key, value) {
+  where(key, value) {
     if (key === undefined || value === undefined)
       throw new Error('The KEY and VALUE are required on where() method.')
 
@@ -78,7 +78,7 @@ export default class Builder {
     return this
   }
 
-  whereIn (key, array) {
+  whereIn(key, array) {
     if (!Array.isArray(array))
       throw new Error('The second argument on whereIn() method must be an array.')
 
@@ -87,13 +87,13 @@ export default class Builder {
     return this
   }
 
-  orderBy (...args) {
+  orderBy(...args) {
     this.sorts = args
 
     return this
   }
 
-  page (value) {
+  page(value) {
     if (!Number.isInteger(value)) {
       throw new Error('The VALUE must be an integer on page() method.')
     }
@@ -103,7 +103,7 @@ export default class Builder {
     return this
   }
 
-  limit (value) {
+  limit(value) {
     if (!Number.isInteger(value)) {
       throw new Error('The VALUE must be an integer on limit() method.')
     }
@@ -113,7 +113,7 @@ export default class Builder {
     return this
   }
 
-  params (payload) {
+  params(payload) {
     if (payload === undefined || payload.constructor !== Object) {
       throw new Error('You must pass a payload/object as param.')
     }
