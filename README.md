@@ -585,7 +585,30 @@ let comments = await post
   .get()
 ```
 
+# Customize query parameters name
 
+If you need to change default values just override `parametersName()` on your Base Model. So, the generated query string will use this new values.
+
+**models/Model.js**
+
+```js
+import { Model as BaseModel } from 'vue-api-query'
+
+export default class Model extends BaseModel {
+
+  parameterNames () {
+    return {
+      include: 'include_custom',
+      filter: 'filter_custom',
+      sort: 'sort_custom',
+      fields: 'fields_custom',
+      append: 'append_custom',
+      page: 'page_custom',
+      limit: 'limit_custom'
+    }
+  }
+}
+```
 
 # Response from backend
 
