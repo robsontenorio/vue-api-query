@@ -15,12 +15,8 @@ export default class Builder {
     this.limitValue = null
     this.payload = null
 
-    this.fields = {
-      fields: {}
-    }
-    this.filters = {
-      filter: {}
-    }
+    this.fields = {}
+    this.filters = {}
 
     this.parser = new Parser(this)
   }
@@ -52,14 +48,14 @@ export default class Builder {
     }
 
     // single entity .select(['age', 'firstname'])
-    if (fields[0].constructor === String || Array.isArray(fields[0]) ) {
-      this.fields.fields[this.model.resource()] = fields.join(',')
+    if (fields[0].constructor === String || Array.isArray(fields[0])) {
+      this.fields[this.model.resource()] = fields.join(',')
     }
 
     // related entities .select({ posts: ['title', 'content'], user: ['age', 'firstname']} )
     if (fields[0].constructor === Object) {
       Object.entries(fields[0]).forEach(([key, value]) => {
-        this.fields.fields[key] = value.join(',')
+        this.fields[key] = value.join(',')
       })
     }
 
@@ -73,7 +69,7 @@ export default class Builder {
     if (Array.isArray(value) || value instanceof Object)
       throw new Error('The VALUE must be primitive on where() method.')
 
-    this.filters.filter[key] = value
+    this.filters[key] = value
 
     return this
   }
@@ -82,7 +78,7 @@ export default class Builder {
     if (!Array.isArray(array))
       throw new Error('The second argument on whereIn() method must be an array.')
 
-    this.filters.filter[key] = array.join(',')
+    this.filters[key] = array.join(',')
 
     return this
   }
