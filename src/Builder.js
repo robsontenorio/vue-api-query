@@ -48,7 +48,7 @@ export default class Builder {
     }
 
     // single entity .select(['age', 'firstname'])
-    if (fields[0].constructor === String || fields[0].constructor === Array) {
+    if (fields[0].constructor === String || Array.isArray(fields[0])) {
       this.fields[this.model.resource()] = fields.join(',')
     }
 
