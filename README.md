@@ -255,6 +255,19 @@ let latest = await Post
   .first()  
 ```
 
+The `custom()` method can be called with multiple arguments to build
+resource endpoints and hierarchies. Simply supply them in the correct order.
+Any combination of strings and models is possible.
+
+```js
+    let user = new User({ id: 1 })
+    let post = new Post()
+
+    // GET /users/1/posts/latest
+    const result = await Post.custom(user, post, 'latest').get()
+```
+
+
 # Full example
 
 **/models/Post.js**

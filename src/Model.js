@@ -45,7 +45,40 @@ export default class Model extends StaticModel {
     return this[this.primaryKey()]
   }
 
-  custom(resource) {
+  custom(...args) {
+
+    if(args.length === 0) {
+      throw new Error('The custom() method takes a minimum of one argument.')
+    }
+
+    // It would be unintuitive for users to manage where the '/' has to be for
+    // multiple arguments. We don't need it for the first argument if it's
+    // a string, but subsequent string arguments need the '/' at the beginning.
+    // We handle this implementation detail here to simplify the readme.
+    let slash = '';
+    let resource = '';
+    
+    args.forEach(value => {
+      switch(true) {
+        case (typeof value === 'string'):
+          resource += slash + value.replace(/^\/+/, '');
+          break;
+        case (value instanceof Model):
+          resource += slash + value.resource();
+          
+          if(value.isValidId(value.getPrimaryKey())) {
+            resource += '/' + value.getPrimaryKey();
+          }
+          break;
+        default:
+          throw new Error('Arguments to custom() must be strings or instances of Model.')
+      }
+      
+      if( !slash.length ) {
+        slash = '/';
+      }
+    });
+    
     this._customResource = resource
 
     return this
