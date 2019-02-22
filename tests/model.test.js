@@ -496,4 +496,20 @@ describe('Model methods', () => {
 
     expect(errorModel).toThrow('The object referenced on for() method has a invalid id.')
   })
+
+  test('it throws a error when a custom() parameter is not a valid Model or a string', () => {
+    
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).custom()
+    }
+
+    expect(errorModel).toThrow('The custom() method takes a minimum of one argument.')
+    
+    errorModel = () => {
+      const user = new User({ name: 'Mary' })
+      const post = new Post({ text: 'Hello' }).custom(user, 'a-string', 42)
+    }
+
+    expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
+  })
 })
