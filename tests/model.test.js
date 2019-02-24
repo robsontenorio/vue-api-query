@@ -311,6 +311,33 @@ describe('Model methods', () => {
     const post = await Post.custom('postz').first()
   })
 
+  test('custom() gracefully handles accidental / for string arguments', async () => {
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.url).toBe('postz/recent')
+
+      return [200, {}]
+    })
+
+    const post = await Post.custom('/postz', 'recent').first()
+  })
+
+  test('custom() called with multiple objects/strings gets the correct resource', async () => {
+    let user
+    let comment
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('users/1/postz/comments')
+
+      return [200, {}]
+    })
+
+    user = new User({ id: 1 })
+    comment = new Comment()
+    const result = await Comment.custom(user, 'postz', comment).get()
+  })
+
   test('a request from hasMany() method hits right resource', async () => {
     let user
     let posts
@@ -468,5 +495,21 @@ describe('Model methods', () => {
     }
 
     expect(errorModel).toThrow('The object referenced on for() method has a invalid id.')
+  })
+
+  test('it throws a error when a custom() parameter is not a valid Model or a string', () => {
+    
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).custom()
+    }
+
+    expect(errorModel).toThrow('The custom() method takes a minimum of one argument.')
+    
+    errorModel = () => {
+      const user = new User({ name: 'Mary' })
+      const post = new Post({ text: 'Hello' }).custom(user, 'a-string', 42)
+    }
+
+    expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
   })
 })

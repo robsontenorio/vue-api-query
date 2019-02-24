@@ -67,9 +67,9 @@ export default class StaticModel {
     return self
   }
 
-  static custom(resource) {
+  static custom(...args) {
     let self = this.instance()
-    self.custom(resource)
+    self.custom(...args)
 
     return self
   }
