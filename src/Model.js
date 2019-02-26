@@ -255,7 +255,7 @@ export default class Model extends StaticModel {
 
   get() {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-    base = this._customResource || base
+    base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
     let url = `${base}${this._builder.query()}`
 
     return this.request({
