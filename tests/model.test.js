@@ -303,7 +303,7 @@ describe('Model methods', () => {
   test('a request with custom() method hits the right resource', async () => {
 
     axiosMock.onAny().reply((config) => {
-      expect(config.url).toBe('postz')
+      expect(config.url).toEqual(`http://localhost/postz`)
 
       return [200, {}]
     })
@@ -314,7 +314,7 @@ describe('Model methods', () => {
   test('custom() gracefully handles accidental / for string arguments', async () => {
 
     axiosMock.onAny().reply((config) => {
-      expect(config.url).toBe('postz/recent')
+      expect(config.url).toBe('http://localhost/postz/recent')
 
       return [200, {}]
     })
@@ -328,7 +328,7 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('get')
-      expect(config.url).toEqual('users/1/postz/comments')
+      expect(config.url).toEqual('http://localhost/users/1/postz/comments')
 
       return [200, {}]
     })
