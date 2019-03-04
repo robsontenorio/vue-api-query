@@ -250,7 +250,7 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(response.data))
+    }).then(response => new this.constructor(this.resolveResponse(response)))
   }
 
   get() {
@@ -262,7 +262,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = response.data.data || response.data
+      let collection = this.resolveResponse(response)
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
@@ -278,7 +278,7 @@ export default class Model extends StaticModel {
         response.data = collection
       }
 
-      return response.data
+      return this.resolveResponse(response)
     })
   }
 
@@ -286,6 +286,14 @@ export default class Model extends StaticModel {
     return this
       .get()
       .then(response => response.data || response)
+  }
+
+  resolveResponse(response) {
+    if (Model.withoutWrapping === undefined || Model.withoutWrapping === true) {
+      return response.data.data || response.data
+    }
+
+    return response.data
   }
 
   /**
@@ -313,7 +321,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
+      let self = Object.assign(this, this.resolveResponse(response))
       return self
     })
   }
@@ -324,7 +332,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
+      let self = Object.assign(this, this.resolveResponse(response))
       return self
     })
   }

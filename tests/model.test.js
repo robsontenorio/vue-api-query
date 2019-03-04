@@ -7,6 +7,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import { Post as postResponse } from './dummy/data/post'
+import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
 
 describe('Model methods', () => {
@@ -143,6 +144,26 @@ describe('Model methods', () => {
 
     post = new Post({ title: 'Cool!' })
     await post.save()
+
+  })
+
+  test('save() keeps data attr from response when Model.withoutWrapping false', async () => {
+    Model.withoutWrapping = false
+
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(postEmbedResponse.data))
+      expect(config.url).toEqual('http://localhost/posts/3')
+
+      return [200, postEmbedResponse]
+    })
+
+    post = new Post(postEmbedResponse.data)
+    let result = await post.save()
+
+    expect(result).toEqual(postEmbedResponse)
 
   })
 
