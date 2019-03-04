@@ -227,17 +227,7 @@ export default class Model extends StaticModel {
    */
 
   first() {
-    return this.get().then(response => {
-      let item
-
-      if (response.data) {
-        item = response.data[0]
-      } else {
-        item = response[0]
-      }
-
-      return item || {}
-    })
+    return this.get().then(response => Model.responseData(response)[0] || {})
   }
 
   find(identifier) {
@@ -262,7 +252,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = this.responseData(response)
+      let collection = Model.responseData(response.data)
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
@@ -284,13 +274,27 @@ export default class Model extends StaticModel {
       .then(response => response.data || response)
   }
 
-  responseData(response) {
-    return response.data.data || response.data
+  static responseData(response) {
+    return response.data || response
+  }
+
+  static removeWrapping(data) {
+    Object.keys(data).forEach(key => {
+      let value = data[key];
+
+      if(typeof value.data !== "undefined" && Array.isArray(value.data)) {
+        data[key] = value.data
+      }
+    });
   }
 
   resolveResponse(response) {
     if (Model.withoutWrapping === undefined || Model.withoutWrapping === true) {
-      return this.responseData(response)
+      let data = Model.responseData(response.data)
+
+      Array.isArray(data) ? data.map(item => Model.removeWrapping(item)) : Model.removeWrapping(data)
+
+      return data
     }
 
     return response.data

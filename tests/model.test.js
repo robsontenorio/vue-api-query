@@ -6,6 +6,8 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
 import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
+import { PostsNested as postsNestedResponse } from './dummy/data/postsNested'
+import { PostsNested as postsNestedEmbedResponse } from './dummy/data/postsNestedEmbed'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
@@ -104,6 +106,26 @@ describe('Model methods', () => {
     const posts = await Post.get()
 
     expect(posts.data).toEqual(postsEmbedResponse.data)
+
+  })
+
+  test('get() "data" from nested relations in response when Model.withoutWrapping false', async () => {
+    Model.withoutWrapping = false
+
+    axiosMock.onGet('http://localhost/posts?include=comments').reply(200, postsNestedEmbedResponse)
+
+    const posts = await Post.include('comments').get()
+    expect(posts).toEqual(postsNestedEmbedResponse)
+
+  })
+
+  test('get() unwraps "data" from nested relations in response when Model.withoutWrapping true or undefined', async () => {
+    Model.withoutWrapping = true
+
+    axiosMock.onGet('http://localhost/posts?include=comments').reply(200, postsNestedEmbedResponse)
+
+    const posts = await Post.include('comments').get()
+    expect(posts).toEqual(postsNestedResponse)
 
   })
 
