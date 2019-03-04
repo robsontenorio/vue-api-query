@@ -262,7 +262,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = this.resolveResponse(response)
+      let collection = this.responseData(response)
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
@@ -272,11 +272,7 @@ export default class Model extends StaticModel {
         return item
       })
 
-      if (response.data.data !== undefined) {
-        response.data.data = collection
-      } else {
-        response.data = collection
-      }
+      response.data.data ? response.data.data = collection : response.data = collection
 
       return this.resolveResponse(response)
     })
@@ -288,9 +284,13 @@ export default class Model extends StaticModel {
       .then(response => response.data || response)
   }
 
+  responseData(response) {
+    return response.data.data || response.data
+  }
+
   resolveResponse(response) {
     if (Model.withoutWrapping === undefined || Model.withoutWrapping === true) {
-      return response.data.data || response.data
+      return this.responseData(response)
     }
 
     return response.data

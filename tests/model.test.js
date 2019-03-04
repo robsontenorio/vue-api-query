@@ -96,11 +96,34 @@ describe('Model methods', () => {
     post.comments().get()
   })
 
+  test('get() fetch style request with "data" attribute when Model.withoutWrapping false', async () => {
+    Model.withoutWrapping = false
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.get()
+
+    expect(posts.data).toEqual(postsEmbedResponse.data)
+
+  })
+
   test('$get() fetch style request with "data" attribute', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
     const posts = await Post.$get()
 
+    expect(posts).toEqual(postsEmbedResponse.data)
+
+  })
+
+  test('$get() fetch style request with "data" attribute when Model.withoutWrapping false', async () => {
+    Model.withoutWrapping = false
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.$get()
+
+    // $get() will alway unwrap, no matter what
     expect(posts).toEqual(postsEmbedResponse.data)
 
   })
@@ -163,7 +186,7 @@ describe('Model methods', () => {
     post = new Post(postEmbedResponse.data)
     let result = await post.save()
 
-    expect(result).toEqual(postEmbedResponse)
+    expect(result.data).toEqual(postEmbedResponse.data)
 
   })
 
