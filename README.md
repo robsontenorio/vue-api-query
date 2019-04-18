@@ -629,9 +629,10 @@ This package automatically handles the response from backend and convert it into
 
 ## Single object
 
-If your backend responds with a single object as a **ROOT ELEMENT**  like this:
+If your backend responds with the following response...
 
 ```js
+// Note: the response data is the root element with no 'data' wrapper
 {
   id: 1,
   firstname: 'John',
@@ -640,21 +641,49 @@ If your backend responds with a single object as a **ROOT ELEMENT**  like this:
 }
 ```
 
-So, `find()` and `first()` methods automatically will convert the backend response into an instace of `User` model. 
+Then using `find()` and `first()` will work as expected and will hydrate the response into the `User` Model.
 
 ```js
 let user = await User.find(1)
 
-//or
+// or
 
 let user = await User.first()
+
+// will work - an instance of User was created from response
+
+user.makeBirthday()
+```
+
+However, if the backend sends a response like this...
+
+```js
+// Note: the response is wrapped with 'data' attribute...
+data: {
+  {
+    id: 1,
+    firstname: 'John',
+    lastname: 'Doe',
+    age: 25
+  }
+}
+```
+
+...then the above would fail. If your backend wraps single objects with a data attribute too then you should use the fetch method of find (which is `$find()`) instead to automatically hydrate the Model with the response data:
+
+```js
+let user = await User.$find(1)
+
+// or
+
+let user = await User.$first()
 
 // will work, because an instance of User was created from response
 
 user.makeBirthday()
 ```
 
-This **WILL NOT** be converted into `User` model, because the main data is not the root element.
+This **WILL NOT** be converted into `User` model, because the main data is not the root element or it is not wrapped by `data` attribute.
 
 ```js
 user: {  

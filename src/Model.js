@@ -3,13 +3,13 @@ import StaticModel from './StaticModel';
 
 export default class Model extends StaticModel {
 
-  constructor(...atributtes) {
+  constructor(...attributes) {
     super()
 
-    if (atributtes.length === 0) {
+    if (attributes.length === 0) {
       this._builder = new Builder(this)
     } else {
-      Object.assign(this, ...atributtes)
+      Object.assign(this, ...attributes)
     }
 
     if (this.baseURL === undefined) {
@@ -57,7 +57,7 @@ export default class Model extends StaticModel {
     // We handle this implementation detail here to simplify the readme.
     let slash = '';
     let resource = '';
-    
+
     args.forEach(value => {
       switch(true) {
         case (typeof value === 'string'):
@@ -65,7 +65,7 @@ export default class Model extends StaticModel {
           break;
         case (value instanceof Model):
           resource += slash + value.resource();
-          
+
           if(value.isValidId(value.getPrimaryKey())) {
             resource += '/' + value.getPrimaryKey();
           }
@@ -73,12 +73,12 @@ export default class Model extends StaticModel {
         default:
           throw new Error('Arguments to custom() must be strings or instances of Model.')
       }
-      
+
       if( !slash.length ) {
         slash = '/';
       }
     });
-    
+
     this._customResource = resource
 
     return this
@@ -240,6 +240,12 @@ export default class Model extends StaticModel {
     })
   }
 
+  $first() {
+    return this
+      .first()
+      .then(response => response.data || response)
+  }
+
   find(identifier) {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
@@ -251,6 +257,16 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => new this.constructor(response.data))
+  }
+
+  $find(identifier) {
+    if (identifier === undefined) {
+      throw new Error('You must specify the param on $find() method.')
+    }
+
+    return this
+      .find(identifier)
+      .then(response => response.data || response)
   }
 
   get() {
