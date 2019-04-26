@@ -256,7 +256,15 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(response.data))
+    }).then(response => {
+      const item = new this.constructor(response.data)
+
+      if (this._fromResource) {
+        item._from(this._fromResource)
+      }
+
+      return item
+    })
   }
 
   $find(identifier) {
@@ -282,8 +290,11 @@ export default class Model extends StaticModel {
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
-        let item = new this.constructor(c)
-        Object.defineProperty(item, '_fromResource', { get: () => this._fromResource })
+        const item = new this.constructor(c)
+
+        if (this._fromResource) {
+          item._from(this._fromResource)
+        }
 
         return item
       })
