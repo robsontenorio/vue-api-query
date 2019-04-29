@@ -266,7 +266,7 @@ export default class Model extends StaticModel {
 
     return this
       .find(identifier)
-      .then(response => response.data || response)
+      .then(response => new this.constructor(response.data || response))
   }
 
   get() {
