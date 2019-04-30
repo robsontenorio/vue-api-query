@@ -145,6 +145,33 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
   })
 
+  test('find() handles request without "data" wrapper and returns a object as instance of such Model', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+
+    const post = await Post.find(1)
+
+    expect(post).toEqual(postResponse)
+    expect(post).toBeInstanceOf(Post)
+  })
+
+  test('find() handles request with "data" wrapper and returns a object as instance of such Model', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        show: 'data'
+      }
+    }
+
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
+
+    const post = await Post.find(1)
+    expect(post).toEqual(postEmbedResponse.data)
+    expect(post).toBeInstanceOf(Post)
+  })
+
   test('get() method returns a array of objects as instance of suchModel', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
