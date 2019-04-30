@@ -67,6 +67,60 @@ describe('Model methods', () => {
     expect(post).toEqual({})
   })
 
+  test('first() handles request without "data" wrapper and returns first object in array as instance of such Model', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, {
+      data: postsResponse
+    })
+
+    const post = await Post.first()
+    expect(post).toEqual(postsResponse[0])
+    expect(post).toBeInstanceOf(Post)
+  })
+
+  test('first() handles request without "data" wrapper and method returns a empty object when no items have found', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, [])
+
+    const post = await Post.first()
+    expect(post).toEqual({})
+  })
+
+  test('first() handles request with "data" wrapper and returns first object in array as instance of such Model', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        index: 'data'
+      }
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, {
+      data: postsEmbedResponse
+    })
+
+    const post = await Post.first()
+    expect(post).toEqual(postsEmbedResponse['data'][0])
+    expect(post).toBeInstanceOf(Post)
+  })
+
+  test('first() handles request with "data" wrapper and method returns a empty object when no items have found', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        index: 'data'
+      }
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, [])
+
+    const post = await Post.first()
+    expect(post).toEqual({})
+  })
+
   test('find() method returns a object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
