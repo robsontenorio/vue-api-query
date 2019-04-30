@@ -573,6 +573,56 @@ describe('Model methods', () => {
     post.delete()
   })
 
+  test('delete() handles request with "data" wrapper and hydrates model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        destroy: 'data'
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toBe('http://localhost/posts/1')
+
+      return [200, {
+        data: {
+          id: 1,
+          title: 'Cool!'
+        }
+      }]
+    })
+
+    const post = new Post({ id: 1 })
+    let res = await post.delete()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ data: { id: 1, title: 'Cool!' }})
+  })
+
+  test('delete() handles request without "data" wrapper and hydrates model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toBe('http://localhost/posts/1')
+
+      return [200, {
+        id: 1,
+        title: 'Cool!'
+      }]
+    })
+
+    const post = new Post({ id: 1 })
+    let res = await post.delete()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ id: 1, title: 'Cool!' })
+  })
+
   test('a request from delete() method hits the right resource (custom PK)', async () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
