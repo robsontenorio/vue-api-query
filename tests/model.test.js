@@ -31,6 +31,7 @@ describe('Model methods', () => {
     expect(errorModel).toThrow('You must specify the param on find() method.')
   })
 
+  // deprecated, use first()
   test('it throws a error when $find() has no parameters', () => {
     errorModel = () => {
       const post = Post.$find()
@@ -50,6 +51,7 @@ describe('Model methods', () => {
     expect(post).toBeInstanceOf(Post)
   })
 
+  // deprecated, use first()
   test('$first() returns first object in array as instance of such Model', async () => {
 
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
@@ -129,6 +131,7 @@ describe('Model methods', () => {
     expect(post).toBeInstanceOf(Post)
   })
 
+  // deprecated, use find()
   test('$find() handles request with "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
 
@@ -137,6 +140,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postEmbedResponse.data)
   })
 
+  // deprecated, use find()
   test('$find() handles request without "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
@@ -320,6 +324,7 @@ describe('Model methods', () => {
     post.comments().get()
   })
 
+  // deprecated, use get()
   test('$get() fetch style request with "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
@@ -329,6 +334,7 @@ describe('Model methods', () => {
 
   })
 
+  // deprecated, use get()
   test('$get() fetch style request without "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse.data)
 
@@ -338,6 +344,7 @@ describe('Model methods', () => {
 
   })
 
+  // deprecated, use get()
   test('$get() hits right resource (nested object, custom PK)', async () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
