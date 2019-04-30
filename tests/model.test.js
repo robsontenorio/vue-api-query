@@ -386,6 +386,118 @@ describe('Model methods', () => {
     await post.save()
   })
 
+  test('save() handles POST request without "data" wrapper and hydrates the model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, {
+        id: 1,
+        title: 'Cool!'
+      }]
+    })
+
+    post = new Post({ title: 'Cool!' })
+    let res = await post.save()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ id: 1, title: 'Cool!' })
+  })
+
+  test('save() handles PUT request without "data" wrapper and hydrates the model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, {
+          id: 1,
+          title: 'Cool!',
+          body: 'Nice!',
+      }]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    let res = await post.save()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!', body: 'Nice!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ id: 1, title: 'Cool!', body: 'Nice!' })
+  })
+
+  test('save() handles POST request with "data" wrapper and hydrates the model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        store: 'data'
+      }
+    }
+
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, {
+        data: {
+          id: 1,
+          title: 'Cool!'
+        }
+      }]
+    })
+
+    post = new Post({ title: 'Cool!' })
+    let res = await post.save()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ data: {id: 1, title: 'Cool!' }})
+  })
+
+  test('save() handles PUT request with "data" wrapper and hydrates the model instance', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        update: 'data'
+      }
+    }
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, {
+        data: {
+          id: 1,
+          title: 'Cool!',
+          body: 'Nice!',
+        }
+      }]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    let res = await post.save()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual({ id: 1, title: 'Cool!', body: 'Nice!' })
+    expect(res.status).toEqual(200)
+    expect(res.data).toEqual({ data: { id: 1, title: 'Cool!', body: 'Nice!', }})
+  })
+
   test('save() method makes a PUT request when ID of object exists (custom PK)', async () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
