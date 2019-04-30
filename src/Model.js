@@ -41,6 +41,16 @@ export default class Model extends StaticModel {
     return 'id'
   }
 
+  dataWrappers() {
+    return {
+      index: null,
+      store: null,
+      show: null,
+      update: null,
+      destroy: null,
+    }
+  }
+
   getPrimaryKey() {
     return this[this.primaryKey()]
   }
@@ -164,6 +174,12 @@ export default class Model extends StaticModel {
     }
   }
 
+  handleResponse(method, data) {
+    return this.dataWrappers()[method]
+      ? data[this.dataWrappers()[method]] || data
+      : data
+  }
+
   /**
    *  Query
    */
@@ -227,19 +243,14 @@ export default class Model extends StaticModel {
    */
 
   first() {
-    return this.get().then(response => {
-      let item
-
-      if (response.data) {
-        item = response.data[0]
-      } else {
-        item = response[0]
-      }
-
-      return item || {}
+    return this.get().then(collection => {
+      return collection[0] || {}
     })
   }
 
+  /**
+   * @deprecated use first() instead
+   */
   $first() {
     return this
       .first()
@@ -256,9 +267,12 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(response.data))
+    }).then(response => new this.constructor(this.handleResponse('show', response.data)))
   }
 
+  /**
+   * @deprecated use find() instead
+   */
   $find(identifier) {
     if (identifier === undefined) {
       throw new Error('You must specify the param on $find() method.')
@@ -278,7 +292,8 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = response.data.data || response.data
+
+      let collection = this.handleResponse('index', response.data.data || response.data)
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
@@ -288,16 +303,13 @@ export default class Model extends StaticModel {
         return item
       })
 
-      if (response.data.data !== undefined) {
-        response.data.data = collection
-      } else {
-        response.data = collection
-      }
-
-      return response.data
+      return collection
     })
   }
 
+  /**
+   * @deprecated use get() instead
+   */
   $get() {
     return this
       .get()
@@ -316,7 +328,10 @@ export default class Model extends StaticModel {
     return this.request({
       url: this.endpoint(),
       method: 'DELETE'
-    }).then(response => response)
+    }).then(response => {
+      Object.assign(this, this.handleResponse('destroy', response.data))
+      return response
+    })
   }
 
   save() {
@@ -329,8 +344,8 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
+      let self = Object.assign(this, this.handleResponse('store', response.data))
+      return response
     })
   }
 
@@ -340,8 +355,8 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
+      let self = Object.assign(this, this.handleResponse('update', response.data))
+      return response
     })
   }
 
