@@ -177,8 +177,9 @@ describe('Model methods', () => {
 
     const posts = await Post.get()
 
-    posts.forEach(post => {
+    posts.forEach((post, index) => {
       expect(post).toBeInstanceOf(Post)
+      expect(post).toEqual(postsResponse[index])
     });
   })
 
@@ -197,6 +198,114 @@ describe('Model methods', () => {
   test('get() hits right resource (nested object, custom PK)', async () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
+    }
+
+    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+
+      return [200, {}]
+    })
+
+    post.comments().get()
+  })
+
+  test('get() method handles request without "data" wrapper and returns a array of objects as instance of suchModel', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
+
+    const posts = await Post.get()
+
+    posts.forEach((post, index) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post).toEqual(postsResponse[index])
+    });
+  })
+
+  test('get() handles request without "data" wrapper and hits right resource (nested object)', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/posts/1/comments')
+
+      return [200, {}]
+    })
+
+    const post = new Post({ id: 1 })
+    await post.comments().get()
+  })
+
+  test('get() handles request without "data" wrapper and hits right resource (nested object, custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+    Post.prototype['dataWrappers'] = () => {
+      return {}
+    }
+
+    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+
+      return [200, {}]
+    })
+
+    post.comments().get()
+  })
+
+  test('get() method handles request with "data" wrapper and returns a array of objects as instance of suchModel', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        index: 'data'
+      }
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.get()
+
+    posts.forEach((post, index) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post).toEqual(postsEmbedResponse.data[index])
+    });
+  })
+
+  test('get() handles request with "data" wrapper and hits right resource (nested object)', async () => {
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        index: 'data'
+      }
+    }
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/posts/1/comments')
+
+      return [200, {}]
+    })
+
+    const post = new Post({ id: 1 })
+    await post.comments().get()
+  })
+
+  test('get() handles request with "data" wrapper and hits right resource (nested object, custom PK)', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'someId'
+    }
+    Post.prototype['dataWrappers'] = () => {
+      return {
+        index: 'data'
+      }
     }
 
     let post = new Post({ id: 1, someId: 'po996-9dd18' })
