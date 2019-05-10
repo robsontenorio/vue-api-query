@@ -127,7 +127,7 @@ describe('Model methods', () => {
       return [200, {}]
     })
 
-    post.comments().get()
+    await post.comments().get()
   })
 
   test('$get() fetch style request with "data" wrapper', async () => {
@@ -162,7 +162,7 @@ describe('Model methods', () => {
       return [200, {}]
     })
 
-    post.comments().$get()
+    await post.comments().$get()
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {
@@ -230,7 +230,7 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
     comment = await post.comments().first()
     comment.text = 'Owh!'
-    comment.save()
+    await comment.save()
   })
 
   test('save() method makes a PUT request when ID of object exists (nested object, customPK)', async () => {
@@ -254,7 +254,7 @@ describe('Model methods', () => {
 
     comment = await post.comments().first()
     comment.text = 'Owh!'
-    comment.save()
+    await comment.save()
   })
 
   test('a request from delete() method hits the right resource', async () => {
@@ -268,7 +268,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
 
-    post.delete()
+    await post.delete()
   })
 
   test('a request from delete() method hits the right resource (custom PK)', async () => {
@@ -310,7 +310,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     const comment = await post.comments().first()
-    comment.delete()
+    await comment.delete()
   })
 
   test('a request from delete() method hits the right resource (nested object) (nested object, customPK)', async () => {
@@ -332,7 +332,7 @@ describe('Model methods', () => {
     })
 
     comment = await post.comments().first()
-    comment.delete()
+    await comment.delete()
   })
 
   test('a request with custom() method hits the right resource', async () => {
@@ -427,7 +427,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().attach(comment)
+    await post.comments().attach(comment)
   })
 
   test('attach() method hits right endpoint with a POST request (custom PK)', async () => {
@@ -452,7 +452,7 @@ describe('Model methods', () => {
     })
 
     comment = { text: 'hi!' }
-    post.comments().attach(comment)
+    await post.comments().attach(comment)
   })
 
   test('sync() method hits right endpoint with a PUT request', async () => {
@@ -468,7 +468,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().sync(comment)
+    await post.comments().sync(comment)
   })
 
   test('for() method setup the right resource', async () => {
@@ -546,5 +546,23 @@ describe('Model methods', () => {
     }
 
     expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
+  })
+
+  test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
+    axiosMock.onGet('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
+    axiosMock.onPut('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
+
+    const post = new Post({ id: 1 })
+    const comment = await post.comments().find(1)
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.url).toEqual('http://localhost/posts/1/comments/1')
+
+      return [200, {}]
+    })
+
+    comment.text = 'Hola!'
+    await comment.save()
   })
 })
