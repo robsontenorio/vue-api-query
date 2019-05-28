@@ -84,9 +84,15 @@ export default class Model extends StaticModel {
     return this
   }
 
-  hasMany(model) {
-    let instance = new model
-    let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
+  hasMany(model, args) {
+    let instance;
+    if(args === undefined) {
+      instance = new model;
+    } else {
+      instance = new model(args);
+    }
+
+    let url = `${this.endpoint()}/${instance.resource()}`
 
     instance._from(url)
 

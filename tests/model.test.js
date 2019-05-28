@@ -9,6 +9,7 @@ import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
+import { Comment as commentResponse } from './dummy/data/comment'
 
 describe('Model methods', () => {
 
@@ -546,5 +547,24 @@ describe('Model methods', () => {
     }
 
     expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
+  })
+
+  test('a request from hasMany() to hasMany() with a find() hits right resource', async () => {
+    let user
+    let post
+    let comment
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/2/comments/1')
+      return [200, {}]
+    })
+
+    user = new User({
+      id: 1
+    }).posts({
+      id: 2
+    }).comments();
+    comment = await user.find(1);
   })
 })

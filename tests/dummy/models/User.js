@@ -3,7 +3,7 @@ import Post from './Post'
 
 export default class User extends BaseModel {
 
-  posts () {
-    return this.hasMany(Post)
+  posts (args) {
+    return this.hasMany(Post, args)
   }
 }
