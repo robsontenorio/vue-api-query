@@ -559,12 +559,11 @@ describe('Model methods', () => {
       return [200, {}]
     })
 
-    user = new User({
+    user = await new User({
       id: 1
     }).posts({
       id: 2
-    }).comments();
-    comment = await user.find(1);
+    }).comments().find(1);
   })
 
   test('get() method returns a array of objects as instance of a model in a hasMany to hasMany relation', async () => {
