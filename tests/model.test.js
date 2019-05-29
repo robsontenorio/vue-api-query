@@ -658,4 +658,36 @@ describe('Model methods', () => {
     comment.text = "Huh";
     await comment.save();
   })
+
+  test('delete() method makes a DELETE request when ID of object does exists in a hasMany to hasMany relation', async () => {
+    let user, post, comment;
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1')
+      return [200, userResponse]
+    })
+    user = await new User().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1')
+      return [200, postResponse]
+    })
+    post = await user.posts().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments/1')
+      return [200, commentResponse]
+    })
+    comment = await post.comments().find(1);
+
+    axiosMock.onDelete().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments/1')
+      return [200, commentResponse]
+    })
+    await comment.delete();
+  })
 })
