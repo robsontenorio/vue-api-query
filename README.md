@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="bird.png">  
 </p>
@@ -188,8 +189,8 @@ import Model from './Model'
 export default class User extends Model {
   resource()
   {
-    return 'users'
-  }
+    return 'users'
+  }
 }
 ```
 
@@ -237,8 +238,8 @@ import Post from './Post'
 
 export default class User extends Model {
 
-  posts () {
-    return this.hasMany(Post)
+  posts (args) {
+    return this.hasMany(Post, args)
   }
 }
 ```
@@ -278,8 +279,8 @@ export default class Post extends Model {
   // done :)
   resource()
   {
-    return 'posts'
-   }
+    return 'posts'
+   }
 }
 ```
 **/models/User.js**
@@ -291,8 +292,8 @@ import Post from './Post'
 export default class User extends Model {  
   resource()
   {
-    return 'users'
-  }
+    return 'users'
+  }
 
   posts () {
     return this.hasMany(Post)
@@ -503,6 +504,9 @@ let Post = await User.posts().get()
 // GET /users/1/posts/2
 let User = new User({id: 1})
 let Post = await User.posts().find(2)
+
+// GET /users/1/posts/2/comments/3
+let Comment = new User({id: 1}).posts({id:2}).comments().find(3);
 ```
 
 And just for convenience you can POST or PUT with any payload to backend:
