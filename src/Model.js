@@ -143,6 +143,14 @@ export default class Model extends StaticModel {
   }
 
   endpoint() {
+    if (this._customResource) {
+      if (this.hasId()) {
+        return `${this._customResource}/${this.getPrimaryKey()}`
+      } else {
+        return this._customResource
+      }
+    }
+
     if (this._fromResource) {
       if (this.hasId()) {
         return `${this._fromResource}/${this.getPrimaryKey()}`
@@ -256,13 +264,19 @@ export default class Model extends StaticModel {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
+
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
     let url = `${base}/${identifier}${this._builder.query()}`
 
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(response.data))
+    }).then(response => {
+      var response = new this.constructor(response.data)
+      response._from(base);
+      return response;
+    })
   }
 
   $find(identifier) {
@@ -272,7 +286,10 @@ export default class Model extends StaticModel {
 
     return this
       .find(identifier)
-      .then(response => new this.constructor(response.data || response))
+      .then(response => {
+        var response = new this.constructor(response.data || response)
+        return response;
+    });
   }
 
   get() {
