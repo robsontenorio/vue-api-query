@@ -4,10 +4,12 @@ import Comment from './dummy/models/Comment'
 import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter';
-import { Posts as postsResponse } from './dummy/data/posts'
+import { Users as usersResponse } from './dummy/data/users'
+import { User as userResponse } from './dummy/data/user'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
-import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
+import { Posts as postsResponse } from './dummy/data/posts'
+import { Post as postResponse } from './dummy/data/post'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comment as commentResponse } from './dummy/data/comment'
 
@@ -88,7 +90,6 @@ describe('Model methods', () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
     const post = await Post.$find(1)
-
     expect(post).toEqual(postResponse)
   })
 
@@ -550,9 +551,7 @@ describe('Model methods', () => {
   })
 
   test('a request from hasMany() to hasMany() with a find() hits right resource', async () => {
-    let user
-    let post
-    let comment
+    let user, post, comment;
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('get')
@@ -566,5 +565,97 @@ describe('Model methods', () => {
       id: 2
     }).comments();
     comment = await user.find(1);
+  })
+
+  test('get() method returns a array of objects as instance of a model in a hasMany to hasMany relation', async () => {
+    let user, post, comment;
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1')
+      return [200, userResponse]
+    })
+
+    user = await new User().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1')
+      return [200, postResponse]
+    })
+
+    post = await user.posts().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.data).toEqual(JSON.stringify(comments))
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments')
+      return [200, commentsResponse]
+    })
+
+    let comments = await post.comments().get();
+  })
+
+  test('save() method makes a POST request when ID of object does not exists in a hasMany to hasMany relation', async () => {
+    let user, post, comment;
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1')
+      return [200, userResponse]
+    })
+
+    user = await new User().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1')
+      return [200, postResponse]
+    })
+
+    post = await user.posts().find(1);
+
+    axiosMock.onPost().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(comment))
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments')
+      return [200, commentResponse]
+    })
+
+    comment = { text: 'Huh' };
+    let response = await post.comments().attach(comment);
+  })
+
+  test('save() method makes a PUT request when ID of object does exists in a hasMany to hasMany relation', async () => {
+    let user, post, comment;
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1')
+      return [200, userResponse]
+    })
+    user = await new User().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1')
+      return [200, postResponse]
+    })
+    post = await user.posts().find(1);
+
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments/1')
+      return [200, commentResponse]
+    })
+    comment = await post.comments().find(1);
+
+    axiosMock.onPut().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.url).toEqual('http://localhost/users/1/posts/1/comments/1')
+      return [200, commentResponse]
+    })
+    comment.text = "Huh";
+    await comment.save();
   })
 })
