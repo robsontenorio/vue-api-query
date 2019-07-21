@@ -699,7 +699,7 @@ user: {
 An array of items from backend would be converted in the same way, **ONLY** if it responds in these formats:
 
 ```js
-let user = await User.get()
+let users = await User.get()
 ```
 
 ```js
