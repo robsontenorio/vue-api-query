@@ -689,4 +689,15 @@ describe('Model methods', () => {
     })
     await comment.delete();
   })
+
+  test('get() method returns a object as instance of such Model. Model was requested before by index.', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
+
+    const posts = await Post.get()
+    expect(posts).toEqual(postsResponse)
+
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+    const post = await posts[0].get()
+    expect(post).toEqual(postResponse)
+  })
 })

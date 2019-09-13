@@ -293,32 +293,41 @@ export default class Model extends StaticModel {
   }
 
   get() {
-    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-    base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
-    let url = `${base}${this._builder.query()}`
 
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
-      let collection = response.data.data || response.data
-      collection = Array.isArray(collection) ? collection : [collection]
+    if (this.hasId()) {
+      return this.request({
+        url: this.endpoint(),
+        method: 'GET'
+      }).then(response => response.data)
 
-      collection = collection.map(c => {
-        let item = new this.constructor(c)
-        Object.defineProperty(item, '_fromResource', { get: () => this._fromResource })
+    } else {
+      let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+      base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
+      let url = `${base}${this._builder.query()}`
 
-        return item
+      return this.request({
+        url,
+        method: 'GET'
+      }).then(response => {
+        let collection = response.data.data || response.data
+        collection = Array.isArray(collection) ? collection : [collection]
+
+        collection = collection.map(c => {
+          let item = new this.constructor(c)
+          Object.defineProperty(item, '_fromResource', { get: () => this._fromResource })
+
+          return item
+        })
+
+        if (response.data.data !== undefined) {
+          response.data.data = collection
+        } else {
+          response.data = collection
+        }
+
+        return response.data
       })
-
-      if (response.data.data !== undefined) {
-        response.data.data = collection
-      } else {
-        response.data = collection
-      }
-
-      return response.data
-    })
+    }
   }
 
   $get() {
