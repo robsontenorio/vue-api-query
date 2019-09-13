@@ -298,7 +298,11 @@ export default class Model extends StaticModel {
       return this.request({
         url: this.endpoint(),
         method: 'GET'
-      }).then(response => response.data)
+      }).then(response => {
+        let collectionItem = response.data.data || response.data
+        let self = Object.assign(this, collectionItem)
+        return self
+      })
 
     } else {
       let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
