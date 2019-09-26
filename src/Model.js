@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 import Builder from './Builder';
 import StaticModel from './StaticModel';
 
@@ -344,25 +346,41 @@ export default class Model extends StaticModel {
    * Common CRUD operations
    */
 
-  delete() {
+  delete(params) {
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
 
+    if(params === undefined) {
+      var url = this.endpoint();
+    } else if(typeof params == "object") {
+      var url = this.endpoint() + '?' +  qs.stringify(params, { encode: false })
+    } else {
+      throw new Error('Params must be of the type object.')
+    }
+
     return this.request({
-      url: this.endpoint(),
+      url: url,
       method: 'DELETE'
     }).then(response => response)
   }
 
-  save() {
-    return this.hasId() ? this._update() : this._create()
+  save(params) {
+    return this.hasId() ? this._update(params) : this._create(params)
   }
 
-  _create() {
+  _create(params) {
+    if(params === undefined) {
+      var url = this.endpoint();
+    } else if(typeof params == "object") {
+      var url = this.endpoint() + '?' +  qs.stringify(params, { encode: false })
+    } else {
+      throw new Error('Params must be of the type object.')
+    }
+
     return this.request({
       method: 'POST',
-      url: this.endpoint(),
+      url: url,
       data: this
     }).then(response => {
       let self = Object.assign(this, response.data)
@@ -370,10 +388,18 @@ export default class Model extends StaticModel {
     })
   }
 
-  _update() {
+  _update(params) {
+    if(params === undefined) {
+      var url = this.endpoint();
+    } else if(typeof params == "object") {
+      var url = this.endpoint() + '?' +  qs.stringify(params, { encode: false })
+    } else {
+      throw new Error('Params must be of the type object.')
+    }
+
     return this.request({
       method: 'PUT',
-      url: this.endpoint(),
+      url: url,
       data: this
     }).then(response => {
       let self = Object.assign(this, response.data)
