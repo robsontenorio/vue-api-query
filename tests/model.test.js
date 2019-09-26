@@ -183,6 +183,24 @@ describe('Model methods', () => {
 
   })
 
+  test('save() method makes a POST request when ID of object does not exists with additional parameter', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts?parameter=true')
+
+      return [200, {}]
+    })
+
+    post = new Post({ title: 'Cool!' })
+    await post.save({
+      parameter: true
+    })
+
+  })
+
   test('save() method makes a PUT request when ID of object exists', async () => {
     let post
 
@@ -196,6 +214,23 @@ describe('Model methods', () => {
 
     post = new Post({ id: 1, title: 'Cool!' })
     await post.save()
+  })
+
+  test('save() method makes a PUT request when ID of object exists with additional parameter', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1?parameter=true')
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    await post.save({
+      parameter: true
+    })
   })
 
   test('save() method makes a PUT request when ID of object exists (custom PK)', async () => {
@@ -271,6 +306,22 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
 
     post.delete()
+  })
+
+  test('a request from delete() method hits the right resource with additional parameter', async () => {
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('delete')
+      expect(config.url).toBe('http://localhost/posts/1?parameter=true')
+
+      return [200, {}]
+    })
+
+    const post = new Post({ id: 1 })
+
+    post.delete({
+      parameter: true
+    })
   })
 
   test('a request from delete() method hits the right resource (custom PK)', async () => {
