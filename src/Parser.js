@@ -13,6 +13,8 @@ export default class Parser {
 
   // final query string
   query() {
+    this.uri = '';
+
     this.includes()
     this.appends()
     this.fields()
