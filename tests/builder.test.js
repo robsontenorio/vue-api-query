@@ -198,4 +198,15 @@ describe('Query builder', () => {
 
     expect(errorModel).toThrow('You must pass a payload/object as param.')
   })
+
+  test('it resets the uri upon query generation when the query is regenerated a second time', () => {
+    const post = Post
+      .where('title', 'Cool')
+      .page(3)
+
+    const query = '?filter[title]=Cool&page=3'
+
+    expect(post._builder.query()).toEqual(query)
+    expect(post._builder.query()).toEqual(query)
+  })
 })
