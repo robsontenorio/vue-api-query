@@ -33,19 +33,19 @@
   },
   "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.3.3",
-    "@babel/node": "^7.2.2",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
-    "@babel/plugin-transform-async-to-generator": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.3.1",
-    "@babel/runtime": "^7.3.1",
-    "axios": "0.18.1",
-    "axios-mock-adapter": "^1.16.0",
-    "babel-eslint": "^10.0.1",
-    "codecov": "^3.2.0",
-    "eslint": "^5.14.0",
-    "jest": "^24.1.0"
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
+    "@babel/plugin-transform-async-to-generator": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/runtime": "^7.9.2",
+    "axios": "^0.19.2",
+    "axios-mock-adapter": "^1.18.1",
+    "babel-eslint": "^10.1.0",
+    "codecov": "^3.6.5",
+    "eslint": "^6.8.0",
+    "jest": "^25.5.0"
   }
 }
