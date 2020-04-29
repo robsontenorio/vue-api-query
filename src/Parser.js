@@ -13,6 +13,7 @@ export default class Parser {
 
   // final query string
   query() {
+    this.reset()
     this.includes()
     this.appends()
     this.fields()
@@ -23,6 +24,10 @@ export default class Parser {
     this.payload()
 
     return this.uri
+  }
+
+  reset() {
+    this.uri = ''
   }
 
   /**
