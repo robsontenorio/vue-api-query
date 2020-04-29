@@ -81,6 +81,7 @@ describe('Model methods', () => {
     const post = await Post.$find(1)
 
     expect(post).toEqual(postEmbedResponse.data)
+    expect(post).toBeInstanceOf(Post)
   })
 
   test('$find() handles request without "data" wrapper', async () => {
@@ -89,6 +90,8 @@ describe('Model methods', () => {
     const post = await Post.$find(1)
 
     expect(post).toEqual(postResponse)
+    expect(post).toBeInstanceOf(Post)
+
   })
 
   test('get() method returns a array of objects as instance of suchModel', async () => {
@@ -546,5 +549,23 @@ describe('Model methods', () => {
     }
 
     expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
+  })
+
+  test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
+    axiosMock.onGet('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
+    axiosMock.onPut('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
+
+    const post = new Post({ id: 1 })
+    const comment = await post.comments().find(1)
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.url).toEqual('http://localhost/posts/1/comments/1')
+
+      return [200, {}]
+    })
+
+    comment.text = 'Hola!'
+    await comment.save()
   })
 })
