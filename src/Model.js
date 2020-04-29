@@ -47,7 +47,7 @@ export default class Model extends StaticModel {
 
   custom(...args) {
 
-    if(args.length === 0) {
+    if (args.length === 0) {
       throw new Error('The custom() method takes a minimum of one argument.')
     }
 
@@ -59,14 +59,14 @@ export default class Model extends StaticModel {
     let resource = '';
 
     args.forEach(value => {
-      switch(true) {
+      switch (true) {
         case (typeof value === 'string'):
           resource += slash + value.replace(/^\/+/, '');
           break;
         case (value instanceof Model):
           resource += slash + value.resource();
 
-          if(value.isValidId(value.getPrimaryKey())) {
+          if (value.isValidId(value.getPrimaryKey())) {
             resource += '/' + value.getPrimaryKey();
           }
           break;
@@ -74,7 +74,7 @@ export default class Model extends StaticModel {
           throw new Error('Arguments to custom() must be strings or instances of Model.')
       }
 
-      if( !slash.length ) {
+      if (!slash.length) {
         slash = '/';
       }
     });
@@ -152,7 +152,7 @@ export default class Model extends StaticModel {
     }
   }
 
-  parameterNames () {
+  parameterNames() {
     return {
       include: 'include',
       filter: 'filter',
@@ -256,7 +256,15 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(response.data))
+    }).then(response => {
+      const item = new this.constructor(response.data)
+
+      if (this._fromResource) {
+        item._from(this._fromResource)
+      }
+
+      return item
+    })
   }
 
   $find(identifier) {
@@ -283,7 +291,10 @@ export default class Model extends StaticModel {
 
       collection = collection.map(c => {
         let item = new this.constructor(c)
-        Object.defineProperty(item, '_fromResource', { get: () => this._fromResource })
+
+        if (this._fromResource) {
+          item._from(this._fromResource)
+        }
 
         return item
       })
