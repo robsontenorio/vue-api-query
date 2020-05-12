@@ -340,7 +340,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
+      let self = Object.assign(this, response.data.data || response.data)
       return self
     })
   }
@@ -351,7 +351,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
+      let self = Object.assign(this, response.data.data || response.data)
       return self
     })
   }
