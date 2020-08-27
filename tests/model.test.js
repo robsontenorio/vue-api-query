@@ -260,6 +260,22 @@ describe('Model methods', () => {
     comment.save()
   })
 
+  test('save() method makes a POST request when ID of object is null', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: null, title: 'Cool!' })
+    await post.save()
+
+  })
+
   test('a request from delete() method hits the right resource', async () => {
 
     axiosMock.onAny().reply((config) => {
