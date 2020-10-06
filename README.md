@@ -156,7 +156,7 @@ Model.$http = axios
 
 Your base model should extend from `vue-api-query` Model. Use base models is good practice in order to abstract configurations from your domain models.
 
-**models/Model.js**
+**models/Model.ts**
 
 ```js
 import { Model as BaseModel } from 'vue-api-query'
@@ -602,7 +602,7 @@ let comments = await post
 
 If you need to change default values just override `parametersName()` on your Base Model. So, the generated query string will use this new values.
 
-**models/Model.js**
+**models/Model.ts**
 
 ```js
 import { Model as BaseModel } from 'vue-api-query'

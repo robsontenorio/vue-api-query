@@ -2,6 +2,7 @@ import Builder from './Builder';
 import StaticModel from './StaticModel';
 
 export default class Model extends StaticModel {
+  private _builder: Builder
 
   constructor(...attributes) {
     super()
