@@ -9,6 +9,7 @@ import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
+import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 
 describe('Model methods', () => {
 
@@ -169,6 +170,25 @@ describe('Model methods', () => {
 
     expect(posts).toEqual(postsEmbedResponse.data)
 
+  })
+
+  test('$get() hits right resource with "data" wrapper (nested object)', async () => {
+    axiosMock.onGet().reply((config) => {
+      expect(config.method).toEqual('get')
+      expect(config.url).toEqual('http://localhost/posts/1/comments')
+
+      return [200, commentsEmbedResponse]
+    })
+
+    const post = new Post({ id: 1 })
+    const comments = await post.comments().$get()
+
+    comments.forEach(comment => {
+      expect(comment).toBeInstanceOf(Comment)
+      comment.replies.data.forEach(reply => {
+        expect(reply).toBeInstanceOf(Comment)
+      })
+    })
   })
 
   test('$get() hits right resource (nested object, custom PK)', async () => {
