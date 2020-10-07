@@ -10,6 +10,7 @@ export default class Model extends StaticModel {
       this._builder = new Builder(this)
     } else {
       Object.assign(this, ...attributes)
+      this._applyRelations(this)
     }
 
     if (this.baseURL === undefined) {
@@ -236,8 +237,6 @@ export default class Model extends StaticModel {
     if(this._fromResource) {
       item._from(this._fromResource)
     }
-
-    this._applyRelations(item)
 
     return item
   }
