@@ -11,6 +11,7 @@ export default class Model extends StaticModel {
       this._builder = new Builder(this)
     } else {
       Object.assign(this, ...attributes)
+      this._applyRelations(this)
     }
 
     if (this.baseURL === undefined) {
@@ -124,6 +125,10 @@ export default class Model extends StaticModel {
     return this
   }
 
+  relations () {
+    return {}
+  }
+
   /**
    * Helpers
    */
@@ -227,6 +232,48 @@ export default class Model extends StaticModel {
    * Result
    */
 
+  _applyInstance(data, model = this.constructor) {
+    const item = new model(data)
+
+    if(this._fromResource) {
+      item._from(this._fromResource)
+    }
+
+    return item
+  }
+
+  _applyInstanceCollection(data, model = this.constructor) {
+    let collection = data.data || data
+    collection = Array.isArray(collection) ? collection : [collection]
+
+    collection = collection.map(c => {
+      return this._applyInstance(c, model)
+    })
+    return collection
+  }
+
+  _applyRelations(model) {
+    const relations = model.relations()
+
+    for(const relation of Object.keys(relations)) {
+      if (!model[relation]) {
+        return;
+      }
+
+      if (Array.isArray(model[relation].data) || Array.isArray(model[relation])) {
+        const collection = this._applyInstanceCollection(model[relation], relations[relation])
+
+        if (model[relation].data !== undefined) {
+          model[relation].data = collection
+        } else {
+          model[relation] = collection
+        }
+      } else {
+        model[relation] = this._applyInstance(model[relation], relations[relation])
+      }
+    }
+  }
+
   first() {
     return this.get().then(response => {
       let item
@@ -258,13 +305,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      const item = new this.constructor(response.data)
-
-      if (this._fromResource) {
-        item._from(this._fromResource)
-      }
-
-      return item
+      return this._applyInstance(response.data)
     })
   }
 
@@ -275,7 +316,7 @@ export default class Model extends StaticModel {
 
     return this
       .find(identifier)
-      .then(response => new this.constructor(response.data || response))
+      .then(response => this._applyInstance(response.data || response))
   }
 
   get() {
@@ -287,18 +328,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = response.data.data || response.data
-      collection = Array.isArray(collection) ? collection : [collection]
-
-      collection = collection.map(c => {
-        let item = new this.constructor(c)
-
-        if (this._fromResource) {
-          item._from(this._fromResource)
-        }
-
-        return item
-      })
+      let collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
         response.data.data = collection
@@ -341,8 +371,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
+      return this._applyInstance(response.data)
     })
   }
 
@@ -352,8 +381,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, response.data)
-      return self
+      return this._applyInstance(response.data)
     })
   }
 
@@ -376,5 +404,4 @@ export default class Model extends StaticModel {
       data: params
     }).then(response => response)
   }
-
 }

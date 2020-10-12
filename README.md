@@ -517,6 +517,90 @@ await this.posts.comments().attach(payload)
 await this.posts.comments().sync(payload) 
 ```
 
+You can also apply a model instance to a nested object by setting the key and the model in `relations` method.
+
+If the backend responds with:
+
+```js
+// response from API for /posts/1
+{
+  title: 'My title'
+  body: 'Some text here',
+  user: {
+    firstName: 'John',
+    lastName: 'Doe'
+  }
+}
+```
+
+We just need to set `user` to User model:
+
+
+**/models/Post.js**
+```js
+class Post extends Model {
+  relations () {
+    return {
+      // Apply User model to `user` object
+      user: User
+    }
+  }
+}
+```
+
+It also works for collections. So if the backend responds with:
+
+```js
+// response from API for /comments
+{
+  text: 'Some text here',
+  user: {
+    firstName: 'John',
+    lastName: 'Doe'
+  },
+  replies: [
+    {
+      text: 'A reply here',
+      user: {
+        firstName: 'Joe',
+        lastName: 'Doe'
+      }
+    },
+    {
+      text: 'Another reply here',
+      user: {
+        firstName: 'Mary',
+        lastName: 'Doe'
+      },
+      replies: [
+        {
+          text: 'Yes, this is the reply of the reply!',
+          user: {
+            firstName: 'Max',
+            lastName: 'Doe'
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+Then we just need to set `user` to User model and `replies` to Comment model:
+
+**/models/Comment.js**
+```js
+class Comment extends Model {
+  relations () {
+    return {
+      // Apply User model to `user` object
+      user: User,
+      // Apply Comment model to each object of `replies` array
+      replies: Comment
+    }
+  }
+}
+```
 
 # Pagination
 
