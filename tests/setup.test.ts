@@ -9,6 +9,7 @@ describe('Setup models', () => {
     EmptyBaseModel.reset().withBaseURL().withRequest()
 
     errorModel = () => {
+      // @ts-ignore
       new EmptyBaseModel()
     }
 
@@ -19,6 +20,7 @@ describe('Setup models', () => {
     EmptyBaseModel.reset().withRequest().withHttp()
 
     errorModel = () => {
+      // @ts-ignore
       new EmptyBaseModel()
     }
     expect(errorModel).toThrow('You must declare baseURL() method.')
@@ -28,6 +30,7 @@ describe('Setup models', () => {
     EmptyBaseModel.reset().withBaseURL().withHttp()
 
     errorModel = () => {
+      // @ts-ignore
       new EmptyBaseModel()
     }
     expect(errorModel).toThrow('You must declare request() method.')
@@ -47,6 +50,7 @@ describe('Setup models', () => {
 
     expect(post.resource()).toEqual('postz')
 
+    // @ts-ignore
     delete Post.prototype['resource']
   })
 
@@ -59,6 +63,7 @@ describe('Setup models', () => {
 
     expect(post.primaryKey()).toEqual('someId')
 
+    // @ts-ignore
     delete Post.prototype['primaryKey']
   })
 
@@ -71,6 +76,7 @@ describe('Setup models', () => {
 
     expect(post.baseURL()).toEqual('http://api.com')
 
+    // @ts-ignore
     delete Post.prototype['baseURL']
   })
 })

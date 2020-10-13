@@ -33,6 +33,7 @@ describe('Query builder', () => {
     const query =
       '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10&doSomething=yes&process=no'
 
+    // @ts-ignore
     expect(post._builder.query()).toEqual(query)
   })
 
@@ -52,51 +53,61 @@ describe('Query builder', () => {
     const query =
       '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
 
+    // @ts-ignore
     expect(post._builder.query()).toEqual(query)
   })
 
   test('include() sets properly the builder', () => {
     let post = Post.include('user')
 
+    // @ts-ignore
     expect(post._builder.includes).toEqual(['user'])
 
     post = Post.include('user', 'category')
 
+    // @ts-ignore
     expect(post._builder.includes).toEqual(['user', 'category'])
   })
 
   test('append() sets properly the builder', () => {
     let post = Post.append('likes')
 
+    // @ts-ignore
     expect(post._builder.appends).toEqual(['likes'])
 
     post = Post.append('likes', 'visits')
 
+    // @ts-ignore
     expect(post._builder.appends).toEqual(['likes', 'visits'])
   })
 
   test('orderBy() sets properly the builder', () => {
     let post = Post.orderBy('created_at')
 
+    // @ts-ignore
     expect(post._builder.sorts).toEqual(['created_at'])
 
     post = Post.orderBy('created_at', '-visits')
 
+    // @ts-ignore
     expect(post._builder.sorts).toEqual(['created_at', '-visits'])
   })
 
   test('where() sets properly the builder', () => {
     let post = Post.where('id', 1)
 
+    // @ts-ignore
     expect(post._builder.filters).toEqual({ id: 1 })
 
     post = Post.where('id', 1).where('title', 'Cool')
 
+    // @ts-ignore
     expect(post._builder.filters).toEqual({ id: 1, title: 'Cool' })
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
     let errorModel = () => {
+      // @ts-ignore
       const post = Post.where()
     }
 
@@ -105,6 +116,7 @@ describe('Query builder', () => {
     )
 
     errorModel = () => {
+      // @ts-ignore
       const post = Post.where('id')
     }
 
@@ -124,11 +136,13 @@ describe('Query builder', () => {
   test('whereIn() sets properly the builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
+    // @ts-ignore
     expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {
     let errorModel = () => {
+      // @ts-ignore
       const post = Post.whereIn('id', 'foo')
     }
 
@@ -140,11 +154,13 @@ describe('Query builder', () => {
   test('page() sets properly the builder', () => {
     let post = Post.page(3)
 
+    // @ts-ignore
     expect(post._builder.pageValue).toEqual(3)
   })
 
   test('page() throws a exception when value is not a number', () => {
     let errorModel = () => {
+      // @ts-ignore
       const post = Post.page('foo')
     }
 
@@ -154,11 +170,13 @@ describe('Query builder', () => {
   test('limit() sets properly the builder', () => {
     let post = Post.limit(10)
 
+    // @ts-ignore
     expect(post._builder.limitValue).toEqual(10)
   })
 
   test('limit() throws a exception when value is not a number', () => {
     let errorModel = () => {
+      // @ts-ignore
       const post = Post.limit('foo')
     }
 
@@ -180,6 +198,7 @@ describe('Query builder', () => {
   test('select() for single entity', () => {
     let post = Post.select('age', 'firstname')
 
+    // @ts-ignore
     expect(post._builder.fields.posts).toEqual('age,firstname')
   })
 
@@ -189,18 +208,22 @@ describe('Query builder', () => {
       user: ['age', 'firstname']
     })
 
+    // @ts-ignore
     expect(post._builder.fields.posts).toEqual('title,content')
+    // @ts-ignore
     expect(post._builder.fields.user).toEqual('age,firstname')
   })
 
   test('params() sets properly the builder', () => {
     let post = Post.params({ doSomething: 'yes' })
 
+    // @ts-ignore
     expect(post._builder.payload).toEqual({ doSomething: 'yes' })
   })
 
   test('params() throws a exception when the payload is not an object', () => {
     let errorModel = () => {
+      // @ts-ignore
       const post = Post.params()
     }
 
@@ -212,7 +235,9 @@ describe('Query builder', () => {
 
     const query = '?filter[title]=Cool&page=4'
 
+    // @ts-ignore
     expect(post._builder.query()).toEqual(query)
+    // @ts-ignore
     expect(post._builder.query()).toEqual(query)
   })
 })
