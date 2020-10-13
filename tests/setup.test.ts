@@ -1,10 +1,8 @@
 import EmptyBaseModel from './dummy/models/EmptyBaseModel'
 
 import Post from './dummy/models/Post'
-import User from './dummy/models/User'
 
 describe('Setup models', () => {
-
   let errorModel = {}
 
   test('it throws an error if $http property has not been set', () => {

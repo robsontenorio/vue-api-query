@@ -18,11 +18,9 @@
 
 # Elegant and simple way to build requests for REST API
 
-This package helps you quickly to build requests for REST API. Move your logic and backend requests to dedicated classes. Keep your code clean and elegant. 
+This package helps you quickly to build requests for REST API. Move your logic and backend requests to dedicated classes. Keep your code clean and elegant.
 
-
-🔥  If you use Laravel, this package matches perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
-
+🔥 If you use Laravel, this package matches perfectly with [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
 
 # Basic usage
 
@@ -31,22 +29,19 @@ Give me the result for a given criteria, include some entities, append extra fie
 ```js
 // GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&orderBy=-created_at,category_id
 
-let posts = await Post
-  .where('status', 'ACTIVE')
+let posts = await Post.where('status', 'ACTIVE')
   .include('user', 'category')
   .append('likes')
-  .orderBy('-created_at', 'category_id')  
+  .orderBy('-created_at', 'category_id')
   .get()
-
 ```
+
 Just give me the first occurrence from response:
 
 ```js
 // GET /posts?filter[status]=ACTIVE
 
-let post = await Post
-  .where('status', 'ACTIVE')
-  .first()
+let post = await Post.where('status', 'ACTIVE').first()
 ```
 
 Nice! Now I want a specific object:
@@ -57,11 +52,10 @@ Nice! Now I want a specific object:
 let post = await Post.find(1)
 ```
 
-
 Edit this and send it back:
 
 ```js
-// PUT /posts/1 
+// PUT /posts/1
 
 post.title = 'Awsome!'
 post.save()
@@ -78,13 +72,12 @@ post.delete()
 Let's create a new object and post it:
 
 ```js
-let post = new Post({title: 'Cool!'})
+let post = new Post({ title: 'Cool!' })
 
 // or
 
 let post = new Post({})
 post.title = 'Another one'
-
 
 // POST /post
 
@@ -94,15 +87,11 @@ post.save()
 We can use relationships:
 
 ```js
-
 // GET /users/1
 let user = await User.find(1)
 
 // GET users/1/posts
-let posts = await user
-  .posts()
-  .get()
-
+let posts = await user.posts().get()
 ```
 
 # Installation
@@ -116,11 +105,11 @@ yarn add vue-api-query
 Create a plugin `~/plugins/vue-api-query.js`
 
 ```js
-// inject global axios instance as http client to Model  
+// inject global axios instance as http client to Model
 
 import { Model } from 'vue-api-query'
 
-export default function (ctx, injext) {  
+export default function (ctx, injext) {
   Model.$http = ctx.$axios
 }
 ```
@@ -128,11 +117,8 @@ export default function (ctx, injext) {
 And register it on `nuxt.config.js`
 
 ```js
-plugins: [
-  '~plugins/vue-api-query'
-]
+plugins: ['~plugins/vue-api-query']
 ```
-
 
 ## VUE
 
@@ -162,34 +148,31 @@ Your base model should extend from `vue-api-query` Model. Use base models is goo
 import { Model as BaseModel } from 'vue-api-query'
 
 export default class Model extends BaseModel {
-
   // define a base url for a REST API
-  baseURL () {
+  baseURL() {
     return 'http://my-api.com'
   }
 
-  // implement a default request method 
-  request (config) {
+  // implement a default request method
+  request(config) {
     return this.$http.request(config)
   }
 }
-
 ```
 
 ## Define your domain models
 
-Just extends from your base model, implement the `resource()` method... and done! 
+Just extends from your base model, implement the `resource()` method... and done!
 
-**models/User.js**
+**models/User.ts**
 
 ```js
 import Model from './Model'
 
 export default class User extends Model {
-  resource()
-  {
-    return 'users'
-  }
+  resource() {
+    return 'users'
+  }
 }
 ```
 
@@ -199,8 +182,7 @@ But, if your model does not work with default primary key ('id'),you need to ove
 import Model from './Model'
 
 export default class User extends Model {
-  primaryKey()
-  {
+  primaryKey() {
     return 'someId'
   }
 }
@@ -212,20 +194,16 @@ Of course you can add extra methods and computed properties like this:
 import Model from './Model'
 
 export default class User extends Model {
-  
   // computed properties are reactive -> user.fullname
-  // make sure to use "get" prefix 
-  get fullname()
-  {
+  // make sure to use "get" prefix
+  get fullname() {
     return `${this.firstname} ${this.lastname}`
   }
 
   // method -> user.makeBirthday()
-  makeBirthday()
-  {
+  makeBirthday() {
     this.age += 1
   }
-
 }
 ```
 
@@ -236,8 +214,7 @@ import Model from './Model'
 import Post from './Post'
 
 export default class User extends Model {
-
-  posts () {
+  posts() {
     return this.hasMany(Post)
   }
 }
@@ -250,9 +227,7 @@ It's ok if in some situations you need to call a custom resource from a already 
 let posts = await Post.get()
 
 // GET /posts/latest
-let latest = await Post
-  .custom('posts/latest')
-  .first()  
+let latest = await Post.custom('posts/latest').first()
 ```
 
 The `custom()` method can be called with multiple arguments to build
@@ -260,53 +235,50 @@ resource endpoints and hierarchies. Simply supply them in the correct order.
 Any combination of strings and models is possible.
 
 ```js
-    let user = new User({ id: 1 })
-    let post = new Post()
+let user = new User({ id: 1 })
+let post = new Post()
 
-    // GET /users/1/posts/latest
-    const result = await Post.custom(user, post, 'latest').get()
+// GET /users/1/posts/latest
+const result = await Post.custom(user, post, 'latest').get()
 ```
-
 
 # Full example
 
-**/models/Post.js**
+**/models/Post.ts**
+
 ```js
 import Model from './Model'
 
 export default class Post extends Model {
   // done :)
-  resource()
-  {
-    return 'posts'
-   }
+  resource() {
+    return 'posts'
+  }
 }
 ```
-**/models/User.js**
+
+**/models/User.ts**
 
 ```js
 import Model from './Model'
 import Post from './Post'
 
-export default class User extends Model {  
-  resource()
-  {
-    return 'users'
-  }
+export default class User extends Model {
+  resource() {
+    return 'users'
+  }
 
-  posts () {
+  posts() {
     return this.hasMany(Post)
   }
 
   // computed properties :)
-  get fullname()
-  {
+  get fullname() {
     return `${this.firstname} ${this.lastname}`
   }
 
   // methods :)
-  makeBirthday()
-  {
+  makeBirthday() {
     this.age += 1
   }
 }
@@ -348,27 +320,23 @@ Then `save()` method will send back the new payload:
 ```
 
 You also can do that:
+
 ```js
 //GET /posts?filter[status]=ACTIVE,ARCHIVED
 
-let posts = await Post
-  .whereIn('status', ['ACTIVE', 'ARCHIVED'])
-  .get()
-
+let posts = await Post.whereIn('status', ['ACTIVE', 'ARCHIVED']).get()
 ```
 
 If you like the "promise way" just do it like this:
 
 ```js
-
 // single object
 
 let user
 
-User
-  .where('status', 'ACTIVE')
+User.where('status', 'ACTIVE')
   .first()
-  .then(response => {
+  .then((response) => {
     user = response
   })
 
@@ -376,24 +344,22 @@ User
 
 let users
 
-User
-  .where('status', 'ACTIVE')
+User.where('status', 'ACTIVE')
   .get()
-  .then(response => {
+  .then((response) => {
     users = response
-    
+
     // or (depending on backend response)
 
-    users = response.data 
+    users = response.data
   })
-
 ```
 
 And in some page/component:
 
 ```js
 <template>
-  User: 
+  User:
   <code>
     {{ user }}
   </code>
@@ -457,39 +423,41 @@ comment.text = 'Changed!'
 
 // PUT /posts/{id_post}/comments/{id_comment}
 
-await comment.save() 
+await comment.save()
 
 // DELETE /posts/{id_post}/comments/{id_comment}
 
-await comment.delete() 
+await comment.delete()
 ```
 
-Creating new related objects is easy. Just use the `for()` method,  passing the related object.
+Creating new related objects is easy. Just use the `for()` method, passing the related object.
 
-```js  
-  let post = new Post({title: 'Woo!'})  
+```js
+let post = new Post({ title: 'Woo!' })
 
-  // POST /posts
-  await post.save()
+// POST /posts
+await post.save()
 
-  let comment = new Comment({text: 'New one for this post'}).for(post)
+let comment = new Comment({ text: 'New one for this post' }).for(post)
 
-  // POST /posts/1/comments
-  await comment.save()
+// POST /posts/1/comments
+await comment.save()
 ```
 
 The `for()` method can take multiple objects to build hierarchy levels.
 
 ```js
-  let user = new User({id: 1})
-  let post = await user.posts().first()
-  
-  // Related objects go in order of their appearance in the URL.
-  let comment = new Comment({text: 'for() takes multiple objects.'}).for(user, post)
+let user = new User({ id: 1 })
+let post = await user.posts().first()
 
-  // POST /users/1/posts/1/comments
-  await comment.save()
+// Related objects go in order of their appearance in the URL.
+let comment = new Comment({ text: 'for() takes multiple objects.' }).for(
+  user,
+  post
+)
 
+// POST /users/1/posts/1/comments
+await comment.save()
 ```
 
 If you need to get a nested resource, without getting the parent model at first, you can do something like this.
@@ -497,11 +465,11 @@ If you need to get a nested resource, without getting the parent model at first,
 ```js
 // GET /users/1/posts
 
-let User = new User({id: 1})
+let User = new User({ id: 1 })
 let Post = await User.posts().get()
 
 // GET /users/1/posts/2
-let User = new User({id: 1})
+let User = new User({ id: 1 })
 let Post = await User.posts().find(2)
 ```
 
@@ -510,11 +478,11 @@ And just for convenience you can POST or PUT with any payload to backend:
 ```js
 // POST /posts/{id_post}/comments
 
-await this.posts.comments().attach(payload) 
+await this.posts.comments().attach(payload)
 
 // PUT /posts/{id_post}/comments
 
-await this.posts.comments().sync(payload) 
+await this.posts.comments().sync(payload)
 ```
 
 You can also apply a model instance to a nested object by setting the key and the model in `relations` method.
@@ -535,11 +503,11 @@ If the backend responds with:
 
 We just need to set `user` to User model:
 
+**/models/Post.ts**
 
-**/models/Post.js**
 ```js
 class Post extends Model {
-  relations () {
+  relations() {
     return {
       // Apply User model to `user` object
       user: User
@@ -588,10 +556,11 @@ It also works for collections. So if the backend responds with:
 
 Then we just need to set `user` to User model and `replies` to Comment model:
 
-**/models/Comment.js**
+**/models/Comment.ts**
+
 ```js
 class Comment extends Model {
-  relations () {
+  relations() {
     return {
       // Apply User model to `user` object
       user: User,
@@ -607,12 +576,7 @@ class Comment extends Model {
 ```js
 // GET /users?sort=firstname&page=1&limit=20
 
-let users = await User        
-        .orderBy('firstname')
-        .page(1) 
-        .limit(20)
-        .get()
-
+let users = await User.orderBy('firstname').page(1).limit(20).get()
 ```
 
 # Selecting fields
@@ -622,9 +586,7 @@ Just want only some fields?
 ```js
 // GET posts?fields[posts]=title,content
 
-let post = await Post
-   .select(['title', 'content'])
-   .get() 
+let post = await Post.select(['title', 'content']).get()
 ```
 
 With related entities:
@@ -632,13 +594,12 @@ With related entities:
 ```js
 // GET posts?include=user&fields[posts]=title,content&fields[user]=firstname,age
 
-let post = await Post
-   .select({
-      posts: ['title', 'content'],
-      user: ['age', 'firstname']
-    })
-   .include('user')
-   .get() 
+let post = await Post.select({
+  posts: ['title', 'content'],
+  user: ['age', 'firstname']
+})
+  .include('user')
+  .get()
 ```
 
 **TIP:** If you are using spatie/laravel-query-builder, when using related entities, you must pass extra fields:
@@ -646,13 +607,12 @@ let post = await Post
 ```js
 // GET posts?include=user&fields[posts]=title,content,user_id&fields[user]=id,firstname,age
 
-let post = await Post
-   .select({
-      posts: ['title', 'content', 'user_id'],  //user_id
-      user: ['id', 'age', 'firstname']         //id
-    })
-   .include('user')
-   .get() 
+let post = await Post.select({
+  posts: ['title', 'content', 'user_id'], //user_id
+  user: ['id', 'age', 'firstname'] //id
+})
+  .include('user')
+  .get()
 ```
 
 # Custom params
@@ -662,12 +622,10 @@ If you need to pass any extra param not provided by `vue-api-query` pattern, jus
 ```js
 // GET /users?doSomething=yes&process=no
 
-let users = await User
-  .params({
-    doSomething: 'yes',
-    process: 'no'
-  })
-  .get()
+let users = await User.params({
+  doSomething: 'yes',
+  process: 'no'
+}).get()
 ```
 
 Of course you can chain it with other methods, including on relationships.
@@ -675,11 +633,7 @@ Of course you can chain it with other methods, including on relationships.
 ```js
 // GET /posts/1/comments?include=user&blah=123
 
-let comments = await post
-  .comments()
-  .include('user')
-  .params({blah: 123})
-  .get()
+let comments = await post.comments().include('user').params({ blah: 123 }).get()
 ```
 
 # Customize query parameters name
@@ -692,8 +646,7 @@ If you need to change default values just override `parametersName()` on your Ba
 import { Model as BaseModel } from 'vue-api-query'
 
 export default class Model extends BaseModel {
-
-  parameterNames () {
+  parameterNames() {
     return {
       include: 'include_custom',
       filter: 'filter_custom',
@@ -770,7 +723,7 @@ user.makeBirthday()
 This **WILL NOT** be converted into `User` model, because the main data is not the root element or it is not wrapped by `data` attribute.
 
 ```js
-user: {  
+user: {
     id: 1,
     firstname: 'John',
     lastname: 'Doe',
@@ -788,7 +741,7 @@ let users = await User.get()
 
 ```js
 // works - array of object is the root element
-[
+;[
   {
     id: 1,
     firstname: 'John',
@@ -805,7 +758,7 @@ let users = await User.get()
 ```
 
 ```js
-// works - `data` exists in the root and contains the array of objects 
+// works - `data` exists in the root and contains the array of objects
 {
   data: [
     {
@@ -822,7 +775,7 @@ let users = await User.get()
     }
   ],
   someField: '',
-  anotherOne: '',  
+  anotherOne: '',
 }
 
 // Normally you would handle the response like this
@@ -860,22 +813,19 @@ This **WILL NOT** be converted into an array of `User` model.
     }
   ],
   someField: '',
-  anotherOne: '',  
+  anotherOne: '',
 }
 
 ```
 
-
 # Thanks
 
-* Inspiration from [milroyfraser/sarala](https://github.com/milroyfraser/sarala).
+- Inspiration from [milroyfraser/sarala](https://github.com/milroyfraser/sarala).
 
-* Elegancy from [DavidDuwaer/coloquent](https://github.com/DavidDuwaer/Coloquent). 
-
+- Elegancy from [DavidDuwaer/coloquent](https://github.com/DavidDuwaer/Coloquent).
 
 Why another package if we have those? Because currently (march, 2018) they restricted backend response to JSON API specification.
 
 # Contact
 
 Twitter [@robsontenorio](https://twitter.com/robsontenorio)
-

@@ -8,7 +8,7 @@
 
 export default class StaticModel {
   static instance() {
-    return new this
+    return new this()
   }
 
   static include(...args) {

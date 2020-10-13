@@ -9,7 +9,7 @@ export default class ModelWithParamNames extends BaseModel {
       fields: 'fields_custom',
       append: 'append_custom',
       page: 'page_custom',
-      limit: 'limit_custom',
+      limit: 'limit_custom'
     }
   }
 }

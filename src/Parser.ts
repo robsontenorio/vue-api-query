@@ -5,7 +5,6 @@
 import qs from 'qs'
 
 export default class Parser {
-
   constructor(builder) {
     this.builder = builder
     this.uri = ''
@@ -67,7 +66,7 @@ export default class Parser {
   }
 
   prepend() {
-    return (this.uri === '') ? '?' : '&'
+    return this.uri === '' ? '?' : '&'
   }
 
   parameterNames() {
@@ -83,7 +82,11 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + this.parameterNames().include + '=' + this.builder.includes
+    this.uri +=
+      this.prepend() +
+      this.parameterNames().include +
+      '=' +
+      this.builder.includes
   }
 
   appends() {
@@ -91,7 +94,8 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + this.parameterNames().append + '=' + this.builder.appends
+    this.uri +=
+      this.prepend() + this.parameterNames().append + '=' + this.builder.appends
   }
 
   fields() {
@@ -117,7 +121,8 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + this.parameterNames().sort + '=' + this.builder.sorts
+    this.uri +=
+      this.prepend() + this.parameterNames().sort + '=' + this.builder.sorts
   }
 
   page() {
@@ -125,7 +130,8 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + this.parameterNames().page + '=' + this.builder.pageValue
+    this.uri +=
+      this.prepend() + this.parameterNames().page + '=' + this.builder.pageValue
   }
 
   limit() {
@@ -133,7 +139,11 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + this.parameterNames().limit + '=' + this.builder.limitValue
+    this.uri +=
+      this.prepend() +
+      this.parameterNames().limit +
+      '=' +
+      this.builder.limitValue
   }
 
   payload() {
@@ -141,6 +151,7 @@ export default class Parser {
       return
     }
 
-    this.uri += this.prepend() + qs.stringify(this.builder.payload, { encode: false })
+    this.uri +=
+      this.prepend() + qs.stringify(this.builder.payload, { encode: false })
   }
 }

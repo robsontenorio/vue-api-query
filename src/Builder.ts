@@ -2,10 +2,9 @@
  * Prepare attributes to be parsed
  */
 
-import Parser from './Parser';
+import Parser from './Parser'
 
 export default class Builder {
-
   constructor(model) {
     this.model = model
     this.includes = []
@@ -21,7 +20,7 @@ export default class Builder {
     this.parser = new Parser(this)
   }
 
-  // query string parsed 
+  // query string parsed
   query() {
     return this.parser.query()
   }
@@ -76,7 +75,9 @@ export default class Builder {
 
   whereIn(key, array) {
     if (!Array.isArray(array))
-      throw new Error('The second argument on whereIn() method must be an array.')
+      throw new Error(
+        'The second argument on whereIn() method must be an array.'
+      )
 
     this.filters[key] = array.join(',')
 

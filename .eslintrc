@@ -20,7 +20,9 @@
     "@typescript-eslint",
     "simple-import-sort"
   ],
-  "ignorePatterns": ["build"],
+  "ignorePatterns": [
+    "build"
+  ],
   "rules": {
     "prettier/prettier": "error",
     "simple-import-sort/sort": "warn"

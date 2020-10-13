@@ -1,11 +1,10 @@
 import Post from './dummy/models/Post'
-import ModelWithParamNames from './dummy/models/ModelWithParamNames';
+import ModelWithParamNames from './dummy/models/ModelWithParamNames'
 import { Model } from '../src'
 import axios from 'axios'
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from 'axios-mock-adapter'
 
 describe('Query builder', () => {
-
   let errorModel = {}
   Model.$http = axios
   let axiosMock = new MockAdapter(axios)
@@ -15,8 +14,7 @@ describe('Query builder', () => {
   })
 
   test('it builds a complex query', () => {
-    const post = Post
-      .include('user')
+    const post = Post.include('user')
       .append('likes')
       .select({
         posts: ['title', 'content'],
@@ -28,18 +26,18 @@ describe('Query builder', () => {
       .limit(10)
       .orderBy('created_at')
       .params({
-        'doSomething': 'yes',
-        'process': 'no'
+        doSomething: 'yes',
+        process: 'no'
       })
 
-    const query = '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10&doSomething=yes&process=no'
+    const query =
+      '?include=user&append=likes&fields[posts]=title,content&fields[user]=age,firstname&filter[title]=Cool&filter[status]=ACTIVE&sort=created_at&page=3&limit=10&doSomething=yes&process=no'
 
     expect(post._builder.query()).toEqual(query)
   })
 
   test('it builds a complex query with custom param names', () => {
-    const post = ModelWithParamNames
-      .include('user')
+    const post = ModelWithParamNames.include('user')
       .append('likes')
       .select({
         posts: ['title', 'content'],
@@ -51,7 +49,8 @@ describe('Query builder', () => {
       .limit(10)
       .orderBy('created_at')
 
-    const query = '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
+    const query =
+      '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
 
     expect(post._builder.query()).toEqual(query)
   })
@@ -101,13 +100,17 @@ describe('Query builder', () => {
       const post = Post.where()
     }
 
-    expect(errorModel).toThrow('The KEY and VALUE are required on where() method.')
+    expect(errorModel).toThrow(
+      'The KEY and VALUE are required on where() method.'
+    )
 
     errorModel = () => {
       const post = Post.where('id')
     }
 
-    expect(errorModel).toThrow('The KEY and VALUE are required on where() method.')
+    expect(errorModel).toThrow(
+      'The KEY and VALUE are required on where() method.'
+    )
   })
 
   test('where() throws a exception when second parameter is not primitive', () => {
@@ -129,9 +132,10 @@ describe('Query builder', () => {
       const post = Post.whereIn('id', 'foo')
     }
 
-    expect(errorModel).toThrow('The second argument on whereIn() method must be an array.')
+    expect(errorModel).toThrow(
+      'The second argument on whereIn() method must be an array.'
+    )
   })
-
 
   test('page() sets properly the builder', () => {
     let post = Post.page(3)
@@ -158,7 +162,9 @@ describe('Query builder', () => {
       const post = Post.limit('foo')
     }
 
-    expect(errorModel).toThrow('The VALUE must be an integer on limit() method.')
+    expect(errorModel).toThrow(
+      'The VALUE must be an integer on limit() method.'
+    )
   })
 
   test('select() with no parameters', () => {
@@ -166,7 +172,9 @@ describe('Query builder', () => {
       const post = Post.select()
     }
 
-    expect(errorModel).toThrow('You must specify the fields on select() method.')
+    expect(errorModel).toThrow(
+      'You must specify the fields on select() method.'
+    )
   })
 
   test('select() for single entity', () => {
@@ -186,9 +194,9 @@ describe('Query builder', () => {
   })
 
   test('params() sets properly the builder', () => {
-    let post = Post.params({ 'doSomething': 'yes' })
+    let post = Post.params({ doSomething: 'yes' })
 
-    expect(post._builder.payload).toEqual({ 'doSomething': 'yes' })
+    expect(post._builder.payload).toEqual({ doSomething: 'yes' })
   })
 
   test('params() throws a exception when the payload is not an object', () => {
@@ -200,9 +208,7 @@ describe('Query builder', () => {
   })
 
   test('it resets the uri upon query generation when the query is regenerated a second time', () => {
-    const post = Post
-      .where('title', 'Cool')
-      .page(4)
+    const post = Post.where('title', 'Cool').page(4)
 
     const query = '?filter[title]=Cool&page=4'
 

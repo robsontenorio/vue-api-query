@@ -9,7 +9,7 @@ export default class Post extends BaseModel {
 
   relations() {
     return {
-      user: User,
+      user: User
     }
   }
 }
