@@ -1,8 +1,28 @@
 {
-    "parser": "babel-eslint",
-    "parserOptions": {
-        "sourceType": "module",
-        "allowImportExportEverywhere": false,
-        "codeFrame": true
-    }
+  "env": {
+    "es2020": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "prettier",
+    "@typescript-eslint",
+    "simple-import-sort"
+  ],
+  "ignorePatterns": ["build"],
+  "rules": {
+    "prettier/prettier": "error",
+    "simple-import-sort/sort": "warn"
+  }
 }
