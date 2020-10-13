@@ -1,12 +1,35 @@
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+
 import Builder from './Builder'
-import StaticModel from './StaticModel'
 
-export default class Model extends StaticModel {
-  private _builder: Builder
+type Constructor<T> = new (...args: any[]) => T
 
-  constructor(...attributes) {
-    super()
+type ThisClass<InstanceType extends Model> = {
+  instance<T extends Model>(this: ThisClass<T>): T
+  new (...args: unknown[]): InstanceType
+}
 
+type UnknownObject = {
+  [name: string]: any
+}
+
+type WrappedCollection<T> = {
+  data: T[] | WrappedModel<T>[]
+}
+
+type WrappedModel<T> = {
+  data: T
+}
+
+export default abstract class Model {
+  private readonly _builder: Builder | undefined
+  public static $http: AxiosInstance
+  private _fromResource: string | undefined
+  private _customResource: string | undefined;
+
+  [name: string]: any
+
+  protected constructor(...attributes: unknown[]) {
     if (attributes.length === 0) {
       this._builder = new Builder(this)
     } else {
@@ -31,23 +54,29 @@ export default class Model extends StaticModel {
    *  Setup
    */
 
-  get $http() {
+  abstract baseURL(): string
+
+  abstract request<T = any, R = AxiosResponse<T>>(
+    config: AxiosRequestConfig
+  ): Promise<R>
+
+  get $http(): AxiosInstance {
     return Model.$http
   }
 
-  resource() {
+  resource(): string {
     return `${this.constructor.name.toLowerCase()}s`
   }
 
-  primaryKey() {
+  primaryKey(): string {
     return 'id'
   }
 
-  getPrimaryKey() {
+  getPrimaryKey(): string | number {
     return this[this.primaryKey()]
   }
 
-  custom(...args) {
+  custom(...args: unknown[]): this {
     if (args.length === 0) {
       throw new Error('The custom() method takes a minimum of one argument.')
     }
@@ -60,21 +89,18 @@ export default class Model extends StaticModel {
     let resource = ''
 
     args.forEach((value) => {
-      switch (true) {
-        case typeof value === 'string':
-          resource += slash + value.replace(/^\/+/, '')
-          break
-        case value instanceof Model:
-          resource += slash + value.resource()
+      if (typeof value === 'string') {
+        resource += slash + value.replace(/^\/+/, '')
+      } else if (value instanceof Model) {
+        resource += slash + value.resource()
 
-          if (value.isValidId(value.getPrimaryKey())) {
-            resource += '/' + value.getPrimaryKey()
-          }
-          break
-        default:
-          throw new Error(
-            'Arguments to custom() must be strings or instances of Model.'
-          )
+        if (value.isValidId(value.getPrimaryKey())) {
+          resource += '/' + value.getPrimaryKey()
+        }
+      } else {
+        throw new Error(
+          'Arguments to custom() must be strings or instances of Model.'
+        )
       }
 
       if (!slash.length) {
@@ -87,20 +113,20 @@ export default class Model extends StaticModel {
     return this
   }
 
-  hasMany(model) {
-    let instance = new model()
-    let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
+  hasMany<T extends Model>(model: Constructor<T>): T {
+    const instance = new model()
+    const url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
     instance._from(url)
 
     return instance
   }
 
-  _from(url) {
+  _from(url: string): void {
     Object.defineProperty(this, '_fromResource', { get: () => url })
   }
 
-  for(...args) {
+  for(...args: unknown[]): this {
     if (args.length === 0) {
       throw new Error('The for() method takes a minimum of one argument.')
     }
@@ -108,7 +134,7 @@ export default class Model extends StaticModel {
     let url = `${this.baseURL()}`
 
     args.forEach((object) => {
-      if (object instanceof Model === false) {
+      if (!(object instanceof Model)) {
         throw new Error(
           'The object referenced on for() method is not a valid Model.'
         )
@@ -130,7 +156,9 @@ export default class Model extends StaticModel {
     return this
   }
 
-  relations() {
+  relations(): {
+    [relation: string]: Constructor<Model>
+  } {
     return {}
   }
 
@@ -138,16 +166,16 @@ export default class Model extends StaticModel {
    * Helpers
    */
 
-  hasId() {
+  hasId(): boolean {
     const id = this.getPrimaryKey()
     return this.isValidId(id)
   }
 
-  isValidId(id) {
+  isValidId(id: number | string): boolean {
     return id !== undefined && id !== 0 && id !== ''
   }
 
-  endpoint() {
+  endpoint(): string {
     if (this._fromResource) {
       if (this.hasId()) {
         return `${this._fromResource}/${this.getPrimaryKey()}`
@@ -163,7 +191,15 @@ export default class Model extends StaticModel {
     }
   }
 
-  parameterNames() {
+  parameterNames(): {
+    include: string
+    filter: string
+    sort: string
+    fields: string
+    append: string
+    page: string
+    limit: string
+  } {
     return {
       include: 'include',
       filter: 'filter',
@@ -179,55 +215,91 @@ export default class Model extends StaticModel {
    *  Query
    */
 
-  include(...args) {
+  include(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.include(...args)
 
     return this
   }
 
-  append(...args) {
+  append(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.append(...args)
 
     return this
   }
 
-  select(...fields) {
+  select(...fields: (string[] | { [p: string]: string[] })[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.select(...fields)
 
     return this
   }
 
-  where(field, value) {
+  where(field: string, value: unknown): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.where(field, value)
 
     return this
   }
 
-  whereIn(field, array) {
+  whereIn(field: string, array: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.whereIn(field, array)
 
     return this
   }
 
-  orderBy(...args) {
+  orderBy(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.orderBy(...args)
 
     return this
   }
 
-  page(value) {
+  page(value: number): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.page(value)
 
     return this
   }
 
-  limit(value) {
+  limit(value: number): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.limit(value)
 
     return this
   }
 
-  params(payload) {
+  params(payload: Record<string, unknown>): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     this._builder.params(payload)
 
     return this
@@ -237,7 +309,10 @@ export default class Model extends StaticModel {
    * Result
    */
 
-  _applyInstance(data, model = this.constructor) {
+  _applyInstance<T extends Model>(
+    data: UnknownObject,
+    model: Constructor<T> = this.constructor as Constructor<T>
+  ): T {
     const item = new model(data)
 
     if (this._fromResource) {
@@ -247,17 +322,22 @@ export default class Model extends StaticModel {
     return item
   }
 
-  _applyInstanceCollection(data, model = this.constructor) {
-    let collection = data.data || data
-    collection = Array.isArray(collection) ? collection : [collection]
+  _applyInstanceCollection<T extends Model>(
+    data: UnknownObject | UnknownObject[],
+    model: Constructor<T> = this.constructor as Constructor<T>
+  ): T[] {
+    let collection: UnknownObject | UnknownObject[] = data
 
-    collection = collection.map((c) => {
+    collection = Array.isArray(collection)
+      ? collection
+      : [collection?.data || collection]
+
+    return collection.map((c: UnknownObject) => {
       return this._applyInstance(c, model)
     })
-    return collection
   }
 
-  _applyRelations(model) {
+  _applyRelations(model: this): void {
     const relations = model.relations()
 
     for (const relation of Object.keys(relations)) {
@@ -288,112 +368,123 @@ export default class Model extends StaticModel {
     }
   }
 
-  first() {
-    return this.get().then((response) => {
-      let item
-
-      if (response.data) {
-        item = response.data[0]
-      } else {
-        item = response[0]
-      }
-
-      return item || {}
-    })
+  first(): Promise<this | WrappedModel<this>> {
+    return this.get().then((response) =>
+      Array.isArray(response) ? response[0] : response.data[0] || {}
+    )
   }
 
-  $first() {
-    return this.first().then((response) => response.data || response)
+  $first(): Promise<this> {
+    return this.first().then((response) =>
+      'data' in response ? response.data : response
+    )
   }
 
-  find(identifier) {
+  find(identifier: number | string): Promise<this | WrappedModel<this>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
-    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-    let url = `${base}/${identifier}${this._builder.query()}`
 
-    return this.request({
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    const url = `${base}/${identifier}${this._builder.query()}`
+
+    return this.request<this | WrappedModel<this>>({
       url,
       method: 'GET'
     }).then((response) => {
-      return this._applyInstance(response.data)
+      if ('data' in response.data) {
+        return response.data
+      }
+
+      return this._applyInstance<this>(response.data)
     })
   }
 
-  $find(identifier) {
+  $find(identifier: number | string): Promise<this> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on $find() method.')
     }
 
     return this.find(identifier).then((response) =>
-      this._applyInstance(response.data || response)
+      this._applyInstance<this>('data' in response ? response.data : response)
     )
   }
 
-  get() {
+  get(): Promise<this[] | WrappedModel<this>[] | WrappedCollection<this>> {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     base = this._customResource
       ? `${this.baseURL()}/${this._customResource}`
       : base
-    let url = `${base}${this._builder.query()}`
+    const url = `${base}${this._builder.query()}`
 
-    return this.request({
+    return this.request<
+      this[] | WrappedModel<this>[] | WrappedCollection<this>
+    >({
       url,
       method: 'GET'
     }).then((response) => {
-      let collection = this._applyInstanceCollection(response.data)
+      const collection = this._applyInstanceCollection<this>(response.data)
 
-      if (response.data.data !== undefined) {
-        response.data.data = collection
-      } else {
+      if (Array.isArray(response.data)) {
         response.data = collection
+      } else {
+        response.data.data = collection
       }
 
       return response.data
     })
   }
 
-  $get() {
-    return this.get().then((response) => response.data || response)
+  $get(): Promise<this[] | WrappedModel<this>[]> {
+    return this.get().then((response) =>
+      Array.isArray(response) ? response : response.data
+    )
   }
 
   /**
    * Common CRUD operations
    */
 
-  delete() {
+  delete(): Promise<AxiosResponse<unknown>> {
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
 
-    return this.request({
+    return this.request<unknown>({
       url: this.endpoint(),
       method: 'DELETE'
     }).then((response) => response)
   }
 
-  save() {
+  save(): Promise<this | WrappedModel<this>> {
     return this.hasId() ? this._update() : this._create()
   }
 
-  _create() {
-    return this.request({
+  _create(): Promise<this | WrappedModel<this>> {
+    return this.request<this>({
       method: 'POST',
       url: this.endpoint(),
       data: this
     }).then((response) => {
-      return this._applyInstance(response.data)
+      return this._applyInstance<this>(response.data)
     })
   }
 
-  _update() {
-    return this.request({
+  _update(): Promise<this | WrappedModel<this>> {
+    return this.request<this>({
       method: 'PUT',
       url: this.endpoint(),
       data: this
     }).then((response) => {
-      return this._applyInstance(response.data)
+      return this._applyInstance<this>(response.data)
     })
   }
 
@@ -401,19 +492,159 @@ export default class Model extends StaticModel {
    * Relationship operations
    */
 
-  attach(params) {
-    return this.request({
+  attach(params: unknown): Promise<AxiosResponse<unknown>> {
+    return this.request<unknown>({
       method: 'POST',
       url: this.endpoint(),
       data: params
     }).then((response) => response)
   }
 
-  sync(params) {
-    return this.request({
+  sync(params: unknown): Promise<AxiosResponse<unknown>> {
+    return this.request<unknown>({
       method: 'PUT',
       url: this.endpoint(),
       data: params
     }).then((response) => response)
+  }
+
+  /**
+   * Static
+   */
+
+  static instance<T extends Model>(this: ThisClass<T>): T {
+    return new this()
+  }
+
+  static include<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    const self = this.instance<T>()
+    self.include(...args)
+
+    return self
+  }
+
+  static append<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    const self = this.instance<T>()
+    self.append(...args)
+
+    return self
+  }
+
+  static select<T extends Model>(
+    this: ThisClass<T>,
+    ...fields: (string[] | { [p: string]: string[] })[]
+  ): T {
+    const self = this.instance<T>()
+    self.select(...fields)
+
+    return self
+  }
+
+  static where<T extends Model>(
+    this: ThisClass<T>,
+    field: string,
+    value: unknown
+  ): T {
+    const self = this.instance<T>()
+    self.where(field, value)
+
+    return self
+  }
+
+  static whereIn<T extends Model>(
+    this: ThisClass<T>,
+    field: string,
+    array: unknown[]
+  ): T {
+    const self = this.instance<T>()
+    self.whereIn(field, array)
+
+    return self
+  }
+
+  static orderBy<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    const self = this.instance<T>()
+    self.orderBy(...args)
+
+    return self
+  }
+
+  static page<T extends Model>(this: ThisClass<T>, value: number): T {
+    const self = this.instance<T>()
+    self.page(value)
+
+    return self
+  }
+
+  static limit<T extends Model>(this: ThisClass<T>, value: number): T {
+    const self = this.instance<T>()
+    self.limit(value)
+
+    return self
+  }
+
+  static custom<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    const self = this.instance<T>()
+    self.custom(...args)
+
+    return self
+  }
+
+  static params<T extends Model>(
+    this: ThisClass<T>,
+    payload: Record<string, unknown>
+  ): T {
+    const self = this.instance<T>()
+    self.params(payload)
+
+    return self
+  }
+
+  static first<T extends Model>(
+    this: ThisClass<T>
+  ): Promise<T | WrappedModel<T>> {
+    const self = this.instance<T>()
+
+    return self.first()
+  }
+
+  static $first<T extends Model>(this: ThisClass<T>): Promise<T> {
+    const self = this.instance<T>()
+
+    return self.$first()
+  }
+
+  static find<T extends Model>(
+    this: ThisClass<T>,
+    identifier: number | string
+  ): Promise<T | WrappedModel<T>> {
+    const self = this.instance<T>()
+
+    return self.find(identifier)
+  }
+
+  static $find<T extends Model>(
+    this: ThisClass<T>,
+    identifier: number | string
+  ): Promise<T> {
+    const self = this.instance<T>()
+
+    return self.$find(identifier)
+  }
+
+  static get<T extends Model>(
+    this: ThisClass<T>
+  ): Promise<T[] | WrappedModel<T>[] | WrappedCollection<T>> {
+    const self = this.instance<T>()
+
+    return self.get()
+  }
+
+  static $get<T extends Model>(
+    this: ThisClass<T>
+  ): Promise<T[] | WrappedModel<T>[]> {
+    const self = this.instance<T>()
+
+    return self.$get()
   }
 }
