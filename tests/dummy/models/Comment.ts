@@ -1,9 +1,9 @@
 import BaseModel from './BaseModel'
 
 export default class Comment extends BaseModel {
-  relations () {
+  relations() {
     return {
-      replies: Comment
+      replies: Comment,
     }
   }
 }
