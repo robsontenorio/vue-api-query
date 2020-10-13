@@ -4,14 +4,19 @@
 
 import qs from 'qs'
 
+import Builder from './Builder'
+
 export default class Parser {
-  constructor(builder) {
+  private builder: Builder
+  private uri: string
+
+  constructor(builder: Builder) {
     this.builder = builder
     this.uri = ''
   }
 
   // final query string
-  query() {
+  query(): string {
     this.reset()
     this.includes()
     this.appends()
@@ -25,7 +30,7 @@ export default class Parser {
     return this.uri
   }
 
-  reset() {
+  reset(): void {
     this.uri = ''
   }
 
@@ -33,43 +38,51 @@ export default class Parser {
    * Helpers
    */
 
-  hasIncludes() {
+  hasIncludes(): boolean {
     return this.builder.includes.length > 0
   }
 
-  hasAppends() {
+  hasAppends(): boolean {
     return this.builder.appends.length > 0
   }
 
-  hasFields() {
+  hasFields(): boolean {
     return Object.keys(this.builder.fields).length > 0
   }
 
-  hasFilters() {
+  hasFilters(): boolean {
     return Object.keys(this.builder.filters).length > 0
   }
 
-  hasSorts() {
+  hasSorts(): boolean {
     return this.builder.sorts.length > 0
   }
 
-  hasPage() {
+  hasPage(): boolean {
     return this.builder.pageValue !== null
   }
 
-  hasLimit() {
+  hasLimit(): boolean {
     return this.builder.limitValue !== null
   }
 
-  hasPayload() {
+  hasPayload(): boolean {
     return this.builder.payload !== null
   }
 
-  prepend() {
+  prepend(): string {
     return this.uri === '' ? '?' : '&'
   }
 
-  parameterNames() {
+  parameterNames(): {
+    include: string
+    filter: string
+    sort: string
+    fields: string
+    append: string
+    page: string
+    limit: string
+  } {
     return this.builder.model.parameterNames()
   }
 
@@ -77,7 +90,7 @@ export default class Parser {
    * Parsers
    */
 
-  includes() {
+  includes(): void {
     if (!this.hasIncludes()) {
       return
     }
@@ -89,7 +102,7 @@ export default class Parser {
       this.builder.includes
   }
 
-  appends() {
+  appends(): void {
     if (!this.hasAppends()) {
       return
     }
@@ -98,25 +111,25 @@ export default class Parser {
       this.prepend() + this.parameterNames().append + '=' + this.builder.appends
   }
 
-  fields() {
+  fields(): void {
     if (!this.hasFields()) {
       return
     }
 
-    let fields = { [this.parameterNames().fields]: this.builder.fields }
+    const fields = { [this.parameterNames().fields]: this.builder.fields }
     this.uri += this.prepend() + qs.stringify(fields, { encode: false })
   }
 
-  filters() {
+  filters(): void {
     if (!this.hasFilters()) {
       return
     }
 
-    let filters = { [this.parameterNames().filter]: this.builder.filters }
+    const filters = { [this.parameterNames().filter]: this.builder.filters }
     this.uri += this.prepend() + qs.stringify(filters, { encode: false })
   }
 
-  sorts() {
+  sorts(): void {
     if (!this.hasSorts()) {
       return
     }
@@ -125,7 +138,7 @@ export default class Parser {
       this.prepend() + this.parameterNames().sort + '=' + this.builder.sorts
   }
 
-  page() {
+  page(): void {
     if (!this.hasPage()) {
       return
     }
@@ -134,7 +147,7 @@ export default class Parser {
       this.prepend() + this.parameterNames().page + '=' + this.builder.pageValue
   }
 
-  limit() {
+  limit(): void {
     if (!this.hasLimit()) {
       return
     }
@@ -146,7 +159,7 @@ export default class Parser {
       this.builder.limitValue
   }
 
-  payload() {
+  payload(): void {
     if (!this.hasPayload()) {
       return
     }
