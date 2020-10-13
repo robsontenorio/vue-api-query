@@ -21,7 +21,10 @@ type WrappedModel<T> = {
   data: T
 }
 
-export default abstract class Model {
+export default abstract class Model<
+  isCollectionWrapped extends boolean,
+  isModelWrapped extends boolean
+> {
   private readonly _builder: Builder | undefined
   public static $http: AxiosInstance
   private _fromResource: string | undefined
@@ -156,9 +159,7 @@ export default abstract class Model {
     return this
   }
 
-  relations(): {
-    [relation: string]: Constructor<Model>
-  } {
+  relations(): Record<string, Constructor<Model>> {
     return {}
   }
 
@@ -209,6 +210,22 @@ export default abstract class Model {
       page: 'page',
       limit: 'limit'
     }
+  }
+
+  isModelWrapped<T extends Model>(
+    model: T | WrappedModel<T>
+  ): model is WrappedModel<T> {
+    return 'data' in model
+  }
+
+  isCollectionWrapped<T extends Model>(
+    collection:
+      | T[]
+      | WrappedModel<T>[]
+      | WrappedCollection<T>
+      | WrappedCollection<WrappedModel<T>>
+  ): collection is WrappedCollection<T> | WrappedCollection<WrappedModel<T>> {
+    return !Array.isArray(collection) && 'data' in collection
   }
 
   /**
@@ -325,15 +342,15 @@ export default abstract class Model {
   _applyInstanceCollection<T extends Model>(
     data: UnknownObject | UnknownObject[],
     model: Constructor<T> = this.constructor as Constructor<T>
-  ): T[] {
-    let collection: UnknownObject | UnknownObject[] = data
-
-    collection = Array.isArray(collection)
-      ? collection
-      : [collection?.data || collection]
+  ): T[] | WrappedModel<T>[] {
+    const collection = !Array.isArray(data) && 'data' in data ? data.data : data
 
     return collection.map((c: UnknownObject) => {
-      return this._applyInstance(c, model)
+      if ('data' in c) {
+        return { data: this._applyInstance<T>(c.data, model) }
+      } else {
+        return this._applyInstance<T>(c, model)
+      }
     })
   }
 
@@ -368,10 +385,12 @@ export default abstract class Model {
     }
   }
 
-  first(): Promise<this | WrappedModel<this>> {
-    return this.get().then((response) =>
-      Array.isArray(response) ? response[0] : response.data[0] || {}
-    )
+  first(): Promise<isModelWrapped extends true ? WrappedModel<this> : this> {
+    return this.get().then((response) => {
+      return this.isCollectionWrapped<this>(response)
+        ? response.data[0]
+        : response[0]
+    })
   }
 
   $first(): Promise<this> {
@@ -414,7 +433,15 @@ export default abstract class Model {
     )
   }
 
-  get(): Promise<this[] | WrappedModel<this>[] | WrappedCollection<this>> {
+  get(): Promise<
+    isCollectionWrapped extends true
+      ? isModelWrapped extends true
+        ? WrappedCollection<WrappedModel<this>>
+        : WrappedCollection<this>
+      : isModelWrapped extends true
+      ? WrappedModel<this>[]
+      : this[]
+  > {
     if (!this._builder) {
       throw new Error('Builder methods are not available after fetching data.')
     }
@@ -426,20 +453,29 @@ export default abstract class Model {
     const url = `${base}${this._builder.query()}`
 
     return this.request<
-      this[] | WrappedModel<this>[] | WrappedCollection<this>
+      isCollectionWrapped extends true
+        ? isModelWrapped extends true
+          ? WrappedCollection<WrappedModel<this>>
+          : WrappedCollection<this>
+        : isModelWrapped extends true
+        ? WrappedModel<this>[]
+        : this[]
     >({
       url,
       method: 'GET'
     }).then((response) => {
-      const collection = this._applyInstanceCollection<this>(response.data)
+      let collection = response.data
+      const instancedCollection = this._applyInstanceCollection<this>(
+        collection
+      )
 
-      if (Array.isArray(response.data)) {
-        response.data = collection
+      if (this.isCollectionWrapped<this>(collection)) {
+        collection.data = instancedCollection
       } else {
-        response.data.data = collection
+        collection = instancedCollection
       }
 
-      return response.data
+      return collection
     })
   }
 
