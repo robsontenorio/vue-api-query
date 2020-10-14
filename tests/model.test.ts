@@ -1,4 +1,7 @@
 import Post from './dummy/models/Post'
+import PostEmbed from './dummy/models/PostEmbed'
+import PostCollectionEmbed from './dummy/models/PostCollectionEmbed'
+import PostAllEmbed from './dummy/models/PostAllEmbed'
 import User from './dummy/models/User'
 import Comment from './dummy/models/Comment'
 import { Model } from '../src'
@@ -6,6 +9,7 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
+import { Posts as postsAllEmbedResponse } from './dummy/data/postsAllEmbed'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
@@ -13,7 +17,7 @@ import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 
 describe('Model methods', () => {
   let errorModel = {}
-  Model.$http = axios
+  Model().$http = axios
   let axiosMock = new MockAdapter(axios)
 
   beforeEach(() => {
@@ -25,6 +29,7 @@ describe('Model methods', () => {
 
   test('it throws a error when find() has no parameters', () => {
     errorModel = () => {
+      // @ts-ignore
       const post = Post.find()
     }
 
@@ -33,6 +38,7 @@ describe('Model methods', () => {
 
   test('it throws a error when $find() has no parameters', () => {
     errorModel = () => {
+      // @ts-ignore
       const post = Post.$find()
     }
 
@@ -50,12 +56,43 @@ describe('Model methods', () => {
     expect(post.user).toBeInstanceOf(User)
   })
 
+  test('first() returns first object in array with "data" wrapper as instance of such Model wrapped with "data"', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, {
+      data: postsEmbedResponse
+    })
+
+    const { data: post } = await PostEmbed.first()
+    expect(post).toEqual(postsResponse[0])
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+  })
+
   test('$first() returns first object in array as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
     const post = await Post.$first()
 
     expect(post).toEqual(postsEmbedResponse.data[0])
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+  })
+
+  test('$first() returns first object in array with "data" wrapper as instance of such Model', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const post = await PostEmbed.$first()
+
+    expect(post).toEqual(postsEmbedResponse.data[0])
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+  })
+
+  test('$first() returns first object in array with "data" wrapper as instance of such Model', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
+
+    const post = await PostAllEmbed.$first()
+
+    expect(post).toEqual(postsAllEmbedResponse.data[0].data)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
   })
@@ -67,11 +104,20 @@ describe('Model methods', () => {
     expect(post).toEqual({})
   })
 
-  test('find() method returns a object as instance of such Model', async () => {
+  test('find() method returns an object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
     const post = await Post.find(1)
     expect(post).toEqual(postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+  })
+
+  test('find() method returns an object as instance of such Model wrapped with "data"', async () => {
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
+
+    const { data: post } = await PostEmbed.find(1)
+    expect(post).toEqual(postEmbedResponse.data)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
   })
@@ -96,12 +142,34 @@ describe('Model methods', () => {
     expect(post.user).toBeInstanceOf(User)
   })
 
-  test('get() method returns a array of objects as instance of suchModel', async () => {
+  test('get() method returns an array of objects as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
     const posts = await Post.get()
 
     posts.forEach((post) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post.user).toBeInstanceOf(User)
+    })
+  })
+
+  test('get() method returns an object with "data" wrapper containing an array of objects as instance of such Model wrapped with "data"', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const { data: posts } = await PostCollectionEmbed.get()
+
+    posts.forEach((post) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post.user).toBeInstanceOf(User)
+    })
+  })
+
+  test('get() method returns an object with "data" wrapper containing an array of objects as instance of such Model', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
+
+    const { data: posts } = await PostAllEmbed.get()
+
+    posts.forEach(({ data: post }) => {
       expect(post).toBeInstanceOf(Post)
       expect(post.user).toBeInstanceOf(User)
     })
@@ -473,7 +541,7 @@ describe('Model methods', () => {
     post = await user.posts().find(1)
   })
 
-  test('a request hasMany() method returns a array of Models', async () => {
+  test('a request hasMany() method returns an array of Models', async () => {
     axiosMock.onGet('http://localhost/users/1/posts').reply(200, postsResponse)
 
     const user = new User({ id: 1 })
