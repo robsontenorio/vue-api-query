@@ -5,25 +5,47 @@ import Builder from './Builder'
 type Constructor<T> = new (...args: any[]) => T
 
 type ThisClass<InstanceType extends Model> = {
-  instance<T extends Model>(this: ThisClass<T>): T
+  instance<T extends Model<boolean, boolean>>(this: ThisClass<T>): T
   new (...args: unknown[]): InstanceType
 }
 
-type UnknownObject = {
-  [name: string]: any
-}
-
-type WrappedCollection<T> = {
-  data: T[] | WrappedModel<T>[]
-}
-
-type WrappedModel<T> = {
+type WModel<T> = {
   data: T
 }
 
+type TModel<T extends Model<boolean, boolean>> = T | WModel<T>
+
+type WCollection<T> = {
+  data: T[] | WModel<T>[]
+}
+
+type TWCollection<T extends Model<boolean, boolean>> = WCollection<TModel<T>>
+
+type TCollection<T extends Model<boolean, boolean>> =
+  | TWCollection<T>
+  | TModel<T>[]
+
+type RModel<
+  T extends Model<boolean, boolean>,
+  isWrapped extends boolean
+> = isWrapped extends true ? WModel<T> : T
+
+type WRCollection<
+  T extends Model<boolean, boolean>,
+  isWrapped extends boolean
+> = WCollection<RModel<T, isWrapped>>
+
+type RCollection<
+  T extends Model<boolean, boolean>,
+  isWrappedCollection extends boolean,
+  isWrappedModel extends boolean
+> = isWrappedCollection extends true
+  ? WRCollection<T, isWrappedModel>
+  : RModel<T, isWrappedModel>[]
+
 export default abstract class Model<
-  isCollectionWrapped extends boolean,
-  isModelWrapped extends boolean
+  isWrappedCollection extends boolean,
+  isWrappedModel extends boolean
 > {
   private readonly _builder: Builder | undefined
   public static $http: AxiosInstance
@@ -116,7 +138,7 @@ export default abstract class Model<
     return this
   }
 
-  hasMany<T extends Model>(model: Constructor<T>): T {
+  hasMany<T extends Model<boolean, boolean>>(model: Constructor<T>): T {
     const instance = new model()
     const url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
@@ -159,7 +181,7 @@ export default abstract class Model<
     return this
   }
 
-  relations(): Record<string, Constructor<Model>> {
+  relations(): Record<string, Constructor<Model<boolean, boolean>>> {
     return {}
   }
 
@@ -212,19 +234,15 @@ export default abstract class Model<
     }
   }
 
-  isModelWrapped<T extends Model>(
-    model: T | WrappedModel<T>
-  ): model is WrappedModel<T> {
+  isWrappedModel<T extends Model<boolean, boolean>>(
+    model: TModel<T>
+  ): model is WModel<T> {
     return 'data' in model
   }
 
-  isCollectionWrapped<T extends Model>(
-    collection:
-      | T[]
-      | WrappedModel<T>[]
-      | WrappedCollection<T>
-      | WrappedCollection<WrappedModel<T>>
-  ): collection is WrappedCollection<T> | WrappedCollection<WrappedModel<T>> {
+  isWrappedCollection<T extends Model<boolean, boolean>>(
+    collection: TCollection<T>
+  ): collection is TWCollection<T> {
     return !Array.isArray(collection) && 'data' in collection
   }
 
@@ -326,8 +344,8 @@ export default abstract class Model<
    * Result
    */
 
-  _applyInstance<T extends Model>(
-    data: UnknownObject,
+  _applyInstance<T extends Model<boolean, boolean>>(
+    data: Record<string, any>,
     model: Constructor<T> = this.constructor as Constructor<T>
   ): T {
     const item = new model(data)
@@ -339,13 +357,13 @@ export default abstract class Model<
     return item
   }
 
-  _applyInstanceCollection<T extends Model>(
-    data: UnknownObject | UnknownObject[],
+  _applyInstanceCollection<T extends Model<boolean, boolean>>(
+    data: Record<string, any> | Record<string, any>[],
     model: Constructor<T> = this.constructor as Constructor<T>
-  ): T[] | WrappedModel<T>[] {
+  ): RModel<T, isWrappedModel>[] {
     const collection = !Array.isArray(data) && 'data' in data ? data.data : data
 
-    return collection.map((c: UnknownObject) => {
+    return collection.map((c: Record<string, any>) => {
       if ('data' in c) {
         return { data: this._applyInstance<T>(c.data, model) }
       } else {
@@ -385,9 +403,9 @@ export default abstract class Model<
     }
   }
 
-  first(): Promise<isModelWrapped extends true ? WrappedModel<this> : this> {
+  first(): Promise<isWrappedModel extends true ? WModel<this> : this> {
     return this.get().then((response) => {
-      return this.isCollectionWrapped<this>(response)
+      return this.isWrappedCollection<this>(response)
         ? response.data[0]
         : response[0]
     })
@@ -399,7 +417,7 @@ export default abstract class Model<
     )
   }
 
-  find(identifier: number | string): Promise<this | WrappedModel<this>> {
+  find(identifier: number | string): Promise<this | WModel<this>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
@@ -411,7 +429,7 @@ export default abstract class Model<
     const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     const url = `${base}/${identifier}${this._builder.query()}`
 
-    return this.request<this | WrappedModel<this>>({
+    return this.request<this | WModel<this>>({
       url,
       method: 'GET'
     }).then((response) => {
@@ -433,15 +451,7 @@ export default abstract class Model<
     )
   }
 
-  get(): Promise<
-    isCollectionWrapped extends true
-      ? isModelWrapped extends true
-        ? WrappedCollection<WrappedModel<this>>
-        : WrappedCollection<this>
-      : isModelWrapped extends true
-      ? WrappedModel<this>[]
-      : this[]
-  > {
+  get(): Promise<RCollection<this, isWrappedCollection, isWrappedModel>> {
     if (!this._builder) {
       throw new Error('Builder methods are not available after fetching data.')
     }
@@ -452,26 +462,21 @@ export default abstract class Model<
       : base
     const url = `${base}${this._builder.query()}`
 
-    return this.request<
-      isCollectionWrapped extends true
-        ? isModelWrapped extends true
-          ? WrappedCollection<WrappedModel<this>>
-          : WrappedCollection<this>
-        : isModelWrapped extends true
-        ? WrappedModel<this>[]
-        : this[]
-    >({
-      url,
-      method: 'GET'
-    }).then((response) => {
+    return this.request<RCollection<this, isWrappedCollection, isWrappedModel>>(
+      {
+        url,
+        method: 'GET'
+      }
+    ).then((response) => {
       let collection = response.data
       const instancedCollection = this._applyInstanceCollection<this>(
         collection
       )
 
-      if (this.isCollectionWrapped<this>(collection)) {
+      if (this.isWrappedCollection<this>(collection)) {
         collection.data = instancedCollection
       } else {
+        console.log(collection)
         collection = instancedCollection
       }
 
@@ -479,9 +484,9 @@ export default abstract class Model<
     })
   }
 
-  $get(): Promise<this[] | WrappedModel<this>[]> {
+  $get(): Promise<RModel<this, isWrappedModel>> {
     return this.get().then((response) =>
-      Array.isArray(response) ? response : response.data
+      this.isWrappedCollection(response) ? response.data : response
     )
   }
 
@@ -500,11 +505,11 @@ export default abstract class Model<
     }).then((response) => response)
   }
 
-  save(): Promise<this | WrappedModel<this>> {
+  save(): Promise<this | WModel<this>> {
     return this.hasId() ? this._update() : this._create()
   }
 
-  _create(): Promise<this | WrappedModel<this>> {
+  _create(): Promise<this | WModel<this>> {
     return this.request<this>({
       method: 'POST',
       url: this.endpoint(),
@@ -514,7 +519,7 @@ export default abstract class Model<
     })
   }
 
-  _update(): Promise<this | WrappedModel<this>> {
+  _update(): Promise<this | WModel<this>> {
     return this.request<this>({
       method: 'PUT',
       url: this.endpoint(),
@@ -548,25 +553,31 @@ export default abstract class Model<
    * Static
    */
 
-  static instance<T extends Model>(this: ThisClass<T>): T {
+  static instance<T extends Model<boolean, boolean>>(this: ThisClass<T>): T {
     return new this()
   }
 
-  static include<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+  static include<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    ...args: unknown[]
+  ): T {
     const self = this.instance<T>()
     self.include(...args)
 
     return self
   }
 
-  static append<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+  static append<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    ...args: unknown[]
+  ): T {
     const self = this.instance<T>()
     self.append(...args)
 
     return self
   }
 
-  static select<T extends Model>(
+  static select<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     ...fields: (string[] | { [p: string]: string[] })[]
   ): T {
@@ -576,7 +587,7 @@ export default abstract class Model<
     return self
   }
 
-  static where<T extends Model>(
+  static where<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     field: string,
     value: unknown
@@ -587,7 +598,7 @@ export default abstract class Model<
     return self
   }
 
-  static whereIn<T extends Model>(
+  static whereIn<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     field: string,
     array: unknown[]
@@ -598,35 +609,47 @@ export default abstract class Model<
     return self
   }
 
-  static orderBy<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+  static orderBy<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    ...args: unknown[]
+  ): T {
     const self = this.instance<T>()
     self.orderBy(...args)
 
     return self
   }
 
-  static page<T extends Model>(this: ThisClass<T>, value: number): T {
+  static page<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    value: number
+  ): T {
     const self = this.instance<T>()
     self.page(value)
 
     return self
   }
 
-  static limit<T extends Model>(this: ThisClass<T>, value: number): T {
+  static limit<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    value: number
+  ): T {
     const self = this.instance<T>()
     self.limit(value)
 
     return self
   }
 
-  static custom<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+  static custom<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>,
+    ...args: unknown[]
+  ): T {
     const self = this.instance<T>()
     self.custom(...args)
 
     return self
   }
 
-  static params<T extends Model>(
+  static params<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     payload: Record<string, unknown>
   ): T {
@@ -636,30 +659,32 @@ export default abstract class Model<
     return self
   }
 
-  static first<T extends Model>(
+  static first<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T | WrappedModel<T>> {
+  ): Promise<T | WModel<T>> {
     const self = this.instance<T>()
 
     return self.first()
   }
 
-  static $first<T extends Model>(this: ThisClass<T>): Promise<T> {
+  static $first<T extends Model<boolean, boolean>>(
+    this: ThisClass<T>
+  ): Promise<T> {
     const self = this.instance<T>()
 
     return self.$first()
   }
 
-  static find<T extends Model>(
+  static find<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     identifier: number | string
-  ): Promise<T | WrappedModel<T>> {
+  ): Promise<T | WModel<T>> {
     const self = this.instance<T>()
 
     return self.find(identifier)
   }
 
-  static $find<T extends Model>(
+  static $find<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     identifier: number | string
   ): Promise<T> {
@@ -668,17 +693,17 @@ export default abstract class Model<
     return self.$find(identifier)
   }
 
-  static get<T extends Model>(
+  static get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T[] | WrappedModel<T>[] | WrappedCollection<T>> {
+  ): Promise<T[] | WModel<T>[] | WCollection<T>> {
     const self = this.instance<T>()
 
     return self.get()
   }
 
-  static $get<T extends Model>(
+  static $get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T[] | WrappedModel<T>[]> {
+  ): Promise<T[] | WModel<T>[]> {
     const self = this.instance<T>()
 
     return self.$get()
