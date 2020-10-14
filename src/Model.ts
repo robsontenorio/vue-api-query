@@ -1,8 +1,10 @@
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosPromise, AxiosRequestConfig } from 'axios'
 
 import Builder from './Builder'
 
-type Constructor<T> = new (...args: any[]) => T
+type Constructor<T extends Model<boolean, boolean>> = new (
+  ...args: unknown[]
+) => T
 
 type ThisClass<InstanceType extends Model<boolean, boolean>> = {
   instance<T extends Model<boolean, boolean>>(this: ThisClass<T>): T
@@ -81,9 +83,7 @@ export default abstract class Model<
 
   abstract baseURL(): string
 
-  abstract request<T = any, R = AxiosResponse<T>>(
-    config: AxiosRequestConfig
-  ): Promise<R>
+  abstract request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   get $http(): AxiosInstance {
     return Model.$http
@@ -524,7 +524,7 @@ export default abstract class Model<
    * Common CRUD operations
    */
 
-  delete(): Promise<AxiosResponse<unknown>> {
+  delete(): AxiosPromise<unknown> {
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
@@ -535,7 +535,7 @@ export default abstract class Model<
     }).then((response) => response)
   }
 
-  save(): Promise<this | WModel<this>> {
+  save(): Promise<RModel<this, isWrappedModel>> {
     return this.hasId() ? this._update() : this._create()
   }
 
@@ -557,7 +557,7 @@ export default abstract class Model<
     })
   }
 
-  _update(): Promise<this | WModel<this>> {
+  _update(): Promise<RModel<this, isWrappedModel>> {
     return this.request<this>({
       method: 'PUT',
       url: this.endpoint(),
@@ -579,7 +579,7 @@ export default abstract class Model<
    * Relationship operations
    */
 
-  attach(params: unknown): Promise<AxiosResponse<unknown>> {
+  attach(params: unknown): AxiosPromise<unknown> {
     return this.request<unknown>({
       method: 'POST',
       url: this.endpoint(),
@@ -587,7 +587,7 @@ export default abstract class Model<
     }).then((response) => response)
   }
 
-  sync(params: unknown): Promise<AxiosResponse<unknown>> {
+  sync(params: unknown): AxiosPromise<unknown> {
     return this.request<unknown>({
       method: 'PUT',
       url: this.endpoint(),
