@@ -4,22 +4,22 @@ import Builder from './Builder'
 
 type Constructor<T> = new (...args: any[]) => T
 
-type ThisClass<InstanceType extends Model> = {
+type ThisClass<InstanceType extends Model<boolean, boolean>> = {
   instance<T extends Model<boolean, boolean>>(this: ThisClass<T>): T
   new (...args: unknown[]): InstanceType
 }
 
-type WModel<T> = {
+type WModel<T extends Model<boolean, boolean>> = {
   data: T
 }
 
 type TModel<T extends Model<boolean, boolean>> = T | WModel<T>
 
-type WCollection<T> = {
-  data: T[] | WModel<T>[]
+type WCollection<T extends Model<boolean, boolean>> = {
+  data: TModel<T>[]
 }
 
-type TWCollection<T extends Model<boolean, boolean>> = WCollection<TModel<T>>
+type TWCollection<T extends Model<boolean, boolean>> = WCollection<T>
 
 type TCollection<T extends Model<boolean, boolean>> =
   | TWCollection<T>
@@ -33,7 +33,7 @@ type RModel<
 type WRCollection<
   T extends Model<boolean, boolean>,
   isWrapped extends boolean
-> = WCollection<RModel<T, isWrapped>>
+> = RModel<T, isWrapped>[]
 
 type RCollection<
   T extends Model<boolean, boolean>,
