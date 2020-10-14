@@ -1,17 +1,3 @@
-import BaseModel from './BaseModel'
-import Comment from './Comment'
-import User from './User'
+import BasePost from './BasePost'
 
-export default class Post extends BaseModel<true, false>() {
-  public user?: User
-
-  comments() {
-    return this.hasMany(Comment)
-  }
-
-  relations() {
-    return {
-      user: User
-    }
-  }
-}
+export default class Post extends BasePost<true, false>() {}
