@@ -19,10 +19,8 @@ type WCollection<T extends Model<boolean, boolean>> = {
   data: TModel<T>[]
 }
 
-type TWCollection<T extends Model<boolean, boolean>> = WCollection<T>
-
 type TCollection<T extends Model<boolean, boolean>> =
-  | TWCollection<T>
+  | WCollection<T>
   | TModel<T>[]
 
 type RModel<
@@ -242,7 +240,7 @@ export default abstract class Model<
 
   isWrappedCollection<T extends Model<boolean, boolean>>(
     collection: TCollection<T>
-  ): collection is TWCollection<T> {
+  ): collection is WCollection<T> {
     return !Array.isArray(collection) && 'data' in collection
   }
 
