@@ -31,7 +31,9 @@ type RModel<
 type WRCollection<
   T extends Model<boolean, boolean>,
   isWrapped extends boolean
-> = RModel<T, isWrapped>[]
+> = {
+  data: RModel<T, isWrapped>[]
+}
 
 type RCollection<
   T extends Model<boolean, boolean>,
@@ -358,7 +360,7 @@ export default abstract class Model<
   _applyInstanceCollection<T extends Model<boolean, boolean>>(
     data: Record<string, any> | Record<string, any>[],
     model: Constructor<T> = this.constructor as Constructor<T>
-  ): RModel<T, isWrappedModel>[] {
+  ): TModel<T>[] {
     const collection = !Array.isArray(data) && 'data' in data ? data.data : data
 
     return collection.map((c: Record<string, any>) => {
@@ -401,21 +403,34 @@ export default abstract class Model<
     }
   }
 
-  first(): Promise<isWrappedModel extends true ? WModel<this> : this> {
-    return this.get().then((response) => {
-      return this.isWrappedCollection<this>(response)
-        ? response.data[0]
-        : response[0]
+  first(): Promise<RModel<this, isWrappedModel>> {
+    return this.get().then((response: TCollection<this>) => {
+      const collection = response
+      let model: TModel<this>
+
+      if (this.isWrappedCollection<this>(collection)) {
+        model = collection.data[0]
+      } else {
+        model = collection[0]
+      }
+
+      return model as RModel<this, isWrappedModel>
     })
   }
 
   $first(): Promise<this> {
-    return this.first().then((response) =>
-      'data' in response ? response.data : response
-    )
+    return this.first().then((response: TModel<this>) => {
+      let model = response
+
+      if (this.isWrappedModel(model)) {
+        model = model.data
+      }
+
+      return model
+    })
   }
 
-  find(identifier: number | string): Promise<this | WModel<this>> {
+  find(identifier: number | string): Promise<RModel<this, isWrappedModel>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
@@ -427,15 +442,19 @@ export default abstract class Model<
     const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     const url = `${base}/${identifier}${this._builder.query()}`
 
-    return this.request<this | WModel<this>>({
+    return this.request<TModel<this>>({
       url,
       method: 'GET'
     }).then((response) => {
-      if ('data' in response.data) {
-        return response.data
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
       }
 
-      return this._applyInstance<this>(response.data)
+      return model as RModel<this, isWrappedModel>
     })
   }
 
@@ -444,9 +463,15 @@ export default abstract class Model<
       throw new Error('You must specify the param on $find() method.')
     }
 
-    return this.find(identifier).then((response) =>
-      this._applyInstance<this>('data' in response ? response.data : response)
-    )
+    return this.find(identifier).then((response: TModel<this>) => {
+      let model = response
+
+      if (this.isWrappedModel(model)) {
+        model = model.data
+      }
+
+      return model
+    })
   }
 
   get(): Promise<RCollection<this, isWrappedCollection, isWrappedModel>> {
@@ -460,12 +485,10 @@ export default abstract class Model<
       : base
     const url = `${base}${this._builder.query()}`
 
-    return this.request<RCollection<this, isWrappedCollection, isWrappedModel>>(
-      {
-        url,
-        method: 'GET'
-      }
-    ).then((response) => {
+    return this.request<TCollection<this>>({
+      url,
+      method: 'GET'
+    }).then((response) => {
       let collection = response.data
       const instancedCollection = this._applyInstanceCollection<this>(
         collection
@@ -474,18 +497,27 @@ export default abstract class Model<
       if (this.isWrappedCollection<this>(collection)) {
         collection.data = instancedCollection
       } else {
-        console.log(collection)
         collection = instancedCollection
       }
 
-      return collection
+      return collection as RCollection<
+        this,
+        isWrappedCollection,
+        isWrappedModel
+      >
     })
   }
 
-  $get(): Promise<RModel<this, isWrappedModel>> {
-    return this.get().then((response) =>
-      this.isWrappedCollection(response) ? response.data : response
-    )
+  $get(): Promise<RModel<this, isWrappedModel>[]> {
+    return this.get().then((response: TCollection<this>) => {
+      let collection = response
+
+      if (this.isWrappedCollection<this>(collection)) {
+        collection = collection.data
+      }
+
+      return collection as RModel<this, isWrappedModel>[]
+    })
   }
 
   /**
@@ -507,13 +539,21 @@ export default abstract class Model<
     return this.hasId() ? this._update() : this._create()
   }
 
-  _create(): Promise<this | WModel<this>> {
-    return this.request<this>({
+  _create(): Promise<RModel<this, isWrappedModel>> {
+    return this.request<TModel<this>>({
       method: 'POST',
       url: this.endpoint(),
       data: this
     }).then((response) => {
-      return this._applyInstance<this>(response.data)
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
+      }
+
+      return model as RModel<this, isWrappedModel>
     })
   }
 
@@ -523,7 +563,15 @@ export default abstract class Model<
       url: this.endpoint(),
       data: this
     }).then((response) => {
-      return this._applyInstance<this>(response.data)
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
+      }
+
+      return model as RModel<this, isWrappedModel>
     })
   }
 
@@ -659,7 +707,7 @@ export default abstract class Model<
 
   static first<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T | WModel<T>> {
+  ): Promise<RModel<T, boolean>> {
     const self = this.instance<T>()
 
     return self.first()
@@ -676,7 +724,7 @@ export default abstract class Model<
   static find<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     identifier: number | string
-  ): Promise<T | WModel<T>> {
+  ): Promise<RModel<T, boolean>> {
     const self = this.instance<T>()
 
     return self.find(identifier)
@@ -693,7 +741,7 @@ export default abstract class Model<
 
   static get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T[] | WModel<T>[] | WCollection<T>> {
+  ): Promise<RCollection<T, boolean, boolean>> {
     const self = this.instance<T>()
 
     return self.get()
@@ -701,7 +749,7 @@ export default abstract class Model<
 
   static $get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<T[] | WModel<T>[]> {
+  ): Promise<RModel<T, boolean>[]> {
     const self = this.instance<T>()
 
     return self.$get()
