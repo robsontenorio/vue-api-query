@@ -1,6 +1,7 @@
 import { Model } from '../../../src'
 
-export default class EmptyBaseModel extends Model {
+// @ts-ignore
+export default class EmptyBaseModel extends Model<false, false> {
   static withBaseURL() {
     EmptyBaseModel.prototype['baseURL'] = () => {
       return 'foo'
@@ -10,6 +11,7 @@ export default class EmptyBaseModel extends Model {
   }
 
   static withRequest() {
+    // @ts-ignore
     EmptyBaseModel.prototype['request'] = () => {
       return 'foo'
     }
@@ -18,14 +20,18 @@ export default class EmptyBaseModel extends Model {
   }
 
   static withHttp() {
+    // @ts-ignore
     Model.$http = 'foo'
 
     return this
   }
 
   static reset() {
+    // @ts-ignore
     delete EmptyBaseModel.prototype['baseURL']
+    // @ts-ignore
     delete EmptyBaseModel.prototype['request']
+    // @ts-ignore
     Model.$http = undefined
 
     return this
