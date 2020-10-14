@@ -25,6 +25,7 @@
   ],
   "rules": {
     "prettier/prettier": "error",
-    "simple-import-sort/sort": "warn"
+    "simple-import-sort/sort": "warn",
+    "no-console": "error"
   }
 }
