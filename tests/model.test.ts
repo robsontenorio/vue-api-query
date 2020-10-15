@@ -17,7 +17,7 @@ import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 
 describe('Model methods', () => {
   let errorModel = {}
-  Model().$http = axios
+  Config.$http = axios
   let axiosMock = new MockAdapter(axios)
 
   beforeEach(() => {
