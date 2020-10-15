@@ -10,12 +10,10 @@ export default function BasePost<
     isWrappedCollection,
     isWrappedModel
   >() {
-    public user: User | Record<string, any>
+    public user?: User
 
     constructor(...attributes: unknown[]) {
       super(...attributes)
-
-      this.user = {}
     }
 
     comments() {
