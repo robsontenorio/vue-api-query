@@ -1,6 +1,7 @@
 import type { AxiosInstance, AxiosPromise, AxiosRequestConfig } from 'axios'
 
 import Builder from './Builder'
+import Config from './Config'
 
 export default function Model<
   isWrappedCollection extends boolean,
@@ -35,46 +36,27 @@ export default function Model<
     ? WRCollection<T>
     : RModel<T>[]
 
-  abstract class Model {
+  abstract class Model extends Config {
     private readonly _builder: Builder | undefined
-    public static $http: AxiosInstance
     private _fromResource: string | undefined
     private _customResource: string | undefined;
 
     [name: string]: any
 
     protected constructor(...attributes: unknown[]) {
+      super()
+
       if (attributes.length === 0) {
         this._builder = new Builder(this)
       } else {
         Object.assign(this, ...attributes)
         this._applyRelations(this)
       }
-
-      if (this.baseURL === undefined) {
-        throw new Error('You must declare baseURL() method.')
-      }
-
-      if (this.request === undefined) {
-        throw new Error('You must declare request() method.')
-      }
-
-      if (this.$http === undefined) {
-        throw new Error('You must set $http property')
-      }
     }
 
     /**
      *  Setup
      */
-
-    abstract baseURL(): string
-
-    abstract request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
-
-    get $http(): AxiosInstance {
-      return Model.$http
-    }
 
     resource(): string {
       return `${this.constructor.name.toLowerCase()}s`
