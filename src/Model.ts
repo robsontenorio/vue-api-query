@@ -1,4 +1,4 @@
-import type { AxiosInstance, AxiosPromise, AxiosRequestConfig } from 'axios'
+import type { AxiosPromise } from 'axios'
 
 import Builder from './Builder'
 import Config from './Config'
@@ -9,16 +9,24 @@ export default function Model<
 >() {
   type Constructor<T extends Model> = new (...args: unknown[]) => T
 
-  type ThisClass<InstanceType extends Model> = {
-    instance<T extends Model>(this: ThisClass<T>): T
+  type ThisClassStatic<InstanceType extends Model> = {
+    instance<T extends Model>(this: ThisClassStatic<T>): T
     new (...args: unknown[]): InstanceType
   }
 
-  type WModel<T extends Model> = {
-    data: T
+  type ThisClass<InstanceType extends Model> = {
+    new (...args: unknown[]): InstanceType
   }
 
-  type TModel<T extends Model> = T | WModel<T>
+  type DerivedClass<T extends Model> = Omit<T, keyof Model>
+
+  type ModelData<T extends Model> = Required<DerivedClass<T>>
+
+  type WModel<T extends Model> = {
+    data: ModelData<T>
+  }
+
+  type TModel<T extends Model> = ModelData<T> | WModel<T>
 
   type WCollection<T extends Model> = {
     data: TModel<T>[]
@@ -26,7 +34,9 @@ export default function Model<
 
   type TCollection<T extends Model> = WCollection<T> | TModel<T>[]
 
-  type RModel<T extends Model> = isWrappedModel extends true ? WModel<T> : T
+  type RModel<T extends Model> = isWrappedModel extends true
+    ? WModel<T>
+    : ModelData<T>
 
   type WRCollection<T extends Model> = {
     data: RModel<T>[]
@@ -36,12 +46,19 @@ export default function Model<
     ? WRCollection<T>
     : RModel<T>[]
 
+  function hasProperty<T extends Model>(
+    obj: T,
+    key: string
+  ): key is keyof ThisClass<T> {
+    return Object.values(obj).indexOf(key) !== -1
+  }
+
   abstract class Model extends Config {
     private readonly _builder: Builder | undefined
     private _fromResource: string | undefined
-    private _customResource: string | undefined;
+    private _customResource: string | undefined
 
-    [name: string]: any
+    // [name: string]: any
 
     protected constructor(...attributes: unknown[]) {
       super()
@@ -67,7 +84,9 @@ export default function Model<
     }
 
     getPrimaryKey(): string | number {
-      return this[this.primaryKey()]
+      const key = this.primaryKey()
+
+      return hasProperty(this, key) ? this[key] : ''
     }
 
     custom(...args: unknown[]): this {
@@ -361,30 +380,33 @@ export default function Model<
     _applyRelations(model: this): void {
       const relations = model.relations()
 
-      for (const relation of Object.keys(relations)) {
-        if (!model[relation]) {
+      for (const key of Object.keys(relations)) {
+        if (!hasProperty(model, key)) {
+          return
+        }
+
+        let relation: any = model[key]
+
+        if (!relation) {
           return
         }
 
         if (
-          Array.isArray(model[relation]) ||
-          ('data' in model[relation] && Array.isArray(model[relation].data))
+          Array.isArray(relation) ||
+          ('data' in relation && Array.isArray(relation.data))
         ) {
           const collection = this._applyInstanceCollection(
-            model[relation],
-            relations[relation]
+            relation,
+            relations[key]
           )
 
-          if ('data' in model[relation]) {
-            model[relation].data = collection
+          if ('data' in relation) {
+            relation.data = collection
           } else {
-            model[relation] = collection
+            relation = collection
           }
         } else {
-          model[relation] = this._applyInstance(
-            model[relation],
-            relations[relation]
-          )
+          relation = this._applyInstance(relation, relations[key])
         }
       }
     }
@@ -404,7 +426,7 @@ export default function Model<
       })
     }
 
-    $first(): Promise<this> {
+    $first(): Promise<ModelData<this>> {
       return this.first().then((response: TModel<this>) => {
         let model = response
 
@@ -446,7 +468,7 @@ export default function Model<
       })
     }
 
-    $find(identifier: number | string): Promise<this> {
+    $find(identifier: number | string): Promise<ModelData<this>> {
       if (identifier === undefined) {
         throw new Error('You must specify the param on $find() method.')
       }
@@ -585,18 +607,24 @@ export default function Model<
      * Static
      */
 
-    static instance<T extends Model>(this: ThisClass<T>): T {
+    static instance<T extends Model>(this: ThisClassStatic<T>): T {
       return new this()
     }
 
-    static include<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    static include<T extends Model>(
+      this: ThisClassStatic<T>,
+      ...args: unknown[]
+    ): T {
       const self = this.instance<T>()
       self.include(...args)
 
       return self
     }
 
-    static append<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    static append<T extends Model>(
+      this: ThisClassStatic<T>,
+      ...args: unknown[]
+    ): T {
       const self = this.instance<T>()
       self.append(...args)
 
@@ -604,7 +632,7 @@ export default function Model<
     }
 
     static select<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       ...fields: (string[] | { [p: string]: string[] })[]
     ): T {
       const self = this.instance<T>()
@@ -614,7 +642,7 @@ export default function Model<
     }
 
     static where<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       field: string,
       value: unknown
     ): T {
@@ -625,7 +653,7 @@ export default function Model<
     }
 
     static whereIn<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       field: string,
       array: unknown[]
     ): T {
@@ -635,28 +663,34 @@ export default function Model<
       return self
     }
 
-    static orderBy<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    static orderBy<T extends Model>(
+      this: ThisClassStatic<T>,
+      ...args: unknown[]
+    ): T {
       const self = this.instance<T>()
       self.orderBy(...args)
 
       return self
     }
 
-    static page<T extends Model>(this: ThisClass<T>, value: number): T {
+    static page<T extends Model>(this: ThisClassStatic<T>, value: number): T {
       const self = this.instance<T>()
       self.page(value)
 
       return self
     }
 
-    static limit<T extends Model>(this: ThisClass<T>, value: number): T {
+    static limit<T extends Model>(this: ThisClassStatic<T>, value: number): T {
       const self = this.instance<T>()
       self.limit(value)
 
       return self
     }
 
-    static custom<T extends Model>(this: ThisClass<T>, ...args: unknown[]): T {
+    static custom<T extends Model>(
+      this: ThisClassStatic<T>,
+      ...args: unknown[]
+    ): T {
       const self = this.instance<T>()
       self.custom(...args)
 
@@ -664,7 +698,7 @@ export default function Model<
     }
 
     static params<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       payload: Record<string, unknown>
     ): T {
       const self = this.instance<T>()
@@ -673,20 +707,24 @@ export default function Model<
       return self
     }
 
-    static first<T extends Model>(this: ThisClass<T>): Promise<RModel<T>> {
+    static first<T extends Model>(
+      this: ThisClassStatic<T>
+    ): Promise<RModel<T>> {
       const self = this.instance<T>()
 
       return self.first()
     }
 
-    static $first<T extends Model>(this: ThisClass<T>): Promise<T> {
+    static $first<T extends Model>(
+      this: ThisClassStatic<T>
+    ): Promise<ModelData<T>> {
       const self = this.instance<T>()
 
       return self.$first()
     }
 
     static find<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       identifier: number | string
     ): Promise<RModel<T>> {
       const self = this.instance<T>()
@@ -695,21 +733,25 @@ export default function Model<
     }
 
     static $find<T extends Model>(
-      this: ThisClass<T>,
+      this: ThisClassStatic<T>,
       identifier: number | string
-    ): Promise<T> {
+    ): Promise<ModelData<T>> {
       const self = this.instance<T>()
 
       return self.$find(identifier)
     }
 
-    static get<T extends Model>(this: ThisClass<T>): Promise<RCollection<T>> {
+    static get<T extends Model>(
+      this: ThisClassStatic<T>
+    ): Promise<RCollection<T>> {
       const self = this.instance<T>()
 
       return self.get()
     }
 
-    static $get<T extends Model>(this: ThisClass<T>): Promise<RModel<T>[]> {
+    static $get<T extends Model>(
+      this: ThisClassStatic<T>
+    ): Promise<RModel<T>[]> {
       const self = this.instance<T>()
 
       return self.$get()
