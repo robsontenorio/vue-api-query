@@ -1,16 +1,19 @@
-import BaseModel from './BaseModel'
+import BaseModel, { ModelData } from './BaseModel'
 import Comment from './Comment'
 import User from './User'
 
 export default function BasePost<
-  isWrappedCollection extends boolean,
-  isWrappedModel extends boolean
+  isWrappedCollection extends boolean = false,
+  isWrappedModel extends boolean = false
 >() {
   return class BasePost extends BaseModel<
     isWrappedCollection,
     isWrappedModel
   >() {
-    public user?: User
+    public id?: number
+    public someId?: string
+    public text?: string
+    public user?: ModelData<User>
 
     constructor(...attributes: unknown[]) {
       super(...attributes)
