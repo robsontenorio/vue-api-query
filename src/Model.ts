@@ -346,8 +346,8 @@ export default function Model<
       data: Record<string, any> | Record<string, any>[],
       model: Constructor<T> = this.constructor as Constructor<T>
     ): TModel<T>[] {
-      const collection =
-        !Array.isArray(data) && 'data' in data ? data.data : data
+      let collection = !Array.isArray(data) && 'data' in data ? data.data : data
+      collection = Array.isArray(collection) ? collection : [collection]
 
       return collection.map((c: Record<string, any>) => {
         if ('data' in c) {
@@ -367,15 +367,15 @@ export default function Model<
         }
 
         if (
-          Array.isArray(model[relation].data) ||
-          Array.isArray(model[relation])
+          Array.isArray(model[relation]) ||
+          ('data' in model[relation] && Array.isArray(model[relation].data))
         ) {
           const collection = this._applyInstanceCollection(
             model[relation],
             relations[relation]
           )
 
-          if (model[relation].data !== undefined) {
+          if ('data' in model[relation]) {
             model[relation].data = collection
           } else {
             model[relation] = collection
