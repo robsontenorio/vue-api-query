@@ -544,7 +544,7 @@ export default function Model<
     }
 
     _update(): Promise<RModel<this>> {
-      return this.request<this>({
+      return this.request<TModel<this>>({
         method: 'PUT',
         url: this.endpoint(),
         data: this
