@@ -60,7 +60,6 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 12.x, 14.x ]
       fail-fast: true
 
     steps:
@@ -72,7 +71,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ matrix.node-version }}-${{ runner.OS }}-build-${{ hashFiles('yarn.lock') }}
+          key: 12.x-${{ runner.OS }}-build-${{ hashFiles('yarn.lock') }}
 
       - name: Install Dependencies
         if: steps.cache-modules.outputs.cache-hit != 'true'
@@ -99,7 +98,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 12.x, 14.x ]
+        node-version: [ 12.x ]
       fail-fast: true
 
     defaults:
