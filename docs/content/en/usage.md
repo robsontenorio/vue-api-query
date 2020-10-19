@@ -60,7 +60,7 @@ Give me the result for a given criteria, include some entities, append extra fie
   </code-block>
   <code-block label="Query">
 
-  ```
+  ```http request
   GET /posts?filter[status]=ACTIVE&include=user,category&append=likes&orderBy=-created_at,category_id
   ```
 
@@ -93,7 +93,7 @@ Just give me the first occurrence from response:
   </code-block>
   <code-block Label="Query">
 
-  ```
+  ```http request
   GET /posts?filter[status]=ACTIVE
   ```
 
@@ -123,7 +123,7 @@ Nice! Now I want a specific object:
   </code-block>
   <code-block Label="Query">
 
-  ```
+  ```http request
   GET /posts/1
   ```
 
@@ -154,7 +154,7 @@ Edit this and send it back:
   </code-block>
   <code-block Label="Query">
 
-  ```
+  ```http request
   PUT /posts/1
   ```
 
@@ -173,7 +173,7 @@ Ops, delete it!
   </code-block>
   <code-block Label="Query">
 
-  ```
+  ```http request
   DELETE /posts/1
   ```
 
@@ -210,7 +210,7 @@ Let's create a new object and post it:
   </code-block>
   <code-block Label="Query">
 
-  ```
+  ```http request
   POST /post
   ```
 
@@ -242,6 +242,13 @@ We can use relationships:
   ```
 
   </code-block>
+  <code-block Label="User Query">
+
+  ```http request
+  GET /users/1
+  ```
+
+  </code-block>
   <code-block Label="Posts Response">
 
   ```js
@@ -260,12 +267,55 @@ We can use relationships:
   ```
 
   </code-block>
+  <code-block Label="Posts Query">
+
+  ```http request
+  GET /users/1/posts
+  ```
+
+  </code-block>
+</code-group>
+
+It's ok if in some situations you need to call a custom resource from an already defined model. You can override dynamically the default resource calling `custom()` method.
+
+<code-group>
+  <code-block Label="Request" active>
+
+  ```js
+  let latest = await Post
+    .custom('posts/latest')
+    .first()  
+  ```
+
+  </code-block>
   <code-block Label="Query">
 
+  ```http request
+  GET /posts/latest
   ```
-  GET /users/1
 
-  GET /users/1/posts
+  </code-block>
+</code-group>
+
+The `custom()` method can be called with multiple arguments to build
+resource endpoints and hierarchies. Simply supply them in the correct order.
+Any combination of strings and models is possible.
+
+<code-group>
+  <code-block Label="Request" active>
+
+  ```js
+  let user = new User({ id: 1 })
+  let post = new Post()
+
+  const result = await Post.custom(user, post, 'latest').get()
+  ```
+
+  </code-block>
+  <code-block Label="Query">
+
+  ```http request
+  GET /users/1/posts/latest
   ```
 
   </code-block>
