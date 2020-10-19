@@ -1,7 +1,7 @@
 ---
 title: Query Methods
 description: 'Query methods.'
-position: 2
+position: 6
 category: API
 ---
 

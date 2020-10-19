@@ -1,7 +1,7 @@
 ---
 title: HTTP Methods
 description: 'HTTP methods.'
-position: 3
+position: 7
 category: API
 ---
 
