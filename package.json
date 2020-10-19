@@ -6,7 +6,9 @@
   "scripts": {
     "build": "babel src -d build",
     "prepare": "yarn build && yarn cc",
-    "test": "jest --watch --coverage",
+    "lint": "eslint --ext .js .",
+    "test": "jest",
+    "test-watch": "jest --watch --coverage",
     "cc": "jest --coverage"
   },
   "jest": {
