@@ -7,7 +7,8 @@
     "build": "babel src -d build",
     "prepare": "yarn build && yarn cc",
     "lint": "eslint --ext .js .",
-    "test": "jest --watch --coverage",
+    "test": "jest",
+    "test-watch": "jest --watch --coverage",
     "cc": "jest --coverage"
   },
   "jest": {
