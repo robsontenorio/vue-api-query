@@ -1,5 +1,4 @@
 import EmptyBaseModel from './dummy/models/EmptyBaseModel'
-
 import Post from './dummy/models/Post'
 
 describe('Setup models', () => {
@@ -41,7 +40,7 @@ describe('Setup models', () => {
     expect(post.resource()).toEqual('posts')
   })
 
-  test('the resource() method can be overrided', () => {
+  test('the resource() method can be overridden', () => {
     Post.prototype['resource'] = () => {
       return 'postz'
     }
@@ -54,7 +53,7 @@ describe('Setup models', () => {
     delete Post.prototype['resource']
   })
 
-  test('the primaryKey() method can be overrided', () => {
+  test('the primaryKey() method can be overridden', () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
     }
@@ -67,7 +66,7 @@ describe('Setup models', () => {
     delete Post.prototype['primaryKey']
   })
 
-  test('the baseURL() method can be overrided', () => {
+  test('the baseURL() method can be overridden', () => {
     Post.prototype['baseURL'] = () => {
       return 'http://api.com'
     }
