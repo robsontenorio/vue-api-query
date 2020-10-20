@@ -1,24 +1,25 @@
-import Post from './dummy/models/Post'
-import PostEmbed from './dummy/models/PostEmbed'
-import PostCollectionEmbed from './dummy/models/PostCollectionEmbed'
-import PostAllEmbed from './dummy/models/PostAllEmbed'
-import User from './dummy/models/User'
-import Comment from './dummy/models/Comment'
-import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
-import { Posts as postsResponse } from './dummy/data/posts'
-import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
-import { Posts as postsAllEmbedResponse } from './dummy/data/postsAllEmbed'
-import { Post as postResponse } from './dummy/data/post'
-import { Post as postEmbedResponse } from './dummy/data/postEmbed'
+
+import Config from '../src/Config'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
+import { Post as postResponse } from './dummy/data/post'
+import { Post as postEmbedResponse } from './dummy/data/postEmbed'
+import { Posts as postsResponse } from './dummy/data/posts'
+import { Posts as postsAllEmbedResponse } from './dummy/data/postsAllEmbed'
+import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
+import Comment from './dummy/models/Comment'
+import Post from './dummy/models/Post'
+import PostAllEmbed from './dummy/models/PostAllEmbed'
+import PostCollectionEmbed from './dummy/models/PostCollectionEmbed'
+import PostEmbed from './dummy/models/PostEmbed'
+import User from './dummy/models/User'
 
 describe('Model methods', () => {
   let errorModel = {}
   Config.$http = axios
-  let axiosMock = new MockAdapter(axios)
+  const axiosMock = new MockAdapter(axios)
 
   beforeEach(() => {
     axiosMock.reset()
@@ -199,7 +200,7 @@ describe('Model methods', () => {
       return 'someId'
     }
 
-    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+    const post = new Post({ id: 1, someId: 'po996-9dd18' })
 
     axiosMock.onGet().reply((config) => {
       expect(config.method).toEqual('get')
@@ -262,7 +263,7 @@ describe('Model methods', () => {
       return 'someId'
     }
 
-    let post = new Post({ id: 1, someId: 'po996-9dd18' })
+    const post = new Post({ id: 1, someId: 'po996-9dd18' })
 
     axiosMock.onGet().reply((config) => {
       expect(config.method).toEqual('get')
@@ -332,7 +333,7 @@ describe('Model methods', () => {
       return 'someId'
     }
 
-    let post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+    const post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('put')
@@ -412,7 +413,7 @@ describe('Model methods', () => {
       return 'someId'
     }
 
-    let post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
+    const post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('delete')
@@ -426,7 +427,7 @@ describe('Model methods', () => {
 
   test('a request from delete() method when model has not ID throws a exception', async () => {
     errorModel = () => {
-      let post = new Post()
+      const post = new Post()
       post.delete()
     }
 
@@ -565,7 +566,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().attach(comment)
+    const response = post.comments().attach(comment)
   })
 
   test('attach() method hits right endpoint with a POST request (custom PK)', async () => {
@@ -608,7 +609,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().sync(comment)
+    const response = post.comments().sync(comment)
   })
 
   test('for() method setup the right resource', async () => {
