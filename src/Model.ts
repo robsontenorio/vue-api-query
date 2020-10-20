@@ -351,14 +351,14 @@ export default function Model<
     _applyInstance<T extends Model>(
       data: Record<string, any>,
       model: Constructor<T> = this.constructor as Constructor<T>
-    ): T {
+    ): ModelData<T> {
       const item = new model(data)
 
       if (this._fromResource) {
         item._from(this._fromResource)
       }
 
-      return item
+      return (item as unknown) as ModelData<T>
     }
 
     _applyInstanceCollection<T extends Model>(
