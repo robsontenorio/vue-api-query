@@ -1,4 +1,5 @@
-import BaseModel, { ModelData } from './BaseModel'
+import { ModelData } from '../../../src/Model'
+import BaseModel from './BaseModel'
 import Comment from './Comment'
 import User from './User'
 

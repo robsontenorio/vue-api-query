@@ -1,9 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 import { Model } from '../../../src'
 
-type ModelInstance = InstanceType<ReturnType<typeof BaseModel>>
-export type ModelData<T> = Required<Omit<T, keyof ModelInstance>>
-
 export default function BaseModel<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
