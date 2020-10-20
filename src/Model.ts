@@ -3,11 +3,11 @@ import type { AxiosPromise } from 'axios'
 import Builder from './Builder'
 import Config from './Config'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export type ModelInstance = InstanceType<ReturnType<typeof Model>>
 export type ModelData<T> = Required<Omit<T, keyof ModelInstance>>
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function Model<
   isWrappedCollection extends boolean,
   isWrappedModel extends boolean
@@ -174,7 +174,6 @@ export default function Model<
       return this
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     relations(): Record<any, InstanceType<typeof Model>> {
       return {}
