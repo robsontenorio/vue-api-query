@@ -17,7 +17,7 @@ export default class Builder {
   public filters: Record<string, unknown>
   public parser: Parser
 
-  constructor(model: Model) {
+  constructor(model: ModelInstance) {
     this.model = model
     this.includes = []
     this.appends = []
@@ -53,7 +53,7 @@ export default class Builder {
     return this
   }
 
-  select(...fields: (string[] | { [p: string]: string[] })[]): this {
+  select(...fields: (string | { [p: string]: string[] })[]): this {
     if (fields.length === 0) {
       throw new Error('You must specify the fields on select() method.')
     }

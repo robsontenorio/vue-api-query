@@ -176,7 +176,7 @@ export default function Model<
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    relations (): Record<any, InstanceType<typeof Model>> {
+    relations(): Record<any, InstanceType<typeof Model>> {
       return {}
     }
 
@@ -184,7 +184,7 @@ export default function Model<
      * Helpers
      */
 
-    hasId (): boolean {
+    hasId(): boolean {
       const id = this.getPrimaryKey()
       return this.isValidId(id)
     }
@@ -267,7 +267,7 @@ export default function Model<
       return this
     }
 
-    select(...fields: (string[] | { [p: string]: string[] })[]): this {
+    select(...fields: (string | { [p: string]: string[] })[]): this {
       if (!this._builder) {
         throw new Error(
           'Builder methods are not available after fetching data.'
@@ -640,7 +640,7 @@ export default function Model<
 
     static select<T extends Model>(
       this: ThisClassStatic<T>,
-      ...fields: (string[] | { [p: string]: string[] })[]
+      ...fields: (string | { [p: string]: string[] })[]
     ): T {
       const self = this.instance<T>()
       self.select(...fields)
