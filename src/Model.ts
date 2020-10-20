@@ -174,7 +174,9 @@ export default function Model<
       return this
     }
 
-    relations(): Record<string, Constructor<Model>> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    relations (): Record<any, InstanceType<typeof Model>> {
       return {}
     }
 
@@ -182,7 +184,7 @@ export default function Model<
      * Helpers
      */
 
-    hasId(): boolean {
+    hasId (): boolean {
       const id = this.getPrimaryKey()
       return this.isValidId(id)
     }
