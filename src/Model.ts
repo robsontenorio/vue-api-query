@@ -5,7 +5,11 @@ import Config from './Config'
 
 // @ts-ignore
 export type ModelInstance = InstanceType<ReturnType<typeof Model>>
-export type ModelData<T> = Required<Omit<T, keyof ModelInstance>>
+type ModelKeys = Omit<
+  ModelInstance,
+  'delete' | 'save' | 'attach' | 'sync' | 'for'
+>
+export type ModelData<T> = Required<Omit<T, keyof ModelKeys>>
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function Model<
@@ -23,7 +27,9 @@ export default function Model<
     new (...args: unknown[]): InstanceType
   }
 
-  type DerivedClass<T extends Model> = Omit<T, keyof Model>
+  type ModelKeys = Omit<Model, 'delete' | 'save' | 'attach' | 'sync' | 'for'>
+
+  type DerivedClass<T extends Model> = Omit<T, keyof ModelKeys>
 
   type ModelData<T extends Model> = Required<DerivedClass<T>>
 
