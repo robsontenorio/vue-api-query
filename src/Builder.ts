@@ -2,11 +2,11 @@
  * Prepare attributes to be parsed
  */
 
-import Model from './Model'
+import { ModelInstance } from './Model'
 import Parser from './Parser'
 
 export default class Builder {
-  public model
+  public model: ModelInstance
   public includes: unknown[]
   public appends: unknown[]
   public sorts: unknown[]
