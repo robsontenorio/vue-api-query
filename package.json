@@ -6,7 +6,6 @@
   "types": "build/types/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepare": "yarn build && yarn cc",
     "lint": "eslint --ext .ts,.js,.json .",
     "lint-fix": "yarn lint --fix",
     "test": "jest --coverage",
