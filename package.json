@@ -8,9 +8,8 @@
     "prepare": "yarn build && yarn cc",
     "lint": "eslint --ext .ts,.js,.json .",
     "lint-fix": "yarn lint --fix",
-    "test": "jest",
-    "test-watch": "jest --watch --coverage",
-    "cc": "jest --coverage"
+    "test": "jest --coverage",
+    "test-watch": "jest --watch --coverage"
   },
   "repository": {
     "type": "git",
