@@ -10,12 +10,14 @@ import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsAllEmbedResponse } from './dummy/data/postsAllEmbed'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import Comment from './dummy/models/Comment'
+import CommentWrapped from './dummy/models/CommentWrapped'
 import Post from './dummy/models/Post'
 import PostAllEmbed from './dummy/models/PostAllEmbed'
 import PostCollectionEmbed from './dummy/models/PostCollectionEmbed'
 import PostCommentEmbed from './dummy/models/PostCommentEmbed'
 import PostEmbed from './dummy/models/PostEmbed'
 import Tag from './dummy/models/Tag'
+import TagEmbed from './dummy/models/TagEmbed'
 import User from './dummy/models/User'
 
 describe('Model methods', () => {
@@ -54,34 +56,37 @@ describe('Model methods', () => {
     })
 
     const post = await Post.first()
+
     expect(post).toEqual(postsResponse[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
 
   test('first() returns first object in array with "data" wrapper as instance of such Model wrapped with "data"', async () => {
-    axiosMock.onGet('http://localhost/posts').reply(200, {
-      data: postsEmbedResponse
-    })
+    axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
 
-    const { data: post } = await PostEmbed.first()
-    expect(post).toEqual(postsResponse[0])
-    expect(post).toBeInstanceOf(Post)
+    const { data: post } = await PostAllEmbed.first()
+
+    expect(post).toEqual(postsAllEmbedResponse.data[0].data)
+    expect(post).toBeInstanceOf(PostAllEmbed)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.data.forEach((tag) => {
+      expect(tag).toBeInstanceOf(TagEmbed)
+    })
   })
 
   test('$first() returns first object in array as instance of such Model', async () => {
-    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+    axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
     const post = await Post.$first()
 
-    expect(post).toEqual(postsEmbedResponse.data[0])
+    expect(post).toEqual(postsResponse[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -89,21 +94,27 @@ describe('Model methods', () => {
   test('$first() returns first object in array with "data" wrapper as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
-    const post = await PostEmbed.$first()
+    const post = await PostCollectionEmbed.$first()
 
     expect(post).toEqual(postsEmbedResponse.data[0])
-    expect(post).toBeInstanceOf(Post)
+    expect(post).toBeInstanceOf(PostCollectionEmbed)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.data.forEach((tag) => {
+      expect(tag).toBeInstanceOf(TagEmbed)
+    })
   })
 
-  test('$first() returns first object in array with "data" wrapper as instance of such Model', async () => {
+  test('$first() returns first object in array with "data" wrapper as instance of such Model wrapped with "data"', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
 
     const post = await PostAllEmbed.$first()
 
     expect(post).toEqual(postsAllEmbedResponse.data[0].data)
-    expect(post).toBeInstanceOf(Post)
+    expect(post).toBeInstanceOf(PostAllEmbed)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.data.forEach((tag) => {
+      expect(tag).toBeInstanceOf(TagEmbed)
+    })
   })
 
   test('first() method returns a empty object when no items have found', async () => {
@@ -120,7 +131,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -129,20 +140,24 @@ describe('Model methods', () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
 
     const { data: post } = await PostEmbed.find(1)
+
     expect(post).toEqual(postEmbedResponse.data)
-    expect(post).toBeInstanceOf(Post)
+    expect(post).toBeInstanceOf(PostEmbed)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach((tag) => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('$find() handles request with "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
 
-    const post = await Post.$find(1)
+    const post = await PostEmbed.$find(1)
 
     expect(post).toEqual(postEmbedResponse.data)
-    expect(post).toBeInstanceOf(Post)
+    expect(post).toBeInstanceOf(PostEmbed)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.data.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -155,7 +170,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -168,7 +183,7 @@ describe('Model methods', () => {
     posts.forEach((post) => {
       expect(post).toBeInstanceOf(Post)
       expect(post.user).toBeInstanceOf(User)
-      post.relationships.tags.forEach(tag => {
+      post.relationships.tags.forEach((tag) => {
         expect(tag).toBeInstanceOf(Tag)
       })
     })
@@ -180,7 +195,7 @@ describe('Model methods', () => {
     const { data: posts } = await PostCollectionEmbed.get()
 
     posts.forEach((post) => {
-      expect(post).toBeInstanceOf(Post)
+      expect(post).toBeInstanceOf(PostCollectionEmbed)
       expect(post.user).toBeInstanceOf(User)
     })
   })
@@ -191,7 +206,7 @@ describe('Model methods', () => {
     const { data: posts } = await PostAllEmbed.get()
 
     posts.forEach(({ data: post }) => {
-      expect(post).toBeInstanceOf(Post)
+      expect(post).toBeInstanceOf(PostAllEmbed)
       expect(post.user).toBeInstanceOf(User)
     })
   })
@@ -271,9 +286,9 @@ describe('Model methods', () => {
     const comments = await post.comments().$get()
 
     comments.forEach((comment) => {
-      expect(comment).toBeInstanceOf(Comment)
+      expect(comment).toBeInstanceOf(CommentWrapped)
       comment.replies.data.forEach((reply) => {
-        expect(reply).toBeInstanceOf(Comment)
+        expect(reply).toBeInstanceOf(CommentWrapped)
       })
     })
   })
