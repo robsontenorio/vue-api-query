@@ -6,5 +6,15 @@ export const Post = {
     firstname: 'John',
     lastname: 'Doe',
     age: 25
+  },
+  relationships: {
+    tags: [
+      {
+        name: 'super'
+      },
+      {
+        name: 'awesome'
+      }
+    ]
   }
 }

@@ -10,14 +10,16 @@ export const Posts = {
         age: 25
       },
       relationships: {
-        tags: [
-          {
-            name: 'super'
-          },
-          {
-            name: 'awesome'
-          }
-        ]
+        tags: {
+          data: [
+            {
+              name: 'super'
+            },
+            {
+              name: 'awesome'
+            }
+          ]
+        }
       }
     },
     {
