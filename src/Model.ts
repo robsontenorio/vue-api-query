@@ -84,7 +84,7 @@ export default abstract class Model<
     }
 
     if (this.$http === undefined) {
-      throw new Error('You must set $http property')
+      throw new Error('You must set $http property.')
     }
   }
 
@@ -391,13 +391,9 @@ export default abstract class Model<
     const relations = model.relations()
 
     for (const key of Object.keys(relations)) {
-      if (!hasProperty(model, key)) {
-        return
-      }
-
       const relation = getProp(model, key)
 
-      if (!relation) {
+      if (!hasProperty(model, key) || !relation) {
         return
       }
 
