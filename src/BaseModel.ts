@@ -1,7 +1,7 @@
 import Model, { ModelData, RCollection, RModel } from './Model'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function StaticModel<
+export default function BaseModel<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
 >() {
@@ -14,10 +14,7 @@ export default function StaticModel<
     new (...args: unknown[]): InstanceType
   }
 
-  abstract class StaticModel extends Model<
-    isWrappedCollection,
-    isWrappedModel
-  > {
+  abstract class BaseModel extends Model<isWrappedCollection, isWrappedModel> {
     static instance<T extends Model<isWrappedCollection, isWrappedModel>>(
       this: ThisClass<T>
     ): T {
@@ -177,5 +174,5 @@ export default function StaticModel<
     }
   }
 
-  return StaticModel
+  return BaseModel
 }

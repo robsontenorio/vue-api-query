@@ -1,12 +1,12 @@
 import { AxiosRequestConfig } from 'axios'
 
-import StaticModel from '../../../src/StaticModel'
+import BaseModel from '../../../src/BaseModel'
 
 export default function BaseModel<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
 >() {
-  return class BaseModel extends StaticModel<
+  return class BaseModel extends BaseModel<
     isWrappedCollection,
     isWrappedModel
   >() {
