@@ -181,7 +181,7 @@ export default function Model<
     }
 
     // @ts-ignore
-    relations(): Record<any, InstanceType<typeof Model>> {
+    relations(): Record<string, InstanceType<typeof Model>> {
       return {}
     }
 
