@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import type { ModelData } from '../../../src/types'
+import type { QueryResponseModel } from '../../../src/types'
 import BaseModel from './BaseModel'
 import CommentWrapped from './CommentWrapped'
 import TagEmbed from './TagEmbed'
@@ -10,9 +10,9 @@ export default class Post extends BaseModel<false, false>() {
   public id?: number
   public someId?: string
   public text?: string
-  public user?: ModelData<User>
+  public user?: QueryResponseModel<User>
   public relationships?: {
-    tags: { data: ModelData<TagEmbed>[] }
+    tags: { data: QueryResponseModel<TagEmbed>[] }
   }
 
   comments() {
