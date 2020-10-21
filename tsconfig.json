@@ -4,6 +4,7 @@
 
     /* Basic Options */
     "target": "ESNext",
+    "declaration": true,
     "outDir": "build",
     /* Strict Type-Checking Options */
     "strict": true,
