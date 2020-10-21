@@ -55,7 +55,7 @@ function hasProperty<T extends Model<boolean, boolean>>(
   obj: T,
   key: string
 ): key is keyof ThisClass<T> {
-  return key in obj
+  return !!getProp(obj, key)
 }
 
 export default abstract class Model<
