@@ -2,11 +2,11 @@
  * Prepare attributes to be parsed
  */
 
-import { ModelInstance } from './Model'
+import Model from './Model'
 import Parser from './Parser'
 
 export default class Builder {
-  public model: ModelInstance
+  public model: Model<boolean, boolean>
   public includes: unknown[]
   public appends: unknown[]
   public sorts: unknown[]
@@ -17,7 +17,7 @@ export default class Builder {
   public filters: Record<string, unknown>
   public parser: Parser
 
-  constructor(model: ModelInstance) {
+  constructor(model: Model<boolean, boolean>) {
     this.model = model
     this.includes = []
     this.appends = []
