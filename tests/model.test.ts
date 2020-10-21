@@ -405,18 +405,150 @@ describe('Model methods', () => {
     expect(post.user).toBeInstanceOf(User)
   })
 
+  test('save() method makes a POST request when ID of object does not exists and returns a Model wrapped with "data"', async () => {
+    let post:
+      | PostEmbed
+      | {
+          data: Required<
+            Pick<
+              PostEmbed,
+              | 'delete'
+              | 'save'
+              | 'attach'
+              | 'sync'
+              | 'for'
+              | 'id'
+              | 'someId'
+              | 'text'
+              | 'user'
+              | 'relationships'
+              | 'comments'
+            >
+          >
+        }
+    const _postResponse = {
+      data: {
+        id: 1,
+        title: 'Cool!',
+        text: 'Lorem Ipsum Dolor',
+        user: {
+          firstname: 'John',
+          lastname: 'Doe',
+          age: 25
+        }
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, _postResponse]
+    })
+
+    post = new PostEmbed({ title: 'Cool!' })
+    post = await post.save()
+
+    expect(post.data).toEqual(_postResponse.data)
+    expect(post.data).toBeInstanceOf(PostEmbed)
+    expect(post.data.user).toBeInstanceOf(User)
+  })
+
   test('save() method makes a PUT request when ID of object exists', async () => {
-    const post = new Post({ id: 1, title: 'Cool!' })
+    let post:
+      | Post
+      | Required<
+          Pick<
+            Post,
+            | 'delete'
+            | 'save'
+            | 'attach'
+            | 'sync'
+            | 'for'
+            | 'id'
+            | 'someId'
+            | 'text'
+            | 'user'
+            | 'relationships'
+            | 'comments'
+          >
+        >
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!',
+      text: 'Lorem Ipsum Dolor',
+      user: {
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+      }
+    }
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('put')
       expect(config.data).toEqual(JSON.stringify(post))
       expect(config.url).toEqual('http://localhost/posts/1')
 
-      return [200, {}]
+      return [200, _postResponse]
     })
 
-    await post.save()
+    post = new Post({ id: 1, title: 'Cool!' })
+    post = await post.save()
+
+    expect(post).toEqual(_postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+  })
+
+  test('save() method makes a PUT request when ID of object exists and returns a Model wrapped with "data"', async () => {
+    let post:
+      | PostEmbed
+      | {
+          data: Required<
+            Pick<
+              PostEmbed,
+              | 'delete'
+              | 'save'
+              | 'attach'
+              | 'sync'
+              | 'for'
+              | 'id'
+              | 'someId'
+              | 'text'
+              | 'user'
+              | 'relationships'
+              | 'comments'
+            >
+          >
+        }
+    const _postResponse = {
+      data: {
+        id: 1,
+        title: 'Cool!',
+        text: 'Lorem Ipsum Dolor',
+        user: {
+          firstname: 'John',
+          lastname: 'Doe',
+          age: 25
+        }
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('put')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, _postResponse]
+    })
+
+    post = new PostEmbed({ id: 1, title: 'Cool!' })
+    post = await post.save()
+
+    expect(post.data).toEqual(_postResponse.data)
+    expect(post.data).toBeInstanceOf(PostEmbed)
+    expect(post.data.user).toBeInstanceOf(User)
   })
 
   test('save() method makes a PUT request when ID of object exists (custom PK)', async () => {
