@@ -19,6 +19,7 @@ import PostEmbed from './dummy/models/PostEmbed'
 import Tag from './dummy/models/Tag'
 import TagEmbed from './dummy/models/TagEmbed'
 import User from './dummy/models/User'
+import EmptyBaseModel from './dummy/models/EmptyBaseModel'
 
 describe('Model methods', () => {
   let errorModel = {}
@@ -30,6 +31,48 @@ describe('Model methods', () => {
     Post.prototype['primaryKey'] = () => {
       return 'id'
     }
+  })
+
+  test('it throws an error if baseURL is not defined', () => {
+    // @ts-ignore
+    EmptyBaseModel.prototype.baseURL = undefined
+
+    errorModel = () => {
+      // @ts-ignore
+      new EmptyBaseModel()
+    }
+
+    expect(errorModel).toThrow('You must declare baseURL() method.')
+  })
+
+  test('it throws an error if request is not defined', () => {
+    EmptyBaseModel.prototype.baseURL = () => ''
+    // @ts-ignore
+    EmptyBaseModel.prototype.request = undefined
+
+    errorModel = () => {
+      // @ts-ignore
+      new EmptyBaseModel()
+    }
+
+    expect(errorModel).toThrow('You must declare request() method.')
+  })
+
+  test('it throws an error if $http is not defined', () => {
+    EmptyBaseModel.prototype.baseURL = () => ''
+    // @ts-ignore
+    EmptyBaseModel.prototype.request = () => ''
+    // @ts-ignore
+    Model.$http = undefined
+
+    errorModel = () => {
+      // @ts-ignore
+      new EmptyBaseModel()
+    }
+
+    expect(errorModel).toThrow('You must set $http property.')
+
+    Model.$http = axios
   })
 
   test('it throws an error when trying to use Query Builder methods after fetching data', async () => {
