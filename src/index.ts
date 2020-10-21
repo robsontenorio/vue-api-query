@@ -1,3 +1,4 @@
+import BaseModel from './BaseModel'
 import Model from './Model'
 
-export { Model }
+export { Model, BaseModel }
