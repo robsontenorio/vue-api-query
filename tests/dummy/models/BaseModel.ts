@@ -1,11 +1,15 @@
 import { AxiosRequestConfig } from 'axios'
-import { Model } from '../../../src'
+
+import StaticModel from '../../../src/StaticModel'
 
 export default function BaseModel<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
 >() {
-  return class BaseModel extends Model<isWrappedCollection, isWrappedModel>() {
+  return class BaseModel extends StaticModel<
+    isWrappedCollection,
+    isWrappedModel
+  >() {
     constructor(...attributes: unknown[]) {
       super(...attributes)
     }

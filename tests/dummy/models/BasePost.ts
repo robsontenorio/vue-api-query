@@ -20,10 +20,6 @@ export default function BasePost<
       super(...attributes)
     }
 
-    comments() {
-      return this.hasMany(Comment)
-    }
-
     relations() {
       return {
         user: User
