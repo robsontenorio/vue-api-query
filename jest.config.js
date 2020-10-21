@@ -18,7 +18,7 @@ module.exports = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ['src/*.js', '!src/index.ts'],
+  collectCoverageFrom: ['src/*.ts', '!src/index.ts'],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: 'coverage',
@@ -139,7 +139,7 @@ module.exports = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/tests/**/*.ts', '**/?(*.)+(spec|test).ts']
+  testMatch: ['**/?(*.)+(spec|test).ts']
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
