@@ -3,7 +3,7 @@ import { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 import Builder from './Builder'
 import type {
-  ModelData,
+  QueryResponseModel,
   RCollection,
   RModel,
   TCollection,
@@ -320,14 +320,14 @@ export default abstract class Model<
   _applyInstance<T extends Model<boolean, boolean>>(
     data: Record<string, any>,
     model: Constructor<T> = this.constructor as Constructor<T>
-  ): ModelData<T> {
+  ): QueryResponseModel<T> {
     const item = new model(data)
 
     if (this._fromResource) {
       item._from(this._fromResource)
     }
 
-    return (item as unknown) as ModelData<T>
+    return (item as unknown) as QueryResponseModel<T>
   }
 
   _applyInstanceCollection<T extends Model<boolean, boolean>>(
@@ -391,7 +391,7 @@ export default abstract class Model<
     })
   }
 
-  $first(): Promise<ModelData<this>> {
+  $first(): Promise<QueryResponseModel<this>> {
     return this.first().then((response: TModel<this>) => {
       let model = response
 
@@ -431,7 +431,7 @@ export default abstract class Model<
     })
   }
 
-  $find(identifier: number | string): Promise<ModelData<this>> {
+  $find(identifier: number | string): Promise<QueryResponseModel<this>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on $find() method.')
     }

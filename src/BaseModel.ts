@@ -1,5 +1,5 @@
 import Model from './Model'
-import { ModelData, RCollection, RModel } from './types'
+import { QueryResponseModel, RCollection, RModel } from './types'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function BaseModel<
@@ -134,7 +134,7 @@ export default function BaseModel<
 
     static $first<T extends Model<isWrappedCollection, isWrappedModel>>(
       this: ThisClass<T>
-    ): Promise<ModelData<T>> {
+    ): Promise<QueryResponseModel<T>> {
       const self = this.instance<T>()
 
       return self.$first()
@@ -152,7 +152,7 @@ export default function BaseModel<
     static $find<T extends Model<isWrappedCollection, isWrappedModel>>(
       this: ThisClass<T>,
       identifier: number | string
-    ): Promise<ModelData<T>> {
+    ): Promise<QueryResponseModel<T>> {
       const self = this.instance<T>()
 
       return self.$find(identifier)

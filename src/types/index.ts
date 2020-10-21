@@ -1,18 +1,23 @@
 import Model from '../Model'
 
-type ModelKeys = Omit<Model, 'delete' | 'save' | 'attach' | 'sync' | 'for'>
+type ModelOperations = 'delete' | 'save' | 'attach' | 'sync' | 'for'
 
-type DerivedClass<T extends Model<boolean, boolean>> = Omit<T, keyof ModelKeys>
+type DerivedModel<T extends Model<boolean, boolean>> = Omit<
+  T,
+  keyof Omit<Model, ModelOperations>
+>
 
-export type ModelData<T extends Model<boolean, boolean>> = Required<
-  DerivedClass<T>
+export type QueryResponseModel<T extends Model<boolean, boolean>> = Required<
+  DerivedModel<T>
 >
 
 export type WModel<T extends Model<boolean, boolean>> = {
-  data: ModelData<T>
+  data: QueryResponseModel<T>
 }
 
-export type TModel<T extends Model<boolean, boolean>> = ModelData<T> | WModel<T>
+export type TModel<T extends Model<boolean, boolean>> =
+  | QueryResponseModel<T>
+  | WModel<T>
 
 export type WCollection<T extends Model<boolean, boolean>> = {
   data: TModel<T>[]
@@ -25,7 +30,7 @@ export type TCollection<T extends Model<boolean, boolean>> =
 export type RModel<
   T extends Model<boolean, boolean>,
   isWrappedModel
-> = isWrappedModel extends true ? WModel<T> : ModelData<T>
+> = isWrappedModel extends true ? WModel<T> : QueryResponseModel<T>
 
 type WRCollection<T extends Model<boolean, boolean>, isWrappedModel> = {
   data: RModel<T, isWrappedModel>[]
