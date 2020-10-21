@@ -6,6 +6,8 @@
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @return {*}          A property value
  */
+import Model from './Model'
+
 export function getProp(
   holder: Record<string, any>,
   propName: string
@@ -62,4 +64,15 @@ export function setProp(
         ? {}
         : []
   }
+}
+
+type ThisClass<InstanceType extends Model<boolean, boolean>> = {
+  new (...args: unknown[]): InstanceType
+}
+
+export function hasProperty<T extends Model<boolean, boolean>>(
+  obj: T,
+  key: string
+): key is keyof ThisClass<T> {
+  return !!getProp(obj, key)
 }

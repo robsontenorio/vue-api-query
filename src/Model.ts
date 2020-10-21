@@ -11,22 +11,11 @@ import type {
   WCollection,
   WModel
 } from './types'
-import { getProp, setProp } from './utils'
+import { getProp, hasProperty, setProp } from './utils'
 
 type Constructor<T extends Model<boolean, boolean>> = new (
   ...args: unknown[]
 ) => T
-
-type ThisClass<InstanceType extends Model<boolean, boolean>> = {
-  new (...args: unknown[]): InstanceType
-}
-
-function hasProperty<T extends Model<boolean, boolean>>(
-  obj: T,
-  key: string
-): key is keyof ThisClass<T> {
-  return !!getProp(obj, key)
-}
 
 export default abstract class Model<
   isWrappedCollection extends boolean = false,
