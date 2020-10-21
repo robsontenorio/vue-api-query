@@ -58,6 +58,26 @@ describe('Query builder', () => {
     expect(findError).toThrow(errorMessage)
   })
 
+  test('Query Builder methods available before fetching data', async () => {
+    const post = new Post()
+    const methods = [
+      post.include(),
+      post.append(),
+      post.select('id'),
+      post.where('id', 1),
+      post.whereIn('id', [1, 2, 3]),
+      post.orderBy(),
+      post.page(1),
+      post.limit(20),
+      post.params({})
+    ]
+
+    methods.forEach((method) => {
+      expect(method).toBe(post)
+      expect(method).toBeInstanceOf(Post)
+    })
+  })
+
   test('it builds a complex query', () => {
     const post = Post.include('user')
       .append('likes')
