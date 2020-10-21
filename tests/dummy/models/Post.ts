@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import type { ModelData } from '../../../src'
+import type { ModelData } from '../../../src/types'
 import BaseModel from './BaseModel'
 import Comment from './Comment'
 import Tag from './Tag'
