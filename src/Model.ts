@@ -1,7 +1,7 @@
 import type { AxiosPromise } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 import Builder from './Builder'
-import Config from './Config'
 
 type Constructor<T extends Model<boolean, boolean>> = new (
   ...args: unknown[]
@@ -60,25 +60,44 @@ function hasProperty<T extends Model<boolean, boolean>>(
 export default abstract class Model<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
-> extends Config {
+> {
+  public static $http: AxiosInstance
   private readonly _builder: Builder | undefined
   private _fromResource: string | undefined
   private _customResource: string | undefined
 
   protected constructor(...attributes: unknown[]) {
-    super()
-
     if (attributes.length === 0) {
       this._builder = new Builder(this)
     } else {
       Object.assign(this, ...attributes)
       this._applyRelations(this)
     }
+
+    if (this.baseURL === undefined) {
+      throw new Error('You must declare baseURL() method.')
+    }
+
+    if (this.request === undefined) {
+      throw new Error('You must declare request() method.')
+    }
+
+    if (this.$http === undefined) {
+      throw new Error('You must set $http property')
+    }
   }
 
   /**
    *  Setup
    */
+
+  abstract baseURL(): string
+
+  abstract request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+
+  get $http(): AxiosInstance {
+    return Model.$http
+  }
 
   resource(): string {
     return `${this.constructor.name.toLowerCase()}s`
