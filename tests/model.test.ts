@@ -34,16 +34,44 @@ describe('Model methods', () => {
 
   test('it throws an error when trying to use Query Builder methods after fetching data', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+    const errorMessage =
+      'Builder methods are not available after fetching data.'
     const post = await Post.find(1)
 
-    errorModel = () => {
-      // @ts-ignore
-      post.find(2)
-    }
+    // @ts-ignore
+    const includeError = () => post.include()
+    // @ts-ignore
+    const appendError = () => post.append()
+    // @ts-ignore
+    const selectError = () => post.select()
+    // @ts-ignore
+    const whereError = () => post.where()
+    // @ts-ignore
+    const whereInError = () => post.whereIn()
+    // @ts-ignore
+    const orderByError = () => post.orderBy()
+    // @ts-ignore
+    const pageError = () => post.page()
+    // @ts-ignore
+    const limitError = () => post.limit()
+    // @ts-ignore
+    const paramsError = () => post.params()
+    // @ts-ignore
+    const getError = () => post.get()
+    // @ts-ignore
+    const findError = () => post.find(2)
 
-    expect(errorModel).toThrow(
-      'Builder methods are not available after fetching data.'
-    )
+    expect(includeError).toThrow(errorMessage)
+    expect(appendError).toThrow(errorMessage)
+    expect(selectError).toThrow(errorMessage)
+    expect(whereError).toThrow(errorMessage)
+    expect(whereInError).toThrow(errorMessage)
+    expect(orderByError).toThrow(errorMessage)
+    expect(pageError).toThrow(errorMessage)
+    expect(limitError).toThrow(errorMessage)
+    expect(paramsError).toThrow(errorMessage)
+    expect(getError).toThrow(errorMessage)
+    expect(findError).toThrow(errorMessage)
   })
 
   test('it throws a error when find() has no parameters', () => {
