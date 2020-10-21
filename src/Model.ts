@@ -432,7 +432,7 @@ export default abstract class Model<
         model = collection[0]
       }
 
-      return model as RModel<this, isWrappedModel>
+      return (model || {}) as RModel<this, isWrappedModel>
     })
   }
 
