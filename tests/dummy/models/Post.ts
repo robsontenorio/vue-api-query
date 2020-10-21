@@ -1,4 +1,4 @@
-import { ModelData } from '../../../src/Model'
+import type { ModelData } from '../../../src'
 import BaseModel from './BaseModel'
 import Comment from './Comment'
 import Tag from './Tag'

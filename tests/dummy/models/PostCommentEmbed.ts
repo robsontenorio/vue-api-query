@@ -1,4 +1,4 @@
-import { ModelData } from '../../../src/Model'
+import type { ModelData } from '../../../src'
 import BaseModel from './BaseModel'
 import CommentWrapped from './CommentWrapped'
 import TagEmbed from './TagEmbed'
