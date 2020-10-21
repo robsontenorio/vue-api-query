@@ -2,6 +2,7 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
 import Model from '../src/Model'
+import { Post as postResponse } from './dummy/data/post'
 import ModelWithParamNames from './dummy/models/ModelWithParamNames'
 import Post from './dummy/models/Post'
 import User from './dummy/models/User'
@@ -13,6 +14,48 @@ describe('Query builder', () => {
 
   beforeEach(() => {
     axiosMock.reset()
+  })
+
+  test('it throws an error when trying to use Query Builder methods after fetching data', async () => {
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+    const errorMessage =
+      'Builder methods are not available after fetching data.'
+    const post = await Post.find(1)
+
+    // @ts-ignore
+    const includeError = () => post.include()
+    // @ts-ignore
+    const appendError = () => post.append()
+    // @ts-ignore
+    const selectError = () => post.select()
+    // @ts-ignore
+    const whereError = () => post.where()
+    // @ts-ignore
+    const whereInError = () => post.whereIn()
+    // @ts-ignore
+    const orderByError = () => post.orderBy()
+    // @ts-ignore
+    const pageError = () => post.page()
+    // @ts-ignore
+    const limitError = () => post.limit()
+    // @ts-ignore
+    const paramsError = () => post.params()
+    // @ts-ignore
+    const getError = () => post.get()
+    // @ts-ignore
+    const findError = () => post.find(2)
+
+    expect(includeError).toThrow(errorMessage)
+    expect(appendError).toThrow(errorMessage)
+    expect(selectError).toThrow(errorMessage)
+    expect(whereError).toThrow(errorMessage)
+    expect(whereInError).toThrow(errorMessage)
+    expect(orderByError).toThrow(errorMessage)
+    expect(pageError).toThrow(errorMessage)
+    expect(limitError).toThrow(errorMessage)
+    expect(paramsError).toThrow(errorMessage)
+    expect(getError).toThrow(errorMessage)
+    expect(findError).toThrow(errorMessage)
   })
 
   test('it builds a complex query', () => {
