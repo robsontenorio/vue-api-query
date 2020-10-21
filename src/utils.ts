@@ -11,7 +11,7 @@ export function getProp(
   propName: string
 ): Record<string, any> {
   if (!propName || !holder) {
-    return holder
+    return holder || {}
   }
 
   if (propName in holder) {
