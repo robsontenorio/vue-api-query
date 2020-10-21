@@ -1,8 +1,26 @@
-import BasePost from './BasePost'
+import { ModelData } from '../../../src/Model'
+import BaseModel from './BaseModel'
 import Comment from './Comment'
+import Tag from './Tag'
+import User from './User'
 
-export default class Post extends BasePost<false, false>() {
+export default class Post extends BaseModel<false, false>() {
+  public id?: number
+  public someId?: string
+  public text?: string
+  public user?: ModelData<User>
+  public relationships?: {
+    tags: ModelData<Tag>[]
+  }
+
   comments() {
     return this.hasMany(Comment)
+  }
+
+  relations() {
+    return {
+      user: User,
+      'relationships.tags': Tag
+    }
   }
 }
