@@ -411,7 +411,7 @@ export default abstract class Model<
         )
 
         if ('data' in relation) {
-          relation.data = collection
+          setProp(model, key + '.data', collection)
         } else {
           setProp(model, key, collection)
         }
