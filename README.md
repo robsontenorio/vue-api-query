@@ -485,7 +485,7 @@ await this.posts.comments().attach(payload)
 await this.posts.comments().sync(payload)
 ```
 
-You can also apply a model instance to a nested object by setting the key and the model in `relations` method.
+You can also apply a model instance to a nested object by setting the key and the model in `relations` method. It supports nested keys.
 
 If the backend responds with:
 
@@ -497,11 +497,16 @@ If the backend responds with:
   user: {
     firstName: 'John',
     lastName: 'Doe'
+  },
+  relationships: {
+    tag: {
+      name: 'awesome'
+    }
   }
 }
 ```
 
-We just need to set `user` to User model:
+We just need to set `user` to User model and `relationships.tag`to Tag model:
 
 **/models/Post.ts**
 
@@ -510,7 +515,9 @@ class Post extends Model {
   relations() {
     return {
       // Apply User model to `user` object
-      user: User
+      user: User,
+      // Apply Tag model to `relationships.tag` object
+      'relationships.tag': Tag
     }
   }
 }

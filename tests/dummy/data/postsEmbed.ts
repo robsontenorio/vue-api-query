@@ -8,6 +8,16 @@ export const Posts = {
         firstname: 'John',
         lastname: 'Doe',
         age: 25
+      },
+      relationships: {
+        tags: [
+          {
+            name: 'super'
+          },
+          {
+            name: 'awesome'
+          }
+        ]
       }
     },
     {
@@ -18,6 +28,18 @@ export const Posts = {
         firstname: 'Mary',
         lastname: 'Doe',
         age: 25
+      },
+      relationships: {
+        tags: {
+          data: [
+            {
+              name: 'super'
+            },
+            {
+              name: 'awesome'
+            }
+          ]
+        }
       }
     }
   ]
