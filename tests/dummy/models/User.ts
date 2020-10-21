@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import BaseModel from './BaseModel'
 import Post from './Post'
 

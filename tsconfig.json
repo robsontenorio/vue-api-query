@@ -9,18 +9,11 @@
     "strict": true,
     /* Module Resolution Options */
     "moduleResolution": "node",
-    "types": [
-      "@types/node",
-      "@types/qs",
-      "@types/jest"
-    ],
+    "types": ["@types/node", "@types/qs", "@types/jest"],
     "esModuleInterop": true,
     /* Advanced Options */
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": [
-    "coverage",
-    "tests"
-  ]
+  "exclude": ["coverage", "tests"]
 }

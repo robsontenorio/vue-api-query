@@ -27,6 +27,7 @@
     "prettier/prettier": "error",
     "simple-import-sort/sort": "warn",
     "no-console": "error",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

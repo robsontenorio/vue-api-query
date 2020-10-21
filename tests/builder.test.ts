@@ -8,7 +8,6 @@ import Post from './dummy/models/Post'
 import User from './dummy/models/User'
 
 describe('Query builder', () => {
-  const errorModel = {}
   Model.$http = axios
   const axiosMock = new MockAdapter(axios)
 
@@ -173,7 +172,7 @@ describe('Query builder', () => {
   test('where() throws a exception when doest not have params or only first param', () => {
     let errorModel = () => {
       // @ts-ignore
-      const post = Post.where()
+      Post.where()
     }
 
     expect(errorModel).toThrow(
@@ -182,7 +181,7 @@ describe('Query builder', () => {
 
     errorModel = () => {
       // @ts-ignore
-      const post = Post.where('id')
+      Post.where('id')
     }
 
     expect(errorModel).toThrow(
@@ -192,7 +191,7 @@ describe('Query builder', () => {
 
   test('where() throws a exception when second parameter is not primitive', () => {
     const errorModel = () => {
-      const post = Post.where('id', ['foo'])
+      Post.where('id', ['foo'])
     }
 
     expect(errorModel).toThrow('The VALUE must be primitive on where() method.')
@@ -208,7 +207,7 @@ describe('Query builder', () => {
   test('whereIn() throws a exception when second parameter is not a array', () => {
     const errorModel = () => {
       // @ts-ignore
-      const post = Post.whereIn('id', 'foo')
+      Post.whereIn('id', 'foo')
     }
 
     expect(errorModel).toThrow(
@@ -226,7 +225,7 @@ describe('Query builder', () => {
   test('page() throws a exception when value is not a number', () => {
     const errorModel = () => {
       // @ts-ignore
-      const post = Post.page('foo')
+      Post.page('foo')
     }
 
     expect(errorModel).toThrow('The VALUE must be an integer on page() method.')
@@ -242,7 +241,7 @@ describe('Query builder', () => {
   test('limit() throws a exception when value is not a number', () => {
     const errorModel = () => {
       // @ts-ignore
-      const post = Post.limit('foo')
+      Post.limit('foo')
     }
 
     expect(errorModel).toThrow(
@@ -252,7 +251,7 @@ describe('Query builder', () => {
 
   test('select() with no parameters', () => {
     const errorModel = () => {
-      const post = Post.select()
+      Post.select()
     }
 
     expect(errorModel).toThrow(
@@ -289,7 +288,7 @@ describe('Query builder', () => {
   test('params() throws a exception when the payload is not an object', () => {
     const errorModel = () => {
       // @ts-ignore
-      const post = Post.params()
+      Post.params()
     }
 
     expect(errorModel).toThrow('You must pass a payload/object as param.')

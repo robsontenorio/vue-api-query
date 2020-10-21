@@ -46,8 +46,8 @@ export function setProp(
   const propParts = Array.isArray(propName)
     ? propName
     : (propName + '').split('.')
+  const l = propParts.length
   let i = 0,
-    l = propParts.length,
     t = holder,
     x
 

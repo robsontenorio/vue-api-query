@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import { AxiosRequestConfig } from 'axios'
 
 import { BaseModel as Model } from '../../../src'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function BaseModel<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
