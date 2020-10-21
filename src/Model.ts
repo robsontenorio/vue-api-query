@@ -3,772 +3,593 @@ import type { AxiosPromise } from 'axios'
 import Builder from './Builder'
 import Config from './Config'
 
-// @ts-ignore
-export type ModelInstance = InstanceType<ReturnType<typeof Model>>
-type ModelKeys = Omit<
-  ModelInstance,
-  'delete' | 'save' | 'attach' | 'sync' | 'for'
+type Constructor<T extends Model<boolean, boolean>> = new (
+  ...args: unknown[]
+) => T
+
+type ThisClass<InstanceType extends Model<boolean, boolean>> = {
+  new (...args: unknown[]): InstanceType
+}
+
+type ModelKeys = Omit<Model, 'delete' | 'save' | 'attach' | 'sync' | 'for'>
+
+type DerivedClass<T extends Model<boolean, boolean>> = Omit<T, keyof ModelKeys>
+
+export type ModelData<T extends Model<boolean, boolean>> = Required<
+  DerivedClass<T>
 >
-export type ModelData<T> = Required<Omit<T, keyof ModelKeys>>
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function Model<
-  isWrappedCollection extends boolean,
-  isWrappedModel extends boolean
->() {
-  type Constructor<T extends Model> = new (...args: unknown[]) => T
+type WModel<T extends Model<boolean, boolean>> = {
+  data: ModelData<T>
+}
 
-  type ThisClassStatic<InstanceType extends Model> = {
-    instance<T extends Model>(this: ThisClassStatic<T>): T
-    new (...args: unknown[]): InstanceType
+type TModel<T extends Model<boolean, boolean>> = ModelData<T> | WModel<T>
+
+type WCollection<T extends Model<boolean, boolean>> = {
+  data: TModel<T>[]
+}
+
+type TCollection<T extends Model<boolean, boolean>> =
+  | WCollection<T>
+  | TModel<T>[]
+
+export type RModel<
+  T extends Model<boolean, boolean>,
+  isWrappedModel
+> = isWrappedModel extends true ? WModel<T> : ModelData<T>
+
+type WRCollection<T extends Model<boolean, boolean>, isWrappedModel> = {
+  data: RModel<T, isWrappedModel>[]
+}
+
+export type RCollection<
+  T extends Model<boolean, boolean>,
+  isWrappedCollection,
+  isWrappedModel
+> = isWrappedCollection extends true
+  ? WRCollection<T, isWrappedModel>
+  : RModel<T, isWrappedModel>[]
+
+function hasProperty<T extends Model<boolean, boolean>>(
+  obj: T,
+  key: string
+): key is keyof ThisClass<T> {
+  return Object.values(obj).indexOf(key) !== -1
+}
+
+export default abstract class Model<
+  isWrappedCollection extends boolean = false,
+  isWrappedModel extends boolean = false
+> extends Config {
+  private readonly _builder: Builder | undefined
+  private _fromResource: string | undefined
+  private _customResource: string | undefined
+
+  protected constructor(...attributes: unknown[]) {
+    super()
+
+    if (attributes.length === 0) {
+      this._builder = new Builder(this)
+    } else {
+      Object.assign(this, ...attributes)
+      this._applyRelations(this)
+    }
   }
 
-  type ThisClass<InstanceType extends Model> = {
-    new (...args: unknown[]): InstanceType
+  /**
+   *  Setup
+   */
+
+  resource(): string {
+    return `${this.constructor.name.toLowerCase()}s`
   }
 
-  type ModelKeys = Omit<Model, 'delete' | 'save' | 'attach' | 'sync' | 'for'>
-
-  type DerivedClass<T extends Model> = Omit<T, keyof ModelKeys>
-
-  type ModelData<T extends Model> = Required<DerivedClass<T>>
-
-  type WModel<T extends Model> = {
-    data: ModelData<T>
+  primaryKey(): string {
+    return 'id'
   }
 
-  type TModel<T extends Model> = ModelData<T> | WModel<T>
+  getPrimaryKey(): string | number {
+    const key = this.primaryKey()
 
-  type WCollection<T extends Model> = {
-    data: TModel<T>[]
+    return hasProperty(this, key) ? this[key] : ''
   }
 
-  type TCollection<T extends Model> = WCollection<T> | TModel<T>[]
+  custom(...args: unknown[]): this {
+    if (args.length === 0) {
+      throw new Error('The custom() method takes a minimum of one argument.')
+    }
 
-  type RModel<T extends Model> = isWrappedModel extends true
-    ? WModel<T>
-    : ModelData<T>
+    // It would be unintuitive for users to manage where the '/' has to be for
+    // multiple arguments. We don't need it for the first argument if it's
+    // a string, but subsequent string arguments need the '/' at the beginning.
+    // We handle this implementation detail here to simplify the readme.
+    let slash = ''
+    let resource = ''
 
-  type WRCollection<T extends Model> = {
-    data: RModel<T>[]
-  }
+    args.forEach((value) => {
+      if (typeof value === 'string') {
+        resource += slash + value.replace(/^\/+/, '')
+      } else if (value instanceof Model) {
+        resource += slash + value.resource()
 
-  type RCollection<T extends Model> = isWrappedCollection extends true
-    ? WRCollection<T>
-    : RModel<T>[]
-
-  function hasProperty<T extends Model>(
-    obj: T,
-    key: string
-  ): key is keyof ThisClass<T> {
-    return Object.values(obj).indexOf(key) !== -1
-  }
-
-  abstract class Model extends Config {
-    private readonly _builder: Builder | undefined
-    private _fromResource: string | undefined
-    private _customResource: string | undefined
-
-    // [name: string]: any
-
-    protected constructor(...attributes: unknown[]) {
-      super()
-
-      if (attributes.length === 0) {
-        this._builder = new Builder(this)
+        if (value.isValidId(value.getPrimaryKey())) {
+          resource += '/' + value.getPrimaryKey()
+        }
       } else {
-        Object.assign(this, ...attributes)
-        this._applyRelations(this)
-      }
-    }
-
-    /**
-     *  Setup
-     */
-
-    resource(): string {
-      return `${this.constructor.name.toLowerCase()}s`
-    }
-
-    primaryKey(): string {
-      return 'id'
-    }
-
-    getPrimaryKey(): string | number {
-      const key = this.primaryKey()
-
-      return hasProperty(this, key) ? this[key] : ''
-    }
-
-    custom(...args: unknown[]): this {
-      if (args.length === 0) {
-        throw new Error('The custom() method takes a minimum of one argument.')
+        throw new Error(
+          'Arguments to custom() must be strings or instances of Model.'
+        )
       }
 
-      // It would be unintuitive for users to manage where the '/' has to be for
-      // multiple arguments. We don't need it for the first argument if it's
-      // a string, but subsequent string arguments need the '/' at the beginning.
-      // We handle this implementation detail here to simplify the readme.
-      let slash = ''
-      let resource = ''
+      if (!slash.length) {
+        slash = '/'
+      }
+    })
 
-      args.forEach((value) => {
-        if (typeof value === 'string') {
-          resource += slash + value.replace(/^\/+/, '')
-        } else if (value instanceof Model) {
-          resource += slash + value.resource()
+    this._customResource = resource
 
-          if (value.isValidId(value.getPrimaryKey())) {
-            resource += '/' + value.getPrimaryKey()
-          }
-        } else {
-          throw new Error(
-            'Arguments to custom() must be strings or instances of Model.'
-          )
-        }
+    return this
+  }
 
-        if (!slash.length) {
-          slash = '/'
-        }
-      })
+  hasMany<T extends Model<boolean, boolean>>(model: Constructor<T>): T {
+    const instance = new model()
+    const url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
-      this._customResource = resource
+    instance._from(url)
 
-      return this
+    return instance
+  }
+
+  _from(url: string): void {
+    Object.defineProperty(this, '_fromResource', { get: () => url })
+  }
+
+  for(...args: unknown[]): this {
+    if (args.length === 0) {
+      throw new Error('The for() method takes a minimum of one argument.')
     }
 
-    hasMany<T extends Model>(model: Constructor<T>): T {
-      const instance = new model()
-      const url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
+    let url = `${this.baseURL()}`
 
-      instance._from(url)
-
-      return instance
-    }
-
-    _from(url: string): void {
-      Object.defineProperty(this, '_fromResource', { get: () => url })
-    }
-
-    for(...args: unknown[]): this {
-      if (args.length === 0) {
-        throw new Error('The for() method takes a minimum of one argument.')
+    args.forEach((object) => {
+      if (!(object instanceof Model)) {
+        throw new Error(
+          'The object referenced on for() method is not a valid Model.'
+        )
       }
 
-      let url = `${this.baseURL()}`
-
-      args.forEach((object) => {
-        if (!(object instanceof Model)) {
-          throw new Error(
-            'The object referenced on for() method is not a valid Model.'
-          )
-        }
-
-        if (!this.isValidId(object.getPrimaryKey())) {
-          throw new Error(
-            'The object referenced on for() method has a invalid id.'
-          )
-        }
-
-        url += `/${object.resource()}/${object.getPrimaryKey()}`
-      })
-
-      url += `/${this.resource()}`
-
-      this._from(url)
-
-      return this
-    }
-
-    // @ts-ignore
-    relations(): Record<string, InstanceType<typeof Model>> {
-      return {}
-    }
-
-    /**
-     * Helpers
-     */
-
-    hasId(): boolean {
-      const id = this.getPrimaryKey()
-      return this.isValidId(id)
-    }
-
-    isValidId(id: number | string): boolean {
-      return id !== undefined && id !== 0 && id !== ''
-    }
-
-    endpoint(): string {
-      if (this._fromResource) {
-        if (this.hasId()) {
-          return `${this._fromResource}/${this.getPrimaryKey()}`
-        } else {
-          return this._fromResource
-        }
+      if (!this.isValidId(object.getPrimaryKey())) {
+        throw new Error(
+          'The object referenced on for() method has a invalid id.'
+        )
       }
 
+      url += `/${object.resource()}/${object.getPrimaryKey()}`
+    })
+
+    url += `/${this.resource()}`
+
+    this._from(url)
+
+    return this
+  }
+
+  // @ts-ignore
+  relations(): Record<string, InstanceType<typeof Model>> {
+    return {}
+  }
+
+  /**
+   * Helpers
+   */
+
+  hasId(): boolean {
+    const id = this.getPrimaryKey()
+    return this.isValidId(id)
+  }
+
+  isValidId(id: number | string): boolean {
+    return id !== undefined && id !== 0 && id !== ''
+  }
+
+  endpoint(): string {
+    if (this._fromResource) {
       if (this.hasId()) {
-        return `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}`
+        return `${this._fromResource}/${this.getPrimaryKey()}`
       } else {
-        return `${this.baseURL()}/${this.resource()}`
+        return this._fromResource
       }
     }
 
-    parameterNames(): {
-      include: string
-      filter: string
-      sort: string
-      fields: string
-      append: string
-      page: string
-      limit: string
-    } {
-      return {
-        include: 'include',
-        filter: 'filter',
-        sort: 'sort',
-        fields: 'fields',
-        append: 'append',
-        page: 'page',
-        limit: 'limit'
-      }
-    }
-
-    isWrappedModel<T extends Model>(model: TModel<T>): model is WModel<T> {
-      return 'data' in model
-    }
-
-    isWrappedCollection<T extends Model>(
-      collection: TCollection<T>
-    ): collection is WCollection<T> {
-      return !Array.isArray(collection) && 'data' in collection
-    }
-
-    /**
-     *  Query
-     */
-
-    include(...args: unknown[]): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.include(...args)
-
-      return this
-    }
-
-    append(...args: unknown[]): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.append(...args)
-
-      return this
-    }
-
-    select(...fields: (string | { [p: string]: string[] })[]): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.select(...fields)
-
-      return this
-    }
-
-    where(field: string, value: unknown): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.where(field, value)
-
-      return this
-    }
-
-    whereIn(field: string, array: unknown[]): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.whereIn(field, array)
-
-      return this
-    }
-
-    orderBy(...args: unknown[]): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.orderBy(...args)
-
-      return this
-    }
-
-    page(value: number): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.page(value)
-
-      return this
-    }
-
-    limit(value: number): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.limit(value)
-
-      return this
-    }
-
-    params(payload: Record<string, unknown>): this {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      this._builder.params(payload)
-
-      return this
-    }
-
-    /**
-     * Result
-     */
-
-    _applyInstance<T extends Model>(
-      data: Record<string, any>,
-      model: Constructor<T> = this.constructor as Constructor<T>
-    ): ModelData<T> {
-      const item = new model(data)
-
-      if (this._fromResource) {
-        item._from(this._fromResource)
-      }
-
-      return (item as unknown) as ModelData<T>
-    }
-
-    _applyInstanceCollection<T extends Model>(
-      data: Record<string, any> | Record<string, any>[],
-      model: Constructor<T> = this.constructor as Constructor<T>
-    ): TModel<T>[] {
-      let collection = !Array.isArray(data) && 'data' in data ? data.data : data
-      collection = Array.isArray(collection) ? collection : [collection]
-
-      return collection.map((c: Record<string, any>) => {
-        if ('data' in c) {
-          return { data: this._applyInstance<T>(c.data, model) }
-        } else {
-          return this._applyInstance<T>(c, model)
-        }
-      })
-    }
-
-    _applyRelations(model: this): void {
-      const relations = model.relations()
-
-      for (const key of Object.keys(relations)) {
-        if (!hasProperty(model, key)) {
-          return
-        }
-
-        let relation: any = model[key]
-
-        if (!relation) {
-          return
-        }
-
-        if (
-          Array.isArray(relation) ||
-          ('data' in relation && Array.isArray(relation.data))
-        ) {
-          const collection = this._applyInstanceCollection(
-            relation,
-            relations[key]
-          )
-
-          if ('data' in relation) {
-            relation.data = collection
-          } else {
-            relation = collection
-          }
-        } else {
-          relation = this._applyInstance(relation, relations[key])
-        }
-      }
-    }
-
-    first(): Promise<RModel<this>> {
-      return this.get().then((response: TCollection<this>) => {
-        const collection = response
-        let model: TModel<this>
-
-        if (this.isWrappedCollection<this>(collection)) {
-          model = collection.data[0]
-        } else {
-          model = collection[0]
-        }
-
-        return model as RModel<this>
-      })
-    }
-
-    $first(): Promise<ModelData<this>> {
-      return this.first().then((response: TModel<this>) => {
-        let model = response
-
-        if (this.isWrappedModel(model)) {
-          model = model.data
-        }
-
-        return model
-      })
-    }
-
-    find(identifier: number | string): Promise<RModel<this>> {
-      if (identifier === undefined) {
-        throw new Error('You must specify the param on find() method.')
-      }
-
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-      const url = `${base}/${identifier}${this._builder.query()}`
-
-      return this.request<TModel<this>>({
-        url,
-        method: 'GET'
-      }).then((response) => {
-        let model = response.data
-
-        if (this.isWrappedModel(model)) {
-          model.data = this._applyInstance<this>(model.data)
-        } else {
-          model = this._applyInstance<this>(model)
-        }
-
-        return model as RModel<this>
-      })
-    }
-
-    $find(identifier: number | string): Promise<ModelData<this>> {
-      if (identifier === undefined) {
-        throw new Error('You must specify the param on $find() method.')
-      }
-
-      return this.find(identifier).then((response: TModel<this>) => {
-        let model = response
-
-        if (this.isWrappedModel(model)) {
-          model = model.data
-        }
-
-        return model
-      })
-    }
-
-    get(): Promise<RCollection<this>> {
-      if (!this._builder) {
-        throw new Error(
-          'Builder methods are not available after fetching data.'
-        )
-      }
-
-      let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-      base = this._customResource
-        ? `${this.baseURL()}/${this._customResource}`
-        : base
-      const url = `${base}${this._builder.query()}`
-
-      return this.request<TCollection<this>>({
-        url,
-        method: 'GET'
-      }).then((response) => {
-        let collection = response.data
-        const instancedCollection = this._applyInstanceCollection<this>(
-          collection
-        )
-
-        if (this.isWrappedCollection<this>(collection)) {
-          collection.data = instancedCollection
-        } else {
-          collection = instancedCollection
-        }
-
-        return collection as RCollection<this>
-      })
-    }
-
-    $get(): Promise<RModel<this>[]> {
-      return this.get().then((response: TCollection<this>) => {
-        let collection = response
-
-        if (this.isWrappedCollection<this>(collection)) {
-          collection = collection.data
-        }
-
-        return collection as RModel<this>[]
-      })
-    }
-
-    /**
-     * Common CRUD operations
-     */
-
-    delete(): AxiosPromise<unknown> {
-      if (!this.hasId()) {
-        throw new Error('This model has a empty ID.')
-      }
-
-      return this.request<unknown>({
-        url: this.endpoint(),
-        method: 'DELETE'
-      }).then((response) => response)
-    }
-
-    save(): Promise<RModel<this>> {
-      return this.hasId() ? this._update() : this._create()
-    }
-
-    _create(): Promise<RModel<this>> {
-      return this.request<TModel<this>>({
-        method: 'POST',
-        url: this.endpoint(),
-        data: this
-      }).then((response) => {
-        let model = response.data
-
-        if (this.isWrappedModel(model)) {
-          model.data = this._applyInstance<this>(model.data)
-        } else {
-          model = this._applyInstance<this>(model)
-        }
-
-        return model as RModel<this>
-      })
-    }
-
-    _update(): Promise<RModel<this>> {
-      return this.request<TModel<this>>({
-        method: 'PUT',
-        url: this.endpoint(),
-        data: this
-      }).then((response) => {
-        let model = response.data
-
-        if (this.isWrappedModel(model)) {
-          model.data = this._applyInstance<this>(model.data)
-        } else {
-          model = this._applyInstance<this>(model)
-        }
-
-        return model as RModel<this>
-      })
-    }
-
-    /**
-     * Relationship operations
-     */
-
-    attach(params: unknown): AxiosPromise<unknown> {
-      return this.request<unknown>({
-        method: 'POST',
-        url: this.endpoint(),
-        data: params
-      }).then((response) => response)
-    }
-
-    sync(params: unknown): AxiosPromise<unknown> {
-      return this.request<unknown>({
-        method: 'PUT',
-        url: this.endpoint(),
-        data: params
-      }).then((response) => response)
-    }
-
-    /**
-     * Static
-     */
-
-    static instance<T extends Model>(this: ThisClassStatic<T>): T {
-      return new this()
-    }
-
-    static include<T extends Model>(
-      this: ThisClassStatic<T>,
-      ...args: unknown[]
-    ): T {
-      const self = this.instance<T>()
-      self.include(...args)
-
-      return self
-    }
-
-    static append<T extends Model>(
-      this: ThisClassStatic<T>,
-      ...args: unknown[]
-    ): T {
-      const self = this.instance<T>()
-      self.append(...args)
-
-      return self
-    }
-
-    static select<T extends Model>(
-      this: ThisClassStatic<T>,
-      ...fields: (string | { [p: string]: string[] })[]
-    ): T {
-      const self = this.instance<T>()
-      self.select(...fields)
-
-      return self
-    }
-
-    static where<T extends Model>(
-      this: ThisClassStatic<T>,
-      field: string,
-      value: unknown
-    ): T {
-      const self = this.instance<T>()
-      self.where(field, value)
-
-      return self
-    }
-
-    static whereIn<T extends Model>(
-      this: ThisClassStatic<T>,
-      field: string,
-      array: unknown[]
-    ): T {
-      const self = this.instance<T>()
-      self.whereIn(field, array)
-
-      return self
-    }
-
-    static orderBy<T extends Model>(
-      this: ThisClassStatic<T>,
-      ...args: unknown[]
-    ): T {
-      const self = this.instance<T>()
-      self.orderBy(...args)
-
-      return self
-    }
-
-    static page<T extends Model>(this: ThisClassStatic<T>, value: number): T {
-      const self = this.instance<T>()
-      self.page(value)
-
-      return self
-    }
-
-    static limit<T extends Model>(this: ThisClassStatic<T>, value: number): T {
-      const self = this.instance<T>()
-      self.limit(value)
-
-      return self
-    }
-
-    static custom<T extends Model>(
-      this: ThisClassStatic<T>,
-      ...args: unknown[]
-    ): T {
-      const self = this.instance<T>()
-      self.custom(...args)
-
-      return self
-    }
-
-    static params<T extends Model>(
-      this: ThisClassStatic<T>,
-      payload: Record<string, unknown>
-    ): T {
-      const self = this.instance<T>()
-      self.params(payload)
-
-      return self
-    }
-
-    static first<T extends Model>(
-      this: ThisClassStatic<T>
-    ): Promise<RModel<T>> {
-      const self = this.instance<T>()
-
-      return self.first()
-    }
-
-    static $first<T extends Model>(
-      this: ThisClassStatic<T>
-    ): Promise<ModelData<T>> {
-      const self = this.instance<T>()
-
-      return self.$first()
-    }
-
-    static find<T extends Model>(
-      this: ThisClassStatic<T>,
-      identifier: number | string
-    ): Promise<RModel<T>> {
-      const self = this.instance<T>()
-
-      return self.find(identifier)
-    }
-
-    static $find<T extends Model>(
-      this: ThisClassStatic<T>,
-      identifier: number | string
-    ): Promise<ModelData<T>> {
-      const self = this.instance<T>()
-
-      return self.$find(identifier)
-    }
-
-    static get<T extends Model>(
-      this: ThisClassStatic<T>
-    ): Promise<RCollection<T>> {
-      const self = this.instance<T>()
-
-      return self.get()
-    }
-
-    static $get<T extends Model>(
-      this: ThisClassStatic<T>
-    ): Promise<RModel<T>[]> {
-      const self = this.instance<T>()
-
-      return self.$get()
+    if (this.hasId()) {
+      return `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}`
+    } else {
+      return `${this.baseURL()}/${this.resource()}`
     }
   }
 
-  return Model
+  parameterNames(): {
+    include: string
+    filter: string
+    sort: string
+    fields: string
+    append: string
+    page: string
+    limit: string
+  } {
+    return {
+      include: 'include',
+      filter: 'filter',
+      sort: 'sort',
+      fields: 'fields',
+      append: 'append',
+      page: 'page',
+      limit: 'limit'
+    }
+  }
+
+  isWrappedModel<T extends Model<boolean, boolean>>(
+    model: TModel<T>
+  ): model is WModel<T> {
+    return 'data' in model
+  }
+
+  isWrappedCollection<T extends Model<boolean, boolean>>(
+    collection: TCollection<T>
+  ): collection is WCollection<T> {
+    return !Array.isArray(collection) && 'data' in collection
+  }
+
+  /**
+   *  Query
+   */
+
+  include(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.include(...args)
+
+    return this
+  }
+
+  append(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.append(...args)
+
+    return this
+  }
+
+  select(...fields: (string | { [p: string]: string[] })[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.select(...fields)
+
+    return this
+  }
+
+  where(field: string, value: unknown): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.where(field, value)
+
+    return this
+  }
+
+  whereIn(field: string, array: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.whereIn(field, array)
+
+    return this
+  }
+
+  orderBy(...args: unknown[]): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.orderBy(...args)
+
+    return this
+  }
+
+  page(value: number): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.page(value)
+
+    return this
+  }
+
+  limit(value: number): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.limit(value)
+
+    return this
+  }
+
+  params(payload: Record<string, unknown>): this {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    this._builder.params(payload)
+
+    return this
+  }
+
+  /**
+   * Result
+   */
+
+  _applyInstance<T extends Model<boolean, boolean>>(
+    data: Record<string, any>,
+    model: Constructor<T> = this.constructor as Constructor<T>
+  ): ModelData<T> {
+    const item = new model(data)
+
+    if (this._fromResource) {
+      item._from(this._fromResource)
+    }
+
+    return (item as unknown) as ModelData<T>
+  }
+
+  _applyInstanceCollection<T extends Model<boolean, boolean>>(
+    data: Record<string, any> | Record<string, any>[],
+    model: Constructor<T> = this.constructor as Constructor<T>
+  ): TModel<T>[] {
+    let collection = !Array.isArray(data) && 'data' in data ? data.data : data
+    collection = Array.isArray(collection) ? collection : [collection]
+
+    return collection.map((c: Record<string, any>) => {
+      if ('data' in c) {
+        return { data: this._applyInstance<T>(c.data, model) }
+      } else {
+        return this._applyInstance<T>(c, model)
+      }
+    })
+  }
+
+  _applyRelations(model: this): void {
+    const relations = model.relations()
+
+    for (const key of Object.keys(relations)) {
+      if (!hasProperty(model, key)) {
+        return
+      }
+
+      let relation: any = model[key]
+
+      if (!relation) {
+        return
+      }
+
+      if (
+        Array.isArray(relation) ||
+        ('data' in relation && Array.isArray(relation.data))
+      ) {
+        const collection = this._applyInstanceCollection(
+          relation,
+          relations[key]
+        )
+
+        if ('data' in relation) {
+          relation.data = collection
+        } else {
+          relation = collection
+        }
+      } else {
+        relation = this._applyInstance(relation, relations[key])
+      }
+    }
+  }
+
+  first(): Promise<RModel<this, isWrappedModel>> {
+    return this.get().then((response: TCollection<this>) => {
+      const collection = response
+      let model: TModel<this>
+
+      if (this.isWrappedCollection<this>(collection)) {
+        model = collection.data[0]
+      } else {
+        model = collection[0]
+      }
+
+      return model as RModel<this, isWrappedModel>
+    })
+  }
+
+  $first(): Promise<ModelData<this>> {
+    return this.first().then((response: TModel<this>) => {
+      let model = response
+
+      if (this.isWrappedModel(model)) {
+        model = model.data
+      }
+
+      return model
+    })
+  }
+
+  find(identifier: number | string): Promise<RModel<this, isWrappedModel>> {
+    if (identifier === undefined) {
+      throw new Error('You must specify the param on find() method.')
+    }
+
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    const url = `${base}/${identifier}${this._builder.query()}`
+
+    return this.request<TModel<this>>({
+      url,
+      method: 'GET'
+    }).then((response) => {
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
+      }
+
+      return model as RModel<this, isWrappedModel>
+    })
+  }
+
+  $find(identifier: number | string): Promise<ModelData<this>> {
+    if (identifier === undefined) {
+      throw new Error('You must specify the param on $find() method.')
+    }
+
+    return this.find(identifier).then((response: TModel<this>) => {
+      let model = response
+
+      if (this.isWrappedModel(model)) {
+        model = model.data
+      }
+
+      return model
+    })
+  }
+
+  get(): Promise<RCollection<this, isWrappedCollection, isWrappedModel>> {
+    if (!this._builder) {
+      throw new Error('Builder methods are not available after fetching data.')
+    }
+
+    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    base = this._customResource
+      ? `${this.baseURL()}/${this._customResource}`
+      : base
+    const url = `${base}${this._builder.query()}`
+
+    return this.request<TCollection<this>>({
+      url,
+      method: 'GET'
+    }).then((response) => {
+      let collection = response.data
+      const instancedCollection = this._applyInstanceCollection<this>(
+        collection
+      )
+
+      if (this.isWrappedCollection<this>(collection)) {
+        collection.data = instancedCollection
+      } else {
+        collection = instancedCollection
+      }
+
+      return collection as RCollection<
+        this,
+        isWrappedCollection,
+        isWrappedModel
+      >
+    })
+  }
+
+  $get(): Promise<RModel<this, isWrappedModel>[]> {
+    return this.get().then((response: TCollection<this>) => {
+      let collection = response
+
+      if (this.isWrappedCollection<this>(collection)) {
+        collection = collection.data
+      }
+
+      return collection as RModel<this, isWrappedModel>[]
+    })
+  }
+
+  /**
+   * Common CRUD operations
+   */
+
+  delete(): AxiosPromise<unknown> {
+    if (!this.hasId()) {
+      throw new Error('This model has a empty ID.')
+    }
+
+    return this.request<unknown>({
+      url: this.endpoint(),
+      method: 'DELETE'
+    }).then((response) => response)
+  }
+
+  save(): Promise<RModel<this, isWrappedModel>> {
+    return this.hasId() ? this._update() : this._create()
+  }
+
+  _create(): Promise<RModel<this, isWrappedModel>> {
+    return this.request<TModel<this>>({
+      method: 'POST',
+      url: this.endpoint(),
+      data: this
+    }).then((response) => {
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
+      }
+
+      return model as RModel<this, isWrappedModel>
+    })
+  }
+
+  _update(): Promise<RModel<this, isWrappedModel>> {
+    return this.request<TModel<this>>({
+      method: 'PUT',
+      url: this.endpoint(),
+      data: this
+    }).then((response) => {
+      let model = response.data
+
+      if (this.isWrappedModel(model)) {
+        model.data = this._applyInstance<this>(model.data)
+      } else {
+        model = this._applyInstance<this>(model)
+      }
+
+      return model as RModel<this, isWrappedModel>
+    })
+  }
+
+  /**
+   * Relationship operations
+   */
+
+  attach(params: unknown): AxiosPromise<unknown> {
+    return this.request<unknown>({
+      method: 'POST',
+      url: this.endpoint(),
+      data: params
+    }).then((response) => response)
+  }
+
+  sync(params: unknown): AxiosPromise<unknown> {
+    return this.request<unknown>({
+      method: 'PUT',
+      url: this.endpoint(),
+      data: params
+    }).then((response) => response)
+  }
 }
