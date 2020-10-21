@@ -2,6 +2,7 @@ import type { AxiosPromise } from 'axios'
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 import Builder from './Builder'
+import { getProp, setProp } from './utils'
 
 type Constructor<T extends Model<boolean, boolean>> = new (
   ...args: unknown[]
@@ -394,7 +395,7 @@ export default abstract class Model<
         return
       }
 
-      let relation: any = model[key]
+      const relation = getProp(model, key)
 
       if (!relation) {
         return
@@ -412,10 +413,10 @@ export default abstract class Model<
         if ('data' in relation) {
           relation.data = collection
         } else {
-          relation = collection
+          setProp(model, key, collection)
         }
       } else {
-        relation = this._applyInstance(relation, relations[key])
+        setProp(model, key, this._applyInstance(relation, relations[key]))
       }
     }
   }

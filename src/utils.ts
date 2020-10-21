@@ -6,7 +6,7 @@
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @return {*}          A property value
  */
-export function getProp (holder: Record<string, any>, propName: string): any {
+export function getProp(holder: Record<string, any>, propName: string): any {
   if (!propName || !holder) {
     return holder
   }
@@ -35,7 +35,7 @@ export function getProp (holder: Record<string, any>, propName: string): any {
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @param  {*}      value    The value to be set
  */
-export function setProp (
+export function setProp(
   holder: Record<string, any>,
   propName: string,
   value: unknown
@@ -56,7 +56,7 @@ export function setProp (
         : x != null
         ? x
         : !!~propParts[i + 1].indexOf('.') || !(+propParts[i + 1] > -1)
-          ? {}
-          : []
+        ? {}
+        : []
   }
 }
