@@ -201,7 +201,7 @@ describe('Query builder', () => {
     const user = User.select('age', 'firstname')
 
     // @ts-ignore
-    expect(user._builder.fields.posts).toEqual('age,firstname')
+    expect(user._builder.fields.users).toEqual('age,firstname')
   })
 
   test('select() for related entities', () => {
