@@ -54,7 +54,7 @@ function hasProperty<T extends Model<boolean, boolean>>(
   obj: T,
   key: string
 ): key is keyof ThisClass<T> {
-  return Object.values(obj).indexOf(key) !== -1
+  return key in obj
 }
 
 export default abstract class Model<
