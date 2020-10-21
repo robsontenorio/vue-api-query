@@ -1,4 +1,5 @@
 import BaseModel from './BaseModel'
-import Model from './Model'
+import Model, { ModelData } from './Model'
 
 export { Model, BaseModel }
+export type { ModelData }
