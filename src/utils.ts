@@ -6,7 +6,7 @@
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @return {*}          A property value
  */
-export function getProp (holder, propName) {
+export function getProp (holder: Record<string, any>, propName: string): any {
   if (!propName || !holder) {
     return holder
   }
@@ -15,7 +15,9 @@ export function getProp (holder, propName) {
     return holder[propName]
   }
 
-  const propParts = Array.isArray(propName) ? propName : (propName + '').split('.')
+  const propParts = Array.isArray(propName)
+    ? propName
+    : (propName + '').split('.')
 
   let result = holder
   while (propParts.length && result) {
@@ -33,12 +35,28 @@ export function getProp (holder, propName) {
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @param  {*}      value    The value to be set
  */
-export function setProp (holder, propName, value) {
-  const propParts = Array.isArray(propName) ? propName : (propName + '').split('.')
-  let i = 0, l = propParts.length, t = holder, x
+export function setProp (
+  holder: Record<string, any>,
+  propName: string,
+  value: unknown
+): void {
+  const propParts = Array.isArray(propName)
+    ? propName
+    : (propName + '').split('.')
+  let i = 0,
+    l = propParts.length,
+    t = holder,
+    x
 
   for (; i < l; ++i) {
     x = t[propParts[i]]
-    t = t[propParts[i]] = (i === l - 1 ? value : (x != null ? x : (!!~propParts[i + 1].indexOf('.') || !(+propParts[i + 1] > -1)) ? {} : []))
+    t = t[propParts[i]] =
+      i === l - 1
+        ? value
+        : x != null
+        ? x
+        : !!~propParts[i + 1].indexOf('.') || !(+propParts[i + 1] > -1)
+          ? {}
+          : []
   }
 }
