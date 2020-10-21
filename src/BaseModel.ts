@@ -1,4 +1,5 @@
-import Model, { ModelData, RCollection, RModel } from './Model'
+import Model from './Model'
+import { ModelData, RCollection, RModel } from './types'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function BaseModel<
