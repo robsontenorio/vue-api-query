@@ -6,7 +6,10 @@
  * @param  {string} propName Dot notation, like 'this.a.b.c'
  * @return {*}          A property value
  */
-export function getProp(holder: Record<string, any>, propName: string): any {
+export function getProp(
+  holder: Record<string, any>,
+  propName: string
+): Record<string, any> {
   if (!propName || !holder) {
     return holder
   }
