@@ -32,6 +32,20 @@ describe('Model methods', () => {
     }
   })
 
+  test('it throws an error when trying to use Query Builder methods after fetching data', async () => {
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
+    const post = await Post.find(1)
+
+    errorModel = () => {
+      // @ts-ignore
+      post.find(2)
+    }
+
+    expect(errorModel).toThrow(
+      'Builder methods are not available after fetching data.'
+    )
+  })
+
   test('it throws a error when find() has no parameters', () => {
     errorModel = () => {
       // @ts-ignore
@@ -51,9 +65,7 @@ describe('Model methods', () => {
   })
 
   test('first() returns first object in array as instance of such Model', async () => {
-    axiosMock.onGet('http://localhost/posts').reply(200, {
-      data: postsResponse
-    })
+    axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
     const post = await Post.first()
 
