@@ -1,7 +1,7 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import Config from '../src/Config'
+import Model from '../src/Model'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 import { Post as postResponse } from './dummy/data/post'
@@ -18,7 +18,7 @@ import User from './dummy/models/User'
 
 describe('Model methods', () => {
   let errorModel = {}
-  Config.$http = axios
+  Model.$http = axios
   const axiosMock = new MockAdapter(axios)
 
   beforeEach(() => {

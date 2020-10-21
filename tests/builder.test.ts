@@ -1,14 +1,14 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-import Config from '../src/Config'
+import Model from '../src/Model'
 import ModelWithParamNames from './dummy/models/ModelWithParamNames'
 import Post from './dummy/models/Post'
 import User from './dummy/models/User'
 
 describe('Query builder', () => {
   const errorModel = {}
-  Config.$http = axios
+  Model.$http = axios
   const axiosMock = new MockAdapter(axios)
 
   beforeEach(() => {
