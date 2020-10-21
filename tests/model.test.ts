@@ -320,6 +320,24 @@ describe('Model methods', () => {
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {
+    let post:
+      | Post
+      | Required<
+          Pick<
+            Post,
+            | 'delete'
+            | 'save'
+            | 'attach'
+            | 'sync'
+            | 'for'
+            | 'id'
+            | 'someId'
+            | 'text'
+            | 'user'
+            | 'relationships'
+            | 'comments'
+          >
+        >
     const _postResponse = {
       id: 1,
       title: 'Cool!',
@@ -328,40 +346,27 @@ describe('Model methods', () => {
         firstname: 'John',
         lastname: 'Doe',
         age: 25
-      },
-      relationships: {
-        tags: [
-          {
-            name: 'super'
-          },
-          {
-            name: 'awesome'
-          }
-        ]
       }
     }
-    const _post = new Post({ title: 'Cool!' })
-    const post = await _post.save()
-
-    expect(post).toEqual(_postResponse)
-    expect(post).toBeInstanceOf(Post)
-    expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
-      expect(tag).toBeInstanceOf(Tag)
-    })
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('post')
-      expect(config.data).toEqual(JSON.stringify(_post))
+      expect(config.data).toEqual(JSON.stringify(post))
       expect(config.url).toEqual('http://localhost/posts')
 
       return [200, _postResponse]
     })
+
+    post = new Post({ title: 'Cool!' })
+    post = await post.save()
+
+    expect(post).toEqual(_postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
   })
 
   test('save() method makes a PUT request when ID of object exists', async () => {
     const post = new Post({ id: 1, title: 'Cool!' })
-    await post.save()
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('put')
@@ -370,6 +375,8 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
+
+    await post.save()
   })
 
   test('save() method makes a PUT request when ID of object exists (custom PK)', async () => {
@@ -391,10 +398,20 @@ describe('Model methods', () => {
   })
 
   test('save() method makes a PUT request when ID of object exists (nested object)', async () => {
-    const post = new Post({ id: 1 })
-    const comment = await post.comments().first()
-    comment.text = 'Owh!'
-    comment.save()
+    // eslint-disable-next-line prefer-const
+    let comment: Required<Pick<
+      Comment,
+      | 'delete'
+      | 'save'
+      | 'attach'
+      | 'sync'
+      | 'for'
+      | 'id'
+      | 'post_id'
+      | 'someId'
+      | 'text'
+      | 'replies'
+    >>
 
     axiosMock
       .onGet('http://localhost/posts/1/comments')
@@ -407,6 +424,11 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
+
+    const post = new Post({ id: 1 })
+    comment = await post.comments().first()
+    comment.text = 'Owh!'
+    await comment.save()
   })
 
   test('save() method makes a PUT request when ID of object exists (nested object, customPK)', async () => {
@@ -414,10 +436,21 @@ describe('Model methods', () => {
       return 'someId'
     }
 
+    // eslint-disable-next-line prefer-const
+    let comment: Required<Pick<
+      Comment,
+      | 'delete'
+      | 'save'
+      | 'attach'
+      | 'sync'
+      | 'for'
+      | 'id'
+      | 'post_id'
+      | 'someId'
+      | 'text'
+      | 'replies'
+    >>
     const post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
-    const comment = await post.comments().first()
-    comment.text = 'Owh!'
-    comment.save()
 
     axiosMock
       .onGet(`http://localhost/posts/${post.someId}/comments`)
@@ -432,6 +465,10 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
+
+    comment = await post.comments().first()
+    comment.text = 'Owh!'
+    await comment.save()
   })
 
   test('a request from delete() method hits the right resource', async () => {
@@ -452,7 +489,6 @@ describe('Model methods', () => {
     }
 
     const post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
-    await post.delete()
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('delete')
@@ -460,6 +496,8 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
+
+    await post.delete()
   })
 
   test('a request from delete() method when model has not ID throws a exception', async () => {
@@ -494,8 +532,6 @@ describe('Model methods', () => {
     }
 
     const post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
-    const comment = await post.comments().first()
-    comment.delete()
 
     axiosMock
       .onGet(`http://localhost/posts/${post.someId}/comments`)
@@ -509,6 +545,9 @@ describe('Model methods', () => {
 
       return [200, {}]
     })
+
+    const comment = await post.comments().first()
+    comment.delete()
   })
 
   test('a request with custom() method hits the right resource', async () => {
