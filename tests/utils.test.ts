@@ -29,7 +29,7 @@ describe('Utilities', () => {
     expect(result).toBe(holder.a)
   })
 
-  test('Get holder if propName is not defined.', () => {
+  test('Get holder when propName is not defined.', () => {
     const holder = {
       a: {
         b: {
@@ -44,7 +44,7 @@ describe('Utilities', () => {
     expect(result).toBe(holder)
   })
 
-  test('Get empty object if holder is not defined.', () => {
+  test('Get empty object when holder is not defined.', () => {
     // @ts-ignore
     const result = getProp()
 
