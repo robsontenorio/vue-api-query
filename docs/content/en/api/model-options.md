@@ -148,7 +148,7 @@ relations() {
 
 This method can be used to lazy load relationships of a model and apply model instances to them.
 
-It must receive a model instance as parameter.
+It must receive a model instance as argument.
 
 See [Configuration](/configuration#lazy-loading-relationships)
 
