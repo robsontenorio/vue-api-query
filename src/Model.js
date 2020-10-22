@@ -370,7 +370,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      return this._applyInstance(response.data)
+      return this._applyInstance(response.data.data || response.data)
     })
   }
 
@@ -380,7 +380,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      return this._applyInstance(response.data)
+      return this._applyInstance(response.data.data || response.data)
     })
   }
 
