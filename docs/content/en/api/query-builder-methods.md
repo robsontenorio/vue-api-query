@@ -148,6 +148,15 @@ await Model.limit(20)
   </code-block>
 </code-group>
 
+## `get`
+- Returns: `Collection | { data: Collection }`
+
+Execute the query as a "select" statement.
+
+```js
+await Model.get()
+```
+
 ## `first`
 - Returns: `Model | { data: Model }`
 
@@ -167,14 +176,19 @@ Find a model by its primary key.
 await Model.find(1)
 ```
 
-## `get`
-- Returns: `Collection | { data: Collection }`
+## `$get`
+- Returns: `Collection`
 
 Execute the query as a "select" statement.
 
+These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
+
 ```js
-await Model.get()
+await Model.$get()
 ```
+
+<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+They handle and unwrap responses within "data".</alert>
 
 ## `$first`
 - Returns: `Model`
@@ -196,20 +210,6 @@ Find a model by its primary key.
 
 ```js
 await Model.$find(1)
-```
-
-<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
-They handle and unwrap responses within "data".</alert>
-
-## `$get`
-- Returns: `Collection`
-
-Execute the query as a "select" statement.
-
-These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
-
-```js
-await Model.$get()
 ```
 
 <alert type="info">These `$`-prefixed convenience methods always return the requested content. 
