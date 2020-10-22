@@ -1,6 +1,6 @@
 ---
-title: Query Methods
-description: 'Query methods.'
+title: Query Builder Methods
+description: 'Query Builder methods.'
 position: 6
 category: API
 ---
@@ -25,12 +25,14 @@ await Model.include('likes')
 - Arguments: `(...fields)`
 - Returns: `self`
 
-Single entity:
+Set the columns to be selected.
+
+**Single entity:**
 ```js
 await Model.select(['title', 'content'])
 ```
 
-Related entities:
+**Related entities:**
 ```js
 await Model.select({
   posts: ['title', 'content'],
@@ -42,6 +44,8 @@ await Model.select({
 - Arguments: `(field, value)`
 - Returns: `self`
 
+Add a basic where clause to the query.
+
 ```js
 await Model.where('status', 'active')
 ```
@@ -50,6 +54,8 @@ await Model.where('status', 'active')
 - Arguments: `(field, array)`
 - Returns: `self`
 
+Add a "where in" clause to the query.
+
 ```js
 await Model.whereIn('id', [1, 2, 3])
 ```
@@ -57,6 +63,8 @@ await Model.whereIn('id', [1, 2, 3])
 ## `orderBy`
 - Arguments: `(...args)`
 - Returns: `self`
+
+Add an "order by" clause to the query.
 
 ```js
 await Model.orderBy('-created_at', 'category_id')  
@@ -139,3 +147,70 @@ await Model.limit(20)
 
   </code-block>
 </code-group>
+
+## `first`
+- Returns: `Model | { data: Model }`
+
+Execute the query and get the first result.
+
+```js
+await Model.first()
+```
+
+## `find`
+- Arguments: `(identifier)`
+- Returns: `Model | { data: Model }`
+
+Find a model by its primary key.
+
+```js
+await Model.find(1)
+```
+
+## `get`
+- Returns: `Collection | { data: Collection }`
+
+Execute the query as a "select" statement.
+
+```js
+await Model.get()
+```
+
+## `$first`
+- Returns: `Model`
+
+Execute the query and get the first result.
+
+```js
+await Model.$first()
+```
+
+<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+They handle and unwrap responses within "data".</alert>
+
+## `$find`
+- Arguments: `(identifier)`
+- Returns: `Model`
+
+Find a model by its primary key.
+
+```js
+await Model.$find(1)
+```
+
+<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+They handle and unwrap responses within "data".</alert>
+
+## `$get`
+- Returns: `Collection`
+
+Execute the query as a "select" statement.
+
+These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
+
+```js
+await Model.$get()
+```
+
+<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+They handle and unwrap responses within "data".</alert>

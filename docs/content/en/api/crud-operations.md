@@ -1,11 +1,13 @@
 ---
 title: CRUD Operations
 description: 'CRUD Operations.'
-position: 8
+position: 7
 category: API
 ---
 
 ## `delete`
+
+Delete the model from the database.
 
 ```js
 await Model.find(1).delete()
@@ -13,6 +15,8 @@ await Model.find(1).delete()
 
 ## `save`
 - Returns: `Model | { data: Model }`
+
+Save or update a model in the database, then return the instance.
 
 ### create
 

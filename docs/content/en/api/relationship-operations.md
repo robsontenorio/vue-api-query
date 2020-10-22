@@ -1,13 +1,15 @@
 ---
 title: Relationship Operations
 description: 'Relationship Operations.'
-position: 9
+position: 8
 category: API
 ---
 
 ## `attach`
 - Arguments: `(payload)`
 - Returns: `Model | { data: Model }`
+
+Attach a model to the parent.
 
 <code-group>
   <code-block Label="Request" active>
@@ -27,10 +29,11 @@ category: API
   </code-block>
 </code-group>
 
-
 ## `sync`
 - Arguments: `(payload)`
 - Returns: `Model | { data: Model }`
+
+Sync a model to the parent.
 
 <code-group>
   <code-block Label="Request" active>
@@ -53,6 +56,8 @@ category: API
 ## `for`
 - Arguments: `(...args)`
 - Returns: `self`
+
+Attach a model to the parent.
 
 <code-group>
   <code-block Label="Simple Request" active>
