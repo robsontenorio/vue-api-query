@@ -5,9 +5,9 @@
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build",
-    "prepare": "yarn build && yarn cc",
-    "test": "jest --watch --coverage",
-    "cc": "jest --coverage"
+    "lint": "eslint --ext .js .",
+    "test": "jest --coverage",
+    "test-watch": "jest --watch --coverage"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
