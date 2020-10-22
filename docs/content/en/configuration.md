@@ -7,7 +7,7 @@ category: Getting Started
 
 ## Creating a Base Model
 
-See the [API reference](/api/options) for a list of available options.
+See the [API reference](/api/model-options) for a list of available options.
 
 The first step is to create a base model to define the default options, in order to abstract configuration 
 from your models. It should extend the 
@@ -63,7 +63,7 @@ This **User** model will make request to `/users` route as defined in `resource`
 
 <alert type="info">By default, the `primaryKey` is set to `id`.</alert>
 
-See the [API reference](/api/options#primarykey)
+See the [API reference](/api/model-options#primarykey)
 
 It's possible to change the primary key of a model by implementing the `primaryKey` method.
 This way, the specified key will be used to build the query.
@@ -94,7 +94,7 @@ applied to relationships, giving you access to all of their features.
 
 ### Eager Loaded Relationships
 
-See the [API reference](/api/options#relations)
+See the [API reference](/api/model-options#relations)
 
 For relationships that have been eager loaded, we only need to implement the `relations` method to apply their model instances.
 The `relations` method must return an object, which the key is the property of the relationship, and the value is the
@@ -130,7 +130,7 @@ using the specified key: `post.user`
 
 ### Lazy Loading Relationships
 
-See the [API reference](/api/options#hasmany)
+See the [API reference](/api/model-options#hasmany)
 
 To lazy load relationships, we just need to set up custom methods. Each method must return `hasMany(ModelInstance)`.
 
@@ -157,7 +157,7 @@ Then we simply call the method `user.posts()` to lazy load the posts that belong
 
 ## Customizing Query Parameters
 
-See the [API reference](/api/options#parameternames)
+See the [API reference](/api/model-options#parameternames)
 
 If needed, we can easily customize the name of the query parameters by overriding the `parameterNames` method.
 

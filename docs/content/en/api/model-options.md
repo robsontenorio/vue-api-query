@@ -1,18 +1,23 @@
 ---
-title: Options
-description: 'Options.'
+title: Model Options
+description: 'Model Options.'
 position: 5
 category: API
 ---
 
-## `$http`
+## Global Options
+
+It's recommended to define the global options in your [Base Model](/configuration#creating-a-base-model), 
+in order to abstract configuration from your models.
+
+### `$http`
 - Returns: `HTTP Client Instance`
 
 Instance of the HTTP client which is used to make requests.
 
 See [Installation](/installation)
 
-## `baseURL`
+### `baseURL`
 - Returns: `string`
 
 Base URL which is used and prepended to make requests.
@@ -25,7 +30,7 @@ baseURL() {
 }
 ```
 
-## `request`
+### `request`
 - Arguments: `(config)`
 - Returns: `HTTP Client Request`
 
@@ -39,67 +44,7 @@ request(config) {
 }
 ```
 
-## `resource`
-- Returns: `string`
-
-Resource route of the model which is used to build the query.
-
-See [Configuration](/configuration#creating-the-domain-models)
-
-```js
-resource() {
-  return 'resource'
-}
-```
-
-## `primaryKey`
-- Returns: `string`
-
-Primary key of the model which is used to build the query.
-
-See [Configuration](/configuration#changing-the-primary-key)
-
-```js
-primaryKey() {
-  return 'id'
-}
-```
-
-## `relations`
-- Returns: `object`
-
-This method can be implemented in the model to apply model instances to eager loaded relationships.
-
-It must return an object, which the key is the property of the relationship, and the value is the
-model instance.
-
-See [Configuration](/configuration#eager-loaded-relationships)
-
-```js
-relations() {
-  return {
-    relationKey: RelationModel
-  }
-}
-```
-
-## `hasMany`
-- Arguments: `(model)`
-- Returns: `Model`
-
-This method can be used to lazy load relationships of a model and apply model instances to them.
-
-It must receive a model instance as parameter.
-
-See [Configuration](/configuration#lazy-loading-relationships)
-
-```js
-customMethod() {
-  return this.hasMany(RelationModel)
-}
-```
-
-## `parameterNames`
+### `parameterNames`
 - Returns: `object`
 
 This method can be overridden in the model to customize the name of the query parameters.
@@ -120,30 +65,94 @@ parameterNames() {
 }
 ```
 
-### `include`
+#### `include`
 - Default: `include`
 - Returns: `string`
 
-### `filter`
+#### `filter`
 - Default: `filter`
 - Returns: `string`
 
-### `sort`
+#### `sort`
 - Default: `sort`
 - Returns: `string`
 
-### `fields`
+#### `fields`
 - Default: `fields`
 - Returns: `string`
 
-### `append`
+#### `append`
 - Default: `append`
 - Returns: `string`
 
-### `page`
+#### `page`
 - Default: `page`
 - Returns: `string`
 
-### `limit`
+#### `limit`
 - Default: `limit`
 - Returns: `string`
+
+## Model Options
+
+These are model-related options.
+
+### `resource`
+- Returns: `string`
+
+Resource route of the model which is used to build the query.
+
+See [Configuration](/configuration#creating-the-domain-models)
+
+```js
+resource() {
+  return 'resource'
+}
+```
+
+### `primaryKey`
+- Returns: `string`
+
+Primary key of the model which is used to build the query.
+
+See [Configuration](/configuration#changing-the-primary-key)
+
+```js
+primaryKey() {
+  return 'id'
+}
+```
+
+### `relations`
+- Returns: `object`
+
+This method can be implemented in the model to apply model instances to eager loaded relationships.
+
+It must return an object, which the key is the property of the relationship, and the value is the
+model instance.
+
+See [Configuration](/configuration#eager-loaded-relationships)
+
+```js
+relations() {
+  return {
+    relationKey: RelationModel
+  }
+}
+```
+
+### `hasMany`
+- Arguments: `(model)`
+- Returns: `Model`
+
+This method can be used to lazy load relationships of a model and apply model instances to them.
+
+It must receive a model instance as parameter.
+
+See [Configuration](/configuration#lazy-loading-relationships)
+
+```js
+customMethod() {
+  return this.hasMany(RelationModel)
+}
+```
