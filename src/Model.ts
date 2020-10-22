@@ -168,7 +168,7 @@ export default abstract class Model<
   }
 
   isValidId(id: number | string): boolean {
-    return id !== undefined && id !== 0 && id !== ''
+    return !!id
   }
 
   endpoint(): string {
