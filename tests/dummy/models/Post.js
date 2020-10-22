@@ -1,6 +1,7 @@
 import BaseModel from './BaseModel'
 import Comment from './Comment'
 import User from './User'
+import Tag from './Tag'
 
 export default class Post extends BaseModel {
   comments () {
@@ -9,7 +10,8 @@ export default class Post extends BaseModel {
 
   relations () {
     return {
-      user: User
+      user: User,
+      'relationships.tags': Tag
     }
   }
 }

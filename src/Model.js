@@ -1,5 +1,6 @@
 import Builder from './Builder';
 import StaticModel from './StaticModel';
+import { getProp, setProp } from './utils'
 
 export default class Model extends StaticModel {
 
@@ -138,7 +139,7 @@ export default class Model extends StaticModel {
   }
 
   isValidId(id) {
-    return id !== undefined && id !== 0 && id !== ''
+    return id !== undefined && id !== 0 && id !== '' && id !== null
   }
 
   endpoint() {
@@ -255,20 +256,22 @@ export default class Model extends StaticModel {
     const relations = model.relations()
 
     for(const relation of Object.keys(relations)) {
-      if (!model[relation]) {
+      const _relation = getProp(model, relation)
+
+      if (!_relation) {
         return;
       }
 
-      if (Array.isArray(model[relation].data) || Array.isArray(model[relation])) {
-        const collection = this._applyInstanceCollection(model[relation], relations[relation])
+      if (Array.isArray(_relation.data) || Array.isArray(_relation)) {
+        const collection = this._applyInstanceCollection(_relation, relations[relation])
 
-        if (model[relation].data !== undefined) {
-          model[relation].data = collection
+        if (_relation.data !== undefined) {
+          _relation.data = collection
         } else {
-          model[relation] = collection
+          setProp(model, relation, collection)
         }
       } else {
-        model[relation] = this._applyInstance(model[relation], relations[relation])
+        setProp(model, relation, this._applyInstance(_relation, relations[relation]))
       }
     }
   }
@@ -370,7 +373,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      return this._applyInstance(response.data)
+      return this._applyInstance(response.data.data || response.data)
     })
   }
 
@@ -380,7 +383,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      return this._applyInstance(response.data)
+      return this._applyInstance(response.data.data || response.data)
     })
   }
 

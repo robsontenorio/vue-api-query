@@ -80,6 +80,11 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          directory: ./coverage
+
       - name: Publish to NPM
         uses: mikeal/merge-release@master
         env:
