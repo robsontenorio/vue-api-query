@@ -111,6 +111,7 @@ resource() {
 ```
 
 ### `primaryKey`
+- Default: `id`
 - Returns: `string`
 
 Primary key of the model which is used to build the query.
