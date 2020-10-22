@@ -3,13 +3,14 @@ import User from './dummy/models/User'
 import Comment from './dummy/models/Comment'
 import { Model } from '../src'
 import axios from 'axios'
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from 'axios-mock-adapter'
 import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
+import Tag from './dummy/models/Tag'
 
 describe('Model methods', () => {
 
@@ -50,6 +51,9 @@ describe('Model methods', () => {
     expect(post).toEqual(postsResponse[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('$first() returns first object in array as instance of such Model', async () => {
@@ -61,6 +65,9 @@ describe('Model methods', () => {
     expect(post).toEqual(postsEmbedResponse.data[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('first() method returns a empty object when no items have found', async () => {
@@ -77,6 +84,9 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('$find() handles request with "data" wrapper', async () => {
@@ -87,6 +97,9 @@ describe('Model methods', () => {
     expect(post).toEqual(postEmbedResponse.data)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.data.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('$find() handles request without "data" wrapper', async () => {
@@ -97,7 +110,9 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('get() method returns a array of objects as instance of suchModel', async () => {
@@ -108,7 +123,10 @@ describe('Model methods', () => {
     posts.forEach(post => {
       expect(post).toBeInstanceOf(Post)
       expect(post.user).toBeInstanceOf(User)
-    });
+      post.relationships.tags.forEach(tag => {
+        expect(tag).toBeInstanceOf(Tag)
+      })
+    })
   })
 
   test('get() hits right resource (nested object)', async () => {
@@ -225,6 +243,16 @@ describe('Model methods', () => {
         firstname: 'John',
         lastname: 'Doe',
         age: 25
+      },
+      relationships: {
+        tags: [
+          {
+            name: 'super'
+          },
+          {
+            name: 'awesome'
+          }
+        ]
       }
     }
 
@@ -242,6 +270,9 @@ describe('Model methods', () => {
     expect(post).toEqual(_postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
   })
 
   test('save() method makes a PUT request when ID of object exists', async () => {
@@ -490,7 +521,7 @@ describe('Model methods', () => {
 
     posts.forEach(post => {
       expect(post).toBeInstanceOf(Post)
-    });
+    })
   })
 
   test('attach() method hits right endpoint with a POST request', async () => {
