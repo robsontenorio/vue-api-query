@@ -138,7 +138,7 @@ export default class Model extends StaticModel {
   }
 
   isValidId(id) {
-    return id !== undefined && id !== 0 && id !== ''
+    return id !== undefined && id !== 0 && id !== '' && id !== null
   }
 
   endpoint() {
