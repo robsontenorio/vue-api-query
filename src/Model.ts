@@ -22,9 +22,9 @@ export default abstract class Model<
   isWrappedModel extends boolean = false
 > {
   public static $http: AxiosInstance
-  private readonly _builder: Builder | undefined
-  private _fromResource: string | undefined
-  private _customResource: string | undefined
+  private readonly _builder?: Builder
+  private _fromResource?: string
+  private _customResource?: string
 
   protected constructor(...attributes: unknown[]) {
     if (attributes.length === 0) {
