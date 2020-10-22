@@ -6,16 +6,18 @@ category: API
 ---
 
 ## `$http`
-- Returns: `Axios Instance`
+- Returns: `HTTP Client Instance`
+
+Instance of the HTTP client which is used to make requests.
 
 See [Installation](/installation)
 
 ## `baseURL`
 - Returns: `string`
 
-Define a base url for a REST API.
+Base URL which is used and prepended to make requests.
 
-See [Configuration](/configuration)
+See [Configuration](/configuration#creating-a-base-model)
 
 ```js
 baseURL() {
@@ -25,11 +27,11 @@ baseURL() {
 
 ## `request`
 - Arguments: `(config)`
-- Returns: `Axios Request`
+- Returns: `HTTP Client Request`
 
-Implement a default request method.
+Request method which is used to make requests.
 
-See [Configuration](/configuration)
+See [Configuration](/configuration#creating-a-base-model)
 
 ```js
 request(config) {
@@ -37,12 +39,72 @@ request(config) {
 }
 ```
 
+## `resource`
+- Returns: `string`
+
+Resource route of the model which is used to build the query.
+
+See [Configuration](/configuration#creating-the-domain-models)
+
+```js
+resource() {
+  return 'resource'
+}
+```
+
+## `primaryKey`
+- Returns: `string`
+
+Primary key of the model which is used to build the query.
+
+See [Configuration](/configuration#changing-the-primary-key)
+
+```js
+primaryKey() {
+  return 'id'
+}
+```
+
+## `relations`
+- Returns: `object`
+
+This method can be implemented in the model to apply model instances to eager loaded relationships.
+
+It must return an object, which the key is the property of the relationship, and the value is the
+model instance.
+
+See [Configuration](/configuration#eager-loaded-relationships)
+
+```js
+relations() {
+  return {
+    relationKey: RelationModel
+  }
+}
+```
+
+## `hasMany`
+- Arguments: `(model)`
+- Returns: `Model`
+
+This method can be used to lazy load relationships of a model and apply model instances to them.
+
+It must receive a model instance as parameter.
+
+See [Configuration](/configuration#lazy-loading-relationships)
+
+```js
+customMethod() {
+  return this.hasMany(RelationModel)
+}
+```
+
 ## `parameterNames`
 - Returns: `object`
 
-Configure the parameter names.
+This method can be overridden in the model to customize the name of the query parameters.
 
-See [Configuration](/configuration)
+See [Configuration](/configuration#customizing-query-parameters)
 
 ```js
 parameterNames() {
@@ -85,42 +147,3 @@ parameterNames() {
 ### `limit`
 - Default: `limit`
 - Returns: `string`
-
-## `resource`
-- Returns: `string`
-
-Set the resource route of the model.
-
-See [Configuration](/configuration#define-your-domain-models)
-
-```js
-resource() {
-  return 'resource'
-}
-```
-
-## `primaryKey`
-- Returns: `string`
-
-Set the default primary key.
-
-See [Configuration](/configuration#define-your-domain-models)
-
-```js
-primaryKey() {
-  return 'id'
-}
-```
-
-## `relations`
-- Returns: `string`
-
-Configure the model relations.
-
-```js
-relations() {
-  return {
-    nested: Model
-  }
-}
-```

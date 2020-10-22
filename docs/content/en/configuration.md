@@ -5,11 +5,21 @@ position: 3
 category: Getting Started
 ---
 
-## Define a base model
+## Creating a Base Model
 
-Your base model should extend from `vue-api-query` Model. Use base models is good practice in order to abstract configurations from your domain models.
+See the [API reference](/api/options) for a list of available options.
 
-```js{}[models/Model.js]
+The first step is to create a base model to define the default options, in order to abstract configuration 
+from your models. It should extend the 
+[Base Model](https://github.com/robsontenorio/vue-api-query/blob/master/src/Model.js) of [vue-api-query](https://github.com/robsontenorio/vue-api-query).
+
+The base model must implement two methods:
+- `baseURL` - The base url of your REST API.
+- `request` - The default request method.
+
+Let's create a new file `Model.js` in `models` directory:
+
+```js{}[~/models/Model.js]
 import { Model as BaseModel } from 'vue-api-query'
 
 export default class Model extends BaseModel {
@@ -19,83 +29,163 @@ export default class Model extends BaseModel {
     return 'http://my-api.com'
   }
 
-  // Implement a default request method 
+  // Implement a default request method
   request(config) {
     return this.$http.request(config)
   }
-
-  // Configure custom parameter names
-  parameterNames() {
-    return {
-      include: 'include',
-      filter: 'filter',
-      sort: 'sort',
-      fields: 'fields',
-      append: 'append',
-      page: 'page',
-      limit: 'limit'
-    }
-  }
 }
-
 ```
 
-## Define your domain models
+<alert type="info">`$http` property is the HTTP Client Instance configured in [Installation](/installation) section.</alert>
 
-Just extends from your base model, implement the [`resource()`](/api/options#resource) method... and done! 
+## Creating the Domain Models
 
-```js{}[models/User.js]
+Now let's create our domain models that extends the base model. You can create as many models as you like.
+
+Each model must implement:
+- `resource` - The resource route of the model.
+
+We can create a **User** model like this:
+```js{}[~/models/User.js]
 import Model from './Model'
 
 export default class User extends Model {
+  // Set the resource route of the model
   resource() {
     return 'users'
   }
 }
 ```
 
-But, if your model does not work with default primary key ('id'), you need to override the [`primaryKey()`](/api/options#primarykey) method:
+This **User** model will make request to `/users` route as defined in `resource`.
 
-```js{}[models/User.js]
+## Changing the Primary Key
+
+<alert type="info">By default, the `primaryKey` is set to `id`.</alert>
+
+See the [API reference](/api/options#primarykey)
+
+It's possible to change the primary key of a model by implementing the `primaryKey` method.
+This way, the specified key will be used to build the query.
+
+Let's create a **Post** model and set its primary key to `slug`.
+
+```js{}[~/models/Post.js]
 import Model from './Model'
 
-export default class User extends Model {
+export default class Post extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'posts'
+  }
+
+  // Define the primary key of the model
   primaryKey() {
-    return 'someId'
+    return 'slug'
   }
-}
 ```
 
-Of course you can add extra methods and computed properties like this:
+This **Post** model will build the query using the `slug` as primary key: `/posts/{slug}`
 
-```js{}[models/User.js]
+## Defining Relationships
+
+It's also possible to define the relationships of our models. By doing this, model instances will be automatically
+applied to relationships, giving you access to all of their features.
+
+### Eager Loaded Relationships
+
+See the [API reference](/api/options#relations)
+
+For relationships that have been eager loaded, we only need to implement the `relations` method to apply their model instances.
+The `relations` method must return an object, which the key is the property of the relationship, and the value is the
+model instance.
+
+Let's set up an eager loaded **User** for our **Post** model:
+
+```js{}[~/models/Post.js]
 import Model from './Model'
+import User from './User'
 
-export default class User extends Model {
-  
-  // Computed properties are reactive -> user.fullname
-  // Make sure to use "get" prefix 
-  get fullname() {
-    return `${this.firstname} ${this.lastname}`
+export default class Post extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'posts'
   }
 
-  // method -> user.makeBirthday()
-  makeBirthday() {
-    this.age += 1
+  // Define the primary key of the model
+  primaryKey() {
+    return 'slug'
   }
-}
+
+  // Apply model instances to eager loaded relationships
+  relations() {
+    return {
+      user: User
+    }
+  }
 ```
 
-You can set up relationships:
+Now we can easily access an instance of the **User** model containing the eager loaded data 
+using the specified key: `post.user`
 
-```js{}[models/User.js]
+### Lazy Loading Relationships
+
+See the [API reference](/api/options#hasmany)
+
+To lazy load relationships, we just need to set up custom methods. Each method must return `hasMany(ModelInstance)`.
+
+Let's set up a method to lazy load **Posts** in our **User** model:
+
+```js{}[~/models/User.js]
 import Model from './Model'
 import Post from './Post'
 
 export default class User extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'users'
+  }
 
-  posts () {
+  // Lazy load the posts that belongs to the user
+  posts() {
     return this.hasMany(Post)
+  }
+}
+```
+
+Then we simply call the method `user.posts()` to lazy load the posts that belongs to the user.
+
+## Customizing Query Parameters
+
+See the [API reference](/api/options#parameternames)
+
+If needed, we can easily customize the name of the query parameters by overriding the `parameterNames` method.
+
+We can globally customize the names by doing this in the [Base Model](/configuration#creating-a-base-model):
+
+```js{}[~/models/Model.js]
+import { Model as BaseModel } from 'vue-api-query'
+
+export default class Model extends BaseModel {
+
+  // Define a base url for a REST API
+  baseURL() {
+    return 'http://my-api.com'
+  }
+
+  // Implement a default request method
+  request(config) {
+    return this.$http.request(config)
+  }
+
+  // Override default query parameter names
+  parameterNames() {
+    const defaultParams = super.parameterNames()
+    const customParams = {
+      include: 'include_custom'
+    }
+    
+    return { ...defaultParams, ...customParams }
   }
 }
 ```
