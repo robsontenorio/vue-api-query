@@ -1,8 +1,7 @@
-import type { AxiosPromise } from 'axios'
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
-
 import Builder from './Builder'
 import type {
+  HTTPPromise,
+  HTTPRequestConfig,
   QueryResponseModel,
   RCollection,
   RModel,
@@ -21,7 +20,7 @@ export default abstract class Model<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
 > {
-  public static $http: AxiosInstance
+  public static $http: unknown
   private readonly _builder?: Builder
   private _fromResource?: string
   private _customResource?: string
@@ -53,9 +52,9 @@ export default abstract class Model<
 
   abstract baseURL(): string
 
-  abstract request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  abstract request<T = any>(config: HTTPRequestConfig): HTTPPromise<T>
 
-  get $http(): AxiosInstance {
+  get $http(): unknown {
     return Model.$http
   }
 
@@ -497,7 +496,7 @@ export default abstract class Model<
    * Common CRUD operations
    */
 
-  delete(): AxiosPromise<unknown> {
+  delete(): HTTPPromise<unknown> {
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
@@ -552,7 +551,7 @@ export default abstract class Model<
    * Relationship operations
    */
 
-  attach(params: unknown): AxiosPromise<unknown> {
+  attach(params: unknown): HTTPPromise<unknown> {
     return this.request<unknown>({
       method: 'POST',
       url: this.endpoint(),
@@ -560,7 +559,7 @@ export default abstract class Model<
     }).then((response) => response)
   }
 
-  sync(params: unknown): AxiosPromise<unknown> {
+  sync(params: unknown): HTTPPromise<unknown> {
     return this.request<unknown>({
       method: 'PUT',
       url: this.endpoint(),
