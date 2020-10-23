@@ -28,6 +28,17 @@
     "laravel"
   ],
   "author": "Robson Tenório",
+  "contributors": [
+    {
+      "name": "João Pedro Antunes Silva",
+      "email": "joao-pedroas@hotmail.com",
+      "url": "https://github.com/JoaoPedroAS51"
+    },
+    {
+      "name": "Peter Krebs",
+      "url": "https://github.com/Peter-Krebs"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/robsontenorio/vue-api-query/issues"
