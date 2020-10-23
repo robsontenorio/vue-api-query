@@ -2,7 +2,7 @@
 
 import BaseModel from './BaseModel'
 
-export default class ModelWithParamNames extends BaseModel<false, false>() {
+export default class ModelWithParamNames extends BaseModel<false, false> {
   parameterNames() {
     return {
       include: 'include_custom',

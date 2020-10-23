@@ -6,7 +6,7 @@ import Comment from './Comment'
 import Tag from './Tag'
 import User from './User'
 
-export default class Post extends BaseModel<false, false>() {
+export default class Post extends BaseModel<false, false> {
   public id?: number
   public someId?: string
   public text?: string

@@ -2,6 +2,7 @@ import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
 import Model from '../src/Model'
+import { RCollection, RModel } from '../src/types'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 import { Post as postResponse } from './dummy/data/post'
@@ -96,7 +97,7 @@ describe('Model methods', () => {
   test('first() returns first object in array as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
-    const post = await Post.first()
+    const post = (await Post.first()) as RModel<Post, false>
 
     expect(post).toEqual(postsResponse[0])
     expect(post).toBeInstanceOf(Post)
@@ -109,7 +110,10 @@ describe('Model methods', () => {
   test('first() returns first object in array with "data" wrapper as instance of such Model wrapped with "data"', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
 
-    const { data: post } = await PostAllEmbed.first()
+    const { data: post } = (await PostAllEmbed.first()) as RModel<
+      PostAllEmbed,
+      true
+    >
 
     expect(post).toEqual(postsAllEmbedResponse.data[0].data)
     expect(post).toBeInstanceOf(PostAllEmbed)
@@ -168,7 +172,7 @@ describe('Model methods', () => {
   test('find() method returns an object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
-    const post = await Post.find(1)
+    const post = (await Post.find(1)) as RModel<Post, false>
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
@@ -180,7 +184,7 @@ describe('Model methods', () => {
   test('find() method returns an object as instance of such Model wrapped with "data"', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
 
-    const { data: post } = await PostEmbed.find(1)
+    const { data: post } = (await PostEmbed.find(1)) as RModel<PostEmbed, true>
 
     expect(post).toEqual(postEmbedResponse.data)
     expect(post).toBeInstanceOf(PostEmbed)
@@ -219,7 +223,7 @@ describe('Model methods', () => {
   test('get() method returns an array of objects as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
-    const posts = await Post.get()
+    const posts = (await Post.get()) as RCollection<Post, false, false>
 
     posts.forEach((post) => {
       expect(post).toBeInstanceOf(Post)
@@ -233,7 +237,11 @@ describe('Model methods', () => {
   test('get() method returns an object with "data" wrapper containing an array of objects as instance of such Model wrapped with "data"', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
-    const { data: posts } = await PostCollectionEmbed.get()
+    const { data: posts } = (await PostCollectionEmbed.get()) as RCollection<
+      PostCollectionEmbed,
+      true,
+      false
+    >
 
     posts.forEach((post) => {
       expect(post).toBeInstanceOf(PostCollectionEmbed)
@@ -244,7 +252,11 @@ describe('Model methods', () => {
   test('get() method returns an object with "data" wrapper containing an array of objects as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsAllEmbedResponse)
 
-    const { data: posts } = await PostAllEmbed.get()
+    const { data: posts } = (await PostAllEmbed.get()) as RCollection<
+      PostAllEmbed,
+      true,
+      true
+    >
 
     posts.forEach(({ data: post }) => {
       expect(post).toBeInstanceOf(PostAllEmbed)

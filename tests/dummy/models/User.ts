@@ -3,7 +3,7 @@
 import BaseModel from './BaseModel'
 import Post from './Post'
 
-export default class User extends BaseModel<false, false>() {
+export default class User extends BaseModel<false, false> {
   public id?: number
   public firstname?: string
   public lastname?: string

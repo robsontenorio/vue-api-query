@@ -6,7 +6,7 @@ import CommentWrapped from './CommentWrapped'
 import TagEmbed from './TagEmbed'
 import User from './User'
 
-export default class Post extends BaseModel<false, false>() {
+export default class Post extends BaseModel<false, false> {
   public id?: number
   public someId?: string
   public text?: string
