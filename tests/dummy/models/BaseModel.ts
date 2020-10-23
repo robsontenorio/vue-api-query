@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { AxiosRequestConfig } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 import { BaseModel as Model } from '../../../src'
 
@@ -19,7 +19,7 @@ export default function BaseModel<
 
     request(config: AxiosRequestConfig) {
       // this.testApiRequest = config
-      return this.$http.request(config)
+      return (this.$http as AxiosInstance).request(config)
 
       // return Promise.resolve(config)
     }
