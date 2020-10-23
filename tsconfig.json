@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Basic Options */
-    "target": "ESNext",
+    "target": "ES6",
     "declaration": true,
     "outDir": "build",
     /* Strict Type-Checking Options */
