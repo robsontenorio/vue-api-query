@@ -1,4 +1,5 @@
 import Builder from './Builder'
+import StaticModel from './StaticModel'
 import type {
   HTTPPromise,
   HTTPRequestConfig,
@@ -19,13 +20,15 @@ type Constructor<T extends Model<boolean, boolean>> = new (
 export default abstract class Model<
   isWrappedCollection extends boolean = false,
   isWrappedModel extends boolean = false
-> {
+> extends StaticModel {
   public static $http: unknown
   private readonly _builder?: Builder
   private _fromResource?: string
   private _customResource?: string
 
   protected constructor(...attributes: unknown[]) {
+    super()
+
     if (attributes.length === 0) {
       this._builder = new Builder(this)
     } else {
