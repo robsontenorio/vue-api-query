@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import type { QueryResponseModel } from '../../../src/types'
+import type { QueryResponseCollection, QueryResponseModel } from '../../../src'
 import BaseModel from './BaseModel'
 import Comment from './Comment'
 import Tag from './Tag'
@@ -12,7 +12,7 @@ export default class Post extends BaseModel<false, true> {
   public text?: string
   public user?: QueryResponseModel<User>
   public relationships?: {
-    tags: QueryResponseModel<Tag>[]
+    tags: QueryResponseCollection<Tag>
   }
 
   comments() {
