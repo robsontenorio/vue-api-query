@@ -26,7 +26,7 @@ export default abstract class Model<
   private _fromResource?: string
   private _customResource?: string
 
-  protected constructor(...attributes: unknown[]) {
+  constructor(...attributes: unknown[]) {
     super()
 
     if (attributes.length === 0) {
