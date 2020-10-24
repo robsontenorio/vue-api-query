@@ -1,15 +1,15 @@
 import Builder from './Builder'
 import StaticModel from './StaticModel'
 import type {
+  DomainModel,
   HTTPPromise,
   HTTPRequestConfig,
+  QueryResponseCollection,
   QueryResponseModel,
-  RCollection,
-  RModel,
   TCollection,
   TModel,
-  WCollection,
-  WModel
+  WrappedCollection,
+  WrappedModel
 } from './types'
 import { getProp, hasProperty, setProp } from './utils'
 
@@ -211,13 +211,13 @@ export default abstract class Model<
 
   isWrappedModel<T extends Model<boolean, boolean>>(
     model: TModel<T>
-  ): model is WModel<T> {
+  ): model is WrappedModel<T> {
     return 'data' in model
   }
 
   isWrappedCollection<T extends Model<boolean, boolean>>(
     collection: TCollection<T>
-  ): collection is WCollection<T> {
+  ): collection is WrappedCollection<T> {
     return !Array.isArray(collection) && 'data' in collection
   }
 
@@ -322,14 +322,14 @@ export default abstract class Model<
   _applyInstance<T extends Model<boolean, boolean>>(
     data: Record<string, any>,
     model: Constructor<T> = this.constructor as Constructor<T>
-  ): QueryResponseModel<T> {
+  ): DomainModel<T> {
     const item = new model(data)
 
     if (this._fromResource) {
       item._from(this._fromResource)
     }
 
-    return (item as unknown) as QueryResponseModel<T>
+    return (item as unknown) as DomainModel<T>
   }
 
   _applyInstanceCollection<T extends Model<boolean, boolean>>(
@@ -378,7 +378,7 @@ export default abstract class Model<
     }
   }
 
-  first(): Promise<RModel<this, isWrappedModel>> {
+  first(): Promise<QueryResponseModel<this, isWrappedModel>> {
     return this.get().then((response: TCollection<this>) => {
       const collection = response
       let model: TModel<this>
@@ -389,11 +389,11 @@ export default abstract class Model<
         model = collection[0]
       }
 
-      return (model || {}) as RModel<this, isWrappedModel>
+      return (model || {}) as QueryResponseModel<this, isWrappedModel>
     })
   }
 
-  $first(): Promise<QueryResponseModel<this>> {
+  $first(): Promise<DomainModel<this>> {
     return this.first().then((response: TModel<this>) => {
       let model = response
 
@@ -405,7 +405,9 @@ export default abstract class Model<
     })
   }
 
-  find(identifier: number | string): Promise<RModel<this, isWrappedModel>> {
+  find(
+    identifier: number | string
+  ): Promise<QueryResponseModel<this, isWrappedModel>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
@@ -429,11 +431,11 @@ export default abstract class Model<
         model = this._applyInstance<this>(model)
       }
 
-      return model as RModel<this, isWrappedModel>
+      return model as QueryResponseModel<this, isWrappedModel>
     })
   }
 
-  $find(identifier: number | string): Promise<QueryResponseModel<this>> {
+  $find(identifier: number | string): Promise<DomainModel<this>> {
     if (identifier === undefined) {
       throw new Error('You must specify the param on $find() method.')
     }
@@ -449,7 +451,9 @@ export default abstract class Model<
     })
   }
 
-  get(): Promise<RCollection<this, isWrappedCollection, isWrappedModel>> {
+  get(): Promise<
+    QueryResponseCollection<this, isWrappedCollection, isWrappedModel>
+  > {
     if (!this._builder) {
       throw new Error('Builder methods are not available after fetching data.')
     }
@@ -475,7 +479,7 @@ export default abstract class Model<
         collection = instancedCollection
       }
 
-      return collection as RCollection<
+      return collection as QueryResponseCollection<
         this,
         isWrappedCollection,
         isWrappedModel
@@ -483,7 +487,7 @@ export default abstract class Model<
     })
   }
 
-  $get(): Promise<RModel<this, isWrappedModel>[]> {
+  $get(): Promise<QueryResponseModel<this, isWrappedModel>[]> {
     return this.get().then((response: TCollection<this>) => {
       let collection = response
 
@@ -491,7 +495,7 @@ export default abstract class Model<
         collection = collection.data
       }
 
-      return collection as RModel<this, isWrappedModel>[]
+      return collection as QueryResponseModel<this, isWrappedModel>[]
     })
   }
 
@@ -510,11 +514,11 @@ export default abstract class Model<
     }).then((response) => response)
   }
 
-  save(): Promise<RModel<this, isWrappedModel>> {
+  save(): Promise<QueryResponseModel<this, isWrappedModel>> {
     return this.hasId() ? this._update() : this._create()
   }
 
-  _create(): Promise<RModel<this, isWrappedModel>> {
+  _create(): Promise<QueryResponseModel<this, isWrappedModel>> {
     return this.request<TModel<this>>({
       method: 'POST',
       url: this.endpoint(),
@@ -528,11 +532,11 @@ export default abstract class Model<
         model = this._applyInstance<this>(model)
       }
 
-      return model as RModel<this, isWrappedModel>
+      return model as QueryResponseModel<this, isWrappedModel>
     })
   }
 
-  _update(): Promise<RModel<this, isWrappedModel>> {
+  _update(): Promise<QueryResponseModel<this, isWrappedModel>> {
     return this.request<TModel<this>>({
       method: 'PUT',
       url: this.endpoint(),
@@ -546,7 +550,7 @@ export default abstract class Model<
         model = this._applyInstance<this>(model)
       }
 
-      return model as RModel<this, isWrappedModel>
+      return model as QueryResponseModel<this, isWrappedModel>
     })
   }
 

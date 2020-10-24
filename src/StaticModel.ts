@@ -1,5 +1,9 @@
 import Model from './Model'
-import { QueryResponseModel, RCollection, RModel } from './types'
+import {
+  DomainModel,
+  QueryResponseCollection,
+  QueryResponseModel
+} from './types'
 
 type ThisClass<InstanceType extends Model<boolean, boolean>> = {
   instance<T extends Model<boolean, boolean>>(this: ThisClass<T>): T
@@ -115,7 +119,7 @@ export default abstract class StaticModel {
 
   static first<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<RModel<T, boolean>> {
+  ): Promise<QueryResponseModel<T, boolean>> {
     const self = this.instance<T>()
 
     return self.first()
@@ -123,7 +127,7 @@ export default abstract class StaticModel {
 
   static $first<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<QueryResponseModel<T>> {
+  ): Promise<DomainModel<T>> {
     const self = this.instance<T>()
 
     return self.$first()
@@ -132,7 +136,7 @@ export default abstract class StaticModel {
   static find<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     identifier: number | string
-  ): Promise<RModel<T, boolean>> {
+  ): Promise<QueryResponseModel<T, boolean>> {
     const self = this.instance<T>()
 
     return self.find(identifier)
@@ -141,7 +145,7 @@ export default abstract class StaticModel {
   static $find<T extends Model<boolean, boolean>>(
     this: ThisClass<T>,
     identifier: number | string
-  ): Promise<QueryResponseModel<T>> {
+  ): Promise<DomainModel<T>> {
     const self = this.instance<T>()
 
     return self.$find(identifier)
@@ -149,7 +153,7 @@ export default abstract class StaticModel {
 
   static get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<RCollection<T, boolean, boolean>> {
+  ): Promise<QueryResponseCollection<T, boolean, boolean>> {
     const self = this.instance<T>()
 
     return self.get()
@@ -157,7 +161,7 @@ export default abstract class StaticModel {
 
   static $get<T extends Model<boolean, boolean>>(
     this: ThisClass<T>
-  ): Promise<RModel<T, boolean>[]> {
+  ): Promise<QueryResponseModel<T, boolean>[]> {
     const self = this.instance<T>()
 
     return self.$get()
