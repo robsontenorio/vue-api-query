@@ -9,6 +9,8 @@ category: API
 - Arguments: `(...args)`
 - Returns: `self`
 
+Eager load relationships.
+
 ```js
 await Model.include('user', 'category')
 ```
@@ -16,6 +18,8 @@ await Model.include('user', 'category')
 ## `append`
 - Arguments: `(...args)`
 - Returns: `self`
+
+Append attributes.
 
 ```js
 await Model.include('likes')
@@ -74,6 +78,8 @@ await Model.orderBy('-created_at', 'category_id')
 - Arguments: `(value)`
 - Returns: `self`
 
+Set the current page.
+
 ```js
 await Model.page(1)
 ```
@@ -81,6 +87,8 @@ await Model.page(1)
 ## `limit`
 - Arguments: `(value)`
 - Returns: `self`
+
+Set the page limit.
 
 ```js
 await Model.limit(20)
@@ -90,8 +98,10 @@ await Model.limit(20)
 - Arguments: `(payload)`
 - Returns: `self`
 
+Add custom parameters to the query.
+
 <code-group>
-  <code-block Label="Request" active>
+  <code-block Label="Query" active>
 
   ```js
   await Model.params({
@@ -101,7 +111,7 @@ await Model.limit(20)
   ```
 
   </code-block>
-  <code-block Label="Query">
+  <code-block Label="Request">
 
   ```http request
   GET /resource?foo=bar&baz=true
@@ -114,22 +124,24 @@ await Model.limit(20)
 - Arguments: `(...args)`
 - Returns: `self`
 
+Build custom endpoints.
+
 <code-group>
-  <code-block Label="Simple Request" active>
+  <code-block Label="Simple Query" active>
 
   ```js
   await Model.custom('resource/latest')
   ```
 
   </code-block>
-  <code-block Label="Simple Query">
+  <code-block Label="Simple Request">
 
   ```http request
   GET /resource/latest
   ```
 
   </code-block>
-  <code-block Label="Complex Request">
+  <code-block Label="Complex Query">
 
   ```js
   const user = new User({ id: 1 })
@@ -139,7 +151,7 @@ await Model.limit(20)
   ```
 
   </code-block>
-  <code-block Label="Complex Query">
+  <code-block Label="Complex Request">
 
   ```http request
   GET /users/1/posts/latest
