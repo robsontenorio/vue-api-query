@@ -544,7 +544,14 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
   ```
 
   </code-block>
-  <code-block label="Request">
+  <code-block label="User Request">
+
+  ```http request
+  GET /users/1
+  ```
+
+  </code-block>
+  <code-block label="Posts Request">
 
   ```http request
   GET /users/1/posts/latest
@@ -574,6 +581,57 @@ instead of use `find`, we can create a new **User** instance:
 
   ```http request
   GET /users/1/posts/latest
+  ```
+
+  </code-block>
+</code-group>
+
+## Mixing Everything Up
+
+Let's mix everything we have learned so far!
+
+We can get a list of latest **Posts**, where `status` is `published`, include the `category` 
+relation, append `likes` attribute, select `title` and `text` fields, order by `created_at`, 
+paginate and custom parameters:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const user = new User({ id: 1 })
+  const posts = await Post
+    .where('status', 'published')
+    .include('category')
+    .append('likes')
+    .select('title', 'text')
+    .orderBy('-created_at')
+    .page(1)
+    .limit(20)
+    .params({ process: false })
+    .custom(user, post, 'latest')
+    .get()
+  ```
+
+  </code-block>
+  <code-block label="User Request">
+
+  ```http request
+  GET /users/1
+  ```
+
+  </code-block>
+  <code-block label="Posts Request">
+
+  ```http request
+  GET /users/1/posts/latest
+  ?filter[status]=published
+  &include=category
+  &append=likes
+  &fields[posts]=title,text
+  &sort=-created_at
+  &page=1
+  &limit=20
+  &process=false
   ```
 
   </code-block>
