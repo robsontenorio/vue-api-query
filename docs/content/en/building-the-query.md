@@ -711,3 +711,29 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
 
   </code-block>
 </code-group>
+
+
+## Composing Without Request
+
+One thing to note is that in some cases you may not need to make a request to compose the query you want.
+
+Using the example above, if we want to define a dynamic resource, but we already know the **User's** ID, 
+instead of use `find`, we can create a new **User** instance:
+ 
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const user = new User({ id: 1 })
+  const posts = await Post.custom(user, post, 'latest').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /users/1/posts/latest
+  ```
+
+  </code-block>
+</code-group>
