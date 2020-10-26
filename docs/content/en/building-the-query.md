@@ -274,7 +274,7 @@ See the [API reference](/api/query-builder-methods#orderby)
 We also need to sort our queries, so let's do this now!
 
 The method we want to use now is `orderBy`. The arguments are the names of the properties we want to sort.
-We can pass as many arguments we want. 
+We can pass as many arguments as we want. 
 
 **Single Sort**
 
