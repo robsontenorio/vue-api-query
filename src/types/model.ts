@@ -1,22 +1,6 @@
 import Model from '../Model'
 
 /**
- * Domain Model
- * ---
- *
- * The Domain Model type only returns the properties and methods that belongs to domain models,
- * with the addition of [Model Operations]{@link ModelOperations}.
- * All other methods from the base [Base Model]{@link Model} are stripped from this type.
- *
- * @property {Model }T - The model of the response.
- *
- */
-
-export type DomainModel<T extends Model<boolean, boolean>> = Required<
-  Omit<T, keyof Omit<Model, ModelOperations>>
->
-
-/**
  * Model Operations
  * ---
  *
@@ -25,6 +9,22 @@ export type DomainModel<T extends Model<boolean, boolean>> = Required<
  */
 
 type ModelOperations = 'delete' | 'save' | 'attach' | 'sync' | 'for'
+
+/**
+ * Domain Model
+ * ---
+ *
+ * The Domain Model type only returns the properties and methods that belongs to domain models,
+ * with the addition of [Model Operations]{@link ModelOperations}.
+ * All other methods from the [Base Model]{@link Model} are stripped from this type.
+ *
+ * @property {Model }T - The model of the response.
+ *
+ */
+
+export type DomainModel<T extends Model<boolean, boolean>> = Required<
+  Omit<T, keyof Omit<Model, ModelOperations>>
+>
 
 /**
  * Model and Collection Types
@@ -38,7 +38,7 @@ type ModelOperations = 'delete' | 'save' | 'attach' | 'sync' | 'for'
  * The type guards [`isWrappedModel`]{@link Model#isWrappedModel}
  * and [`isWrappedCollection`]{@link Model#isWrappedCollection}` in Model class can be used to predict the type.
  *
- * They shouldn't be used for response. They must be converted to the Conditional Types.
+ * They shouldn't be used for response. They must be converted to Conditional Types.
  *
  * {@link TModel} as {@link QueryResponseModel}
  *
