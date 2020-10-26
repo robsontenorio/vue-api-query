@@ -350,44 +350,6 @@ Let's eager load the `category` relationship of our **Post**:
   ```
 
   </code-block>
-  <code-block label="Response">
-
-  ```js
-  [
-    /* ... */
-    {
-      id: 1,
-      title: 'Post 1',
-      text: 'Some text here...',
-      user: {
-        id: 1,
-        firstName: 'Joe',
-        lastName: 'Doe'
-      },
-      category: {
-        id: 1,
-        name: 'Super Awesome!'
-      }
-    },
-    {
-      id: 2,
-      title: 'Post 2',
-      text: 'Some text here...',
-      user: {
-        id: 2,
-        firstName: 'John',
-        lastName: 'Doe'
-      },
-      category: {
-        id: 1,
-        name: 'Super Awesome!'
-      }
-    }
-    /* ... */
-  ]
-  ```
-
-  </code-block>
 </code-group>
 
 ## Appending Attributes
@@ -411,38 +373,6 @@ Let's append the `likes` attribute of our **Post**:
 
   ```http request
   GET /posts?append=like
-  ```
-
-  </code-block>
-  <code-block label="Response">
-
-  ```js
-  [
-    /* ... */
-    {
-      id: 1,
-      title: 'Post 1',
-      text: 'Some text here...',
-      user: {
-        id: 1,
-        firstName: 'Joe',
-        lastName: 'Doe'
-      },
-      likes: 10
-    },
-    {
-      id: 2,
-      title: 'Post 2',
-      text: 'Some text here...',
-      user: {
-        id: 2,
-        firstName: 'John',
-        lastName: 'Doe'
-      },
-      likes: 15
-    }
-    /* ... */
-  ]
   ```
 
   </code-block>
@@ -478,34 +408,6 @@ We can select only the `title` and the `text` fields of our **Post** model:
   ```
 
   </code-block>
-  <code-block label="Response">
-
-  ```js
-  [
-    /* ... */
-    {
-      title: 'Post 1',
-      text: 'Some text here...',
-      user: {
-        id: 1,
-        firstName: 'Joe',
-        lastName: 'Doe'
-      }
-    },
-    {
-      title: 'Post 2',
-      text: 'Some text here...',
-      user: {
-        id: 2,
-        firstName: 'John',
-        lastName: 'Doe'
-      }
-    }
-    /* ... */
-  ]
-  ```
-
-  </code-block>
 </code-group>
 
 ### Fields of Relationships
@@ -530,30 +432,6 @@ We can select only the `name` field of the category we have to eager loaded:
 
   ```http request
   GET /posts?include=category&fields[posts]=title,text&fields[category]=name
-  ```
-
-  </code-block>
-  <code-block label="Response">
-
-  ```js
-  [
-    /* ... */
-    {
-      title: 'Post 1',
-      text: 'Some text here...',
-      category: {
-        name: 'Super Awesome!',
-      },
-    },
-    {
-      title: 'Post 2',
-      text: 'Some text here...',
-      category: {
-        name: 'Super Awesome!',
-      },
-    }
-    /* ... */
-  ]
   ```
 
   </code-block>
@@ -584,43 +462,6 @@ Let's say we are at page 1, and we want 20 **Posts** per page:
 
   ```http request
   GET /posts?page=1&limit=20
-  ```
-
-  </code-block>
-  <code-block label="Response">
-
-  ```js
-  {
-    data: [
-      /* ... */
-      {
-        id: 1,
-        title: 'Post 1',
-        text: 'Some text here...',
-        user: {
-          id: 1,
-          firstName: 'Joe',
-          lastName: 'Doe'
-        }
-      },
-      {
-        id: 2,
-        title: 'Post 2',
-        text: 'Some text here...',
-        user: {
-          id: 2,
-          firstName: 'John',
-          lastName: 'Doe'
-        }
-      }
-      /* ... */
-    ],
-    meta: {
-      currentPage: 1,
-      perPage: 20,
-      total: 100
-    }
-  }
   ```
 
   </code-block>
