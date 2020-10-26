@@ -1,10 +1,11 @@
 /**
  * Get property defined by dot notation in string.
- * Based on https://github.com/dy/dotprop (MIT)
  *
- * @param  {Object} holder   Target object where to look property up
- * @param  {string | string[]} propName Dot notation, like 'this.a.b.c'
- * @return {*}          A property value
+ * Based on {@link https://github.com/dy/dotprop } (MIT)
+ *
+ * @param  {Object} holder - Target object where to look property up.
+ * @param  {string | string[]} propName - Dot notation, like `'a.b.c'` or `['a', 'b', 'c']`.
+ * @return {*} - A property value.
  */
 export function getProp (holder, propName) {
   if (!propName || !holder) {
@@ -27,11 +28,12 @@ export function getProp (holder, propName) {
 
 /**
  * Set property defined by dot notation in string.
- * Based on https://github.com/lukeed/dset (MIT)
  *
- * @param  {Object} holder   Target object where to look property up
- * @param  {string | string[]} propName Dot notation, like 'this.a.b.c'
- * @param  {*}      value    The value to be set
+ * Based on {@link https://github.com/lukeed/dset} (MIT)
+ *
+ * @param  {Object} holder - Target object where to look property up.
+ * @param  {string | string[]} propName - Dot notation, like `'a.b.c'` or `['a', 'b', 'c']`.
+ * @param  {*} value - The value to be set.
  */
 export function setProp (holder, propName, value) {
   const propParts = Array.isArray(propName) ? propName : (propName + '').split('.')
