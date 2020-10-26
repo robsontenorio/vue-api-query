@@ -1,22 +1,23 @@
 /**
  * Get property defined by dot notation in string.
- * Based on  https://github.com/dy/dotprop (MIT)
  *
- * @param  {Object} holder   Target object where to look property up
- * @param  {string} propName Dot notation, like 'this.a.b.c'
- * @return {*}          A property value
+ * Based on {@link https://github.com/dy/dotprop } (MIT)
+ *
+ * @param  {Object} holder - Target object where to look property up.
+ * @param  {string | string[]} propName - Dot notation, like `'a.b.c'` or `['a', 'b', 'c']`.
+ * @return {*} - A property value.
  */
 import Model from './Model'
 
 export function getProp(
   holder: Record<string, any>,
-  propName: string
+  propName: string | string[]
 ): Record<string, any> {
   if (!propName || !holder) {
     return holder || {}
   }
 
-  if (propName in holder) {
+  if (propName === 'string' && propName in holder) {
     return holder[propName]
   }
 
@@ -25,8 +26,13 @@ export function getProp(
     : (propName + '').split('.')
 
   let result = holder
+
   while (propParts.length && result) {
-    result = result[propParts.shift()]
+    const propPart = propParts.shift()
+
+    if (propPart) {
+      result = result[propPart]
+    }
   }
 
   return result
@@ -34,15 +40,16 @@ export function getProp(
 
 /**
  * Set property defined by dot notation in string.
- * Based on https://github.com/lukeed/dset (MIT)
  *
- * @param  {Object} holder   Target object where to look property up
- * @param  {string} propName Dot notation, like 'this.a.b.c'
- * @param  {*}      value    The value to be set
+ * Based on {@link https://github.com/lukeed/dset} (MIT)
+ *
+ * @param  {Object} holder - Target object where to look property up.
+ * @param  {string | string[]} propName - Dot notation, like `'a.b.c'` or `['a', 'b', 'c']`.
+ * @param  {*} value - The value to be set.
  */
 export function setProp(
   holder: Record<string, any>,
-  propName: string,
+  propName: string | string[],
   value: unknown
 ): void {
   const propParts = Array.isArray(propName)
