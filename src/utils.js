@@ -8,7 +8,7 @@
  */
 export function getProp (holder, propName) {
   if (!propName || !holder) {
-    return holder
+    return holder || {}
   }
 
   if (propName in holder) {
