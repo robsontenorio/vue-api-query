@@ -353,6 +353,9 @@ The arguments are the names of the relationships we want to include. We can pass
         id: 1,
         firstName: 'Joe',
         lastName: 'Doe'
+      },
+      category: {
+        name: 'Super Awesome!'
       }
     },
     {
@@ -363,6 +366,9 @@ The arguments are the names of the relationships we want to include. We can pass
         id: 2,
         firstName: 'John',
         lastName: 'Doe'
+      },
+      category: {
+        name: 'Super Awesome!'
       }
     }
     /* ... */
