@@ -5,14 +5,6 @@ position: 7
 category: API
 ---
 
-## `delete`
-
-Delete the model from the database.
-
-```js
-await Model.find(1).delete()
-```
-
 ## `save`
 - Returns: `Model | { data: Model }`
 
@@ -72,3 +64,12 @@ Save or update a model in the database, then return the instance.
 
   </code-block>
 </code-group>
+
+
+## `delete`
+
+Delete the model from the database.
+
+```js
+await Model.find(1).delete()
+```
