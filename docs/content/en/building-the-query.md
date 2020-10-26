@@ -568,6 +568,8 @@ There are two methods we will be using here:
 - `page` - Set the current page.
 - `limit` -  Set the limit of records per page.
 
+Both methods accept a number as an argument.
+
 Let's say we are at page 1, and we want 20 **Posts** per page:
 
 <code-group>
