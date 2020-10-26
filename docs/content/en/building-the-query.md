@@ -655,3 +655,55 @@ The argument is an object of the parameters to add to the query.
 </code-group>
 
 ## Calling a Custom Resource
+
+In some situations we may also need to define a custom resource for our model directly in the query. We can override 
+the default resource dynamically by calling the `custom` method.
+
+### Defining a Static Resource
+
+If the custom resource is static, you can simply pass the string as an argument.
+
+We can change the **Post** resource to get the latest **Posts**:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.custom('posts/latest').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts/latest
+  ```
+
+  </code-block>
+</code-group>
+
+### Defining a Dynamic Resource
+
+But it's also possible to build dynamic resource endpoints with hierarchies, by supplying the arguments 
+in the correct order. It accepts models and strings as arguments. 
+If a model is passed, the model's resource will be used, as well as its primary key's value if available.
+
+We can build a resource to get the latest `Posts` that belongs to a **User**:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const user = await User.find(1)
+  const posts = await Post.custom(user, post, 'latest').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /users/1/posts/latest
+  ```
+
+  </code-block>
+</code-group>
