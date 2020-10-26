@@ -3,7 +3,7 @@
  * Based on https://github.com/dy/dotprop (MIT)
  *
  * @param  {Object} holder   Target object where to look property up
- * @param  {string} propName Dot notation, like 'this.a.b.c'
+ * @param  {string | string[]} propName Dot notation, like 'this.a.b.c'
  * @return {*}          A property value
  */
 export function getProp (holder, propName) {
