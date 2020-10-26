@@ -380,6 +380,60 @@ The arguments are the names of the relationships we want to include. We can pass
 
 ## Appending Attributes
 
+See the [API reference](/api/query-builder-methods#append)
+
+We can also append attributes to our queries using the `append` method.
+The arguments are the names of the attributes we want to append. We can pass as many arguments as we want. 
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = Post.append('likes').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?append=like
+  ```
+
+  </code-block>
+  <code-block label="Response">
+
+  ```js
+  [
+    /* ... */
+    {
+      id: 1,
+      title: 'Post 1',
+      text: 'Some text here...',
+      user: {
+        id: 1,
+        firstName: 'Joe',
+        lastName: 'Doe'
+      },
+      likes: 10
+    },
+    {
+      id: 2,
+      title: 'Post 2',
+      text: 'Some text here...',
+      user: {
+        id: 2,
+        firstName: 'John',
+        lastName: 'Doe'
+      },
+      likes: 15
+    }
+    /* ... */
+  ]
+  ```
+
+  </code-block>
+</code-group>
+
 ## Selecting Fields
 
 ## Applying Custom Parameters
