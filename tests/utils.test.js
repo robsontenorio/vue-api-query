@@ -1,6 +1,11 @@
 import { getProp, setProp } from '../src/utils'
 
 describe('Utilities', () => {
+  /**
+   * Tests of `getProp`
+   * Based on tests from https://github.com/dy/dotprop (MIT)
+   */
+
   test('[getProp]: Get property defined by dot notation in string.', () => {
     const holder = {
       a: {
@@ -13,6 +18,56 @@ describe('Utilities', () => {
     const result = getProp(holder, 'a.b.c')
 
     expect(result).toBe(1)
+  })
+
+  test('[getProp]: Get property defined by array-type keys.', () => {
+    const holder = {
+      a: {
+        b: {
+          c: 1
+        }
+      }
+    }
+
+    const result = getProp(holder, ['a', 'b', 'c'])
+
+    expect(result).toBe(1)
+  })
+
+  test('[getProp]: Get property defined by simple string.', () => {
+    const holder = {
+      a: {
+        b: {
+          c: 1
+        }
+      }
+    }
+
+    const result = getProp(holder, 'a')
+
+    expect(result).toBe(holder.a)
+  })
+
+  test('[getProp]: Get holder when propName is not defined.', () => {
+    const holder = {
+      a: {
+        b: {
+          c: 1
+        }
+      }
+    }
+
+    // @ts-ignore
+    const result = getProp(holder)
+
+    expect(result).toBe(holder)
+  })
+
+  test('[getProp]: Get empty object when holder is not defined.', () => {
+    // @ts-ignore
+    const result = getProp()
+
+    expect(result).toStrictEqual({})
   })
 
   /**
