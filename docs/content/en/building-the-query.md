@@ -372,7 +372,7 @@ Let's append the `likes` attribute of our **Post**:
   <code-block label="Request">
 
   ```http request
-  GET /posts?append=like
+  GET /posts?append=likes
   ```
 
   </code-block>
