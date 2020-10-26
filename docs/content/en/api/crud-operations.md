@@ -70,6 +70,28 @@ Save or update a model in the database, then return the instance.
 
 Delete the model from the database.
 
-```js
-await Model.find(1).delete()
-```
+<code-group>
+  <code-block Label="Query" active>
+
+  ```js
+  const model = await Model.find(1)
+  
+  model.delete()
+  ```
+
+  </code-block>
+  <code-block Label="Find Request">
+
+  ```http request
+  GET /resource/1
+  ```
+
+  </code-block>
+  <code-block Label="Delete Request">
+
+  ```http request
+  DELETE /resource/1
+  ```
+
+  </code-block>
+</code-group>
