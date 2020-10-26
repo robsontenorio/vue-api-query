@@ -115,6 +115,38 @@ describe('Model methods', () => {
     })
   })
 
+  test("find() method returns a object as instance of such Model with empty relationships", async () => {
+    const _postResponse = postResponse;
+    _postResponse.user = null;
+    _postResponse.relationships.tags = [];
+
+    axiosMock.onGet("http://localhost/posts/1").reply(200, _postResponse);
+
+    const post = await Post.find(1);
+
+    expect(post).toEqual(postResponse);
+    expect(post).toBeInstanceOf(Post);
+    expect(post.user).toStrictEqual(null);
+    expect(post.relationships.tags).toStrictEqual([]);
+  });
+
+  test("find() method returns a object as instance of such Model with some empty relationships", async () => {
+    const _postResponse = postResponse;
+    _postResponse.user = null;
+
+    axiosMock.onGet("http://localhost/posts/1").reply(200, _postResponse);
+
+    const post = await Post.find(1);
+
+    expect(post).toEqual(postResponse);
+    expect(post).toBeInstanceOf(Post);
+    expect(post.user).toStrictEqual(null);
+
+    post.relationships.tags.forEach((tag) => {
+      expect(tag).toBeInstanceOf(Tag);
+    });
+  });
+
   test('get() method returns a array of objects as instance of suchModel', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
