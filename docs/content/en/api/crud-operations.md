@@ -21,7 +21,7 @@ Save or update a model in the database, then return the instance.
 ### create
 
 <code-group>
-  <code-block Label="Request 1" active>
+  <code-block Label="Query 1" active>
 
   ```js
   const model = new Model({ foo: 'bar' })
@@ -30,7 +30,7 @@ Save or update a model in the database, then return the instance.
   ```
 
   </code-block>
-  <code-block Label="Request 2">
+  <code-block Label="Query 2">
 
   ```js
   const model = new Model()
@@ -41,7 +41,7 @@ Save or update a model in the database, then return the instance.
   ```
 
   </code-block>
-  <code-block Label="Query">
+  <code-block Label="Request">
 
   ```http request
   POST /resource/1
@@ -53,7 +53,7 @@ Save or update a model in the database, then return the instance.
 ### update
 
 <code-group>
-  <code-block Label="Request" active>
+  <code-block Label="Query" active>
 
   ```js
   const model = await Model.find(1)
@@ -64,7 +64,7 @@ Save or update a model in the database, then return the instance.
   ```
 
   </code-block>
-  <code-block Label="Query">
+  <code-block Label="Request">
 
   ```http request
   PUT /resource/1

@@ -12,7 +12,7 @@ category: API
 Attach a model to the parent.
 
 <code-group>
-  <code-block Label="Request" active>
+  <code-block Label="Query" active>
 
   ```js
   const model = await Model.find(1)
@@ -20,7 +20,7 @@ Attach a model to the parent.
   ```
 
   </code-block>
-  <code-block Label="Query">
+  <code-block Label="Request">
 
   ```http request
   POST /resource/1/nested
@@ -36,7 +36,7 @@ Attach a model to the parent.
 Sync a model to the parent.
 
 <code-group>
-  <code-block Label="Request" active>
+  <code-block Label="Query" active>
 
   ```js
   const model = await Model.find(1)
@@ -44,7 +44,7 @@ Sync a model to the parent.
   ```
 
   </code-block>
-  <code-block Label="Query">
+  <code-block Label="Request">
 
   ```http request
   PUT /resource/1/nested
@@ -60,7 +60,7 @@ Sync a model to the parent.
 Attach a model to the parent.
 
 <code-group>
-  <code-block Label="Simple Request" active>
+  <code-block Label="Simple Query" active>
 
   ```js
   const post = await Post.find(1)
@@ -72,14 +72,14 @@ Attach a model to the parent.
   ```
 
   </code-block>
-  <code-block Label="Simple Query">
+  <code-block Label="Simple Request">
 
   ```http request
   POST /posts/1/comments
   ```
 
   </code-block>
-  <code-block Label="Complex Request">
+  <code-block Label="Complex Query">
 
   ```js
   const user = new User({ id: 1 })
@@ -92,7 +92,7 @@ Attach a model to the parent.
   ```
 
   </code-block>
-  <code-block Label="Complex Query">
+  <code-block Label="Complex Request">
 
   ```http request
   POST /users/1/posts/1/comments
