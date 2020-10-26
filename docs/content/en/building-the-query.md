@@ -65,7 +65,7 @@ We can get a list of posts using the **Post** model:
   </code-block>
 </code-group>
 
-Just for convenience, it's possible to make Static calls. We are going to use this approach from now on.
+Just for convenience, it's possible to make Static calls. We are going to use this approach from now on:
  
 <code-group>
   <code-block label="Query" active>
@@ -128,6 +128,8 @@ See the [API reference](/api/query-builder-methods#first)
 Let's start using `first`. This method will internally use `get` to retrieve a list of records 
 and then return the first one.
 
+To get the first **Post** of a list:
+
 <code-group>
   <code-block label="Query" active>
 
@@ -167,6 +169,8 @@ See the [API reference](/api/query-builder-methods#find)
 
 Different from `first`, the `find` method wil request a specific record from the database. 
 An identifier must be passed as argument.
+
+To find a specific **Post**:
 
 <code-group>
   <code-block label="Query" active>
@@ -219,7 +223,7 @@ See the [API reference](/api/query-builder-methods#where)
 The `where` method can be used to filter the query by evaluating a value against the column.
 The first argument is the name of the column, and the second argument is the value to evaluate.
 
-We can filter our **Posts** to only get results where `status` is `published`.
+We can filter our **Posts** to only get results where `status` is `published`:
 
 <code-group>
   <code-block label="Query" active>
@@ -246,7 +250,7 @@ The `whereIn` method is similar to `where`, but it accepts multiple values inste
 The first argument is the name of the column, 
 and the second argument is an array of values to evaluate.
 
-We can filter our **Posts** to only get results where `status` is `published` or `archived`.
+We can filter our **Posts** to only get results where `status` is `published` or `archived`:
 
 <code-group>
   <code-block label="Query" active>
@@ -278,7 +282,7 @@ We can pass as many arguments as we want.
 
 **Single Sort**
 
-We can sort our **Posts** by the `created_at` date.
+We can sort our **Posts** by the `created_at` date:
 
 <code-group>
   <code-block label="Query" active>
@@ -299,7 +303,7 @@ We can sort our **Posts** by the `created_at` date.
 
 **Multiple Sort**
 
-And we can sort by their `title` too.
+And we can sort by their `title` too:
 
 <code-group>
   <code-block label="Query" active>
@@ -329,7 +333,7 @@ See the [API reference](/api/query-builder-methods#include)
 Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method.
 The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
 
-Let's eager load the `category` relationship of our **Post**.
+Let's eager load the `category` relationship of our **Post**:
 
 <code-group>
   <code-block label="Query" active>
@@ -393,7 +397,7 @@ See the [API reference](/api/query-builder-methods#append)
 We can also append attributes to our queries using the `append` method.
 The arguments are the names of the attributes we want to append. We can pass as many arguments as we want.
 
-Let's append the `likes` attribute of our **Post**.
+Let's append the `likes` attribute of our **Post**:
 
 <code-group>
   <code-block label="Query" active>
@@ -553,6 +557,69 @@ We can select only the `name` field of the category we have to eager loaded:
   </code-block>
 </code-group>
 
-## Applying Custom Parameters
-
 ## Paginating
+
+A very important feature is paginating, so let's do it now!
+
+There are two methods we will be using here:
+
+- `page` - Set the current page.
+- `limit` -  Set the limit of records per page.
+
+Let's say we are at page 1, and we want 20 **Posts** per page:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.page(1).limit(20).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?page=1&limit=20
+  ```
+
+  </code-block>
+  <code-block label="Response">
+
+  ```js
+  {
+    data: [
+      /* ... */
+      {
+        id: 1,
+        title: 'Post 1',
+        text: 'Some text here...',
+        user: {
+          id: 1,
+          firstName: 'Joe',
+          lastName: 'Doe'
+        }
+      },
+      {
+        id: 2,
+        title: 'Post 2',
+        text: 'Some text here...',
+        user: {
+          id: 2,
+          firstName: 'John',
+          lastName: 'Doe'
+        }
+      }
+      /* ... */
+    ],
+    meta: {
+      currentPage: 1,
+      perPage: 20,
+      total: 100
+    }
+  }
+  ```
+
+  </code-block>
+</code-group>
+
+## Applying Custom Parameters
