@@ -36,7 +36,7 @@ Save or update a model in the database, then return the instance.
   <code-block Label="Request">
 
   ```http request
-  POST /resource/1
+  POST /resource
   ```
 
   </code-block>
