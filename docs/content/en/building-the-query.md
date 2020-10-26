@@ -320,6 +320,11 @@ We can pass as many arguments as we want.
 
 ## Including Relationships
 
+See the [API reference](/api/query-builder-methods#include)
+
+Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method.
+The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
+
 <code-group>
   <code-block label="Query" active>
 
