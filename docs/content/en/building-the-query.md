@@ -71,7 +71,7 @@ Just for convenience, it's possible to make Static calls. We are going to use th
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.get()
+  const posts = await Post.get()
   ```
 
   </code-block>
@@ -132,7 +132,7 @@ and then return the first one.
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.first()
+  const posts = await Post.first()
   ```
 
   </code-block>
@@ -172,7 +172,7 @@ An identifier must be passed as argument.
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.find(1)
+  const posts = await Post.find(1)
   ```
 
   </code-block>
@@ -225,7 +225,7 @@ We can filter our **Posts** to only get results where `status` is `published`.
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.where('status', 'published').get()
+  const posts = await Post.where('status', 'published').get()
   ```
 
   </code-block>
@@ -252,7 +252,7 @@ We can filter our **Posts** to only get results where `status` is `published` or
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.whereIn('status', [
+  const posts = await Post.whereIn('status', [
     'published', 'archived'
   ]).get()
   ```
@@ -278,11 +278,13 @@ We can pass as many arguments as we want.
 
 **Single Sort**
 
+We can sort our **Posts** by the `created_at` date.
+
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.orderBy('-created_at').get()
+  const posts = await Post.orderBy('-created_at').get()
   ```
 
   </code-block>
@@ -297,11 +299,13 @@ We can pass as many arguments as we want.
 
 **Multiple Sort**
 
+And we can sort by their `title` too.
+
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.orderBy('-created_at', 'title').get()
+  const posts = await Post.orderBy('-created_at', 'title').get()
   ```
 
   </code-block>
@@ -325,11 +329,13 @@ See the [API reference](/api/query-builder-methods#include)
 Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method.
 The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
 
+Let's eager load the `category` relationship of our **Post**.
+
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.include('category').get()
+  const posts = await Post.include('category').get()
   ```
 
   </code-block>
@@ -355,6 +361,7 @@ The arguments are the names of the relationships we want to include. We can pass
         lastName: 'Doe'
       },
       category: {
+        id: 1,
         name: 'Super Awesome!'
       }
     },
@@ -368,6 +375,7 @@ The arguments are the names of the relationships we want to include. We can pass
         lastName: 'Doe'
       },
       category: {
+        id: 1,
         name: 'Super Awesome!'
       }
     }
@@ -383,13 +391,15 @@ The arguments are the names of the relationships we want to include. We can pass
 See the [API reference](/api/query-builder-methods#append)
 
 We can also append attributes to our queries using the `append` method.
-The arguments are the names of the attributes we want to append. We can pass as many arguments as we want. 
+The arguments are the names of the attributes we want to append. We can pass as many arguments as we want.
+
+Let's append the `likes` attribute of our **Post**.
 
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = Post.append('likes').get()
+  const posts = await Post.append('likes').get()
   ```
 
   </code-block>
@@ -435,6 +445,113 @@ The arguments are the names of the attributes we want to append. We can pass as 
 </code-group>
 
 ## Selecting Fields
+
+If we only need some fields of the model, we can easily select them using the `select` method.
+
+If the fields we want to select only belongs to the model, we can pass a list of `strings` as the arguments.
+But if we want to select fields of relationships as well, then we need to pass an object.
+
+### Fields of the Model
+
+The arguments are the names of the fields we want to select. We can pass as many arguments as we want.
+
+We can select only the `title` and the `text` fields of our **Post** model:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.select('title', 'text').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?fields[posts]=title,text
+  ```
+
+  </code-block>
+  <code-block label="Response">
+
+  ```js
+  [
+    /* ... */
+    {
+      title: 'Post 1',
+      text: 'Some text here...',
+      user: {
+        id: 1,
+        firstName: 'Joe',
+        lastName: 'Doe'
+      }
+    },
+    {
+      title: 'Post 2',
+      text: 'Some text here...',
+      user: {
+        id: 2,
+        firstName: 'John',
+        lastName: 'Doe'
+      }
+    }
+    /* ... */
+  ]
+  ```
+
+  </code-block>
+</code-group>
+
+### Fields of Relationships
+
+The argument is an object, which the name of the first key is the `resource` defined in the model class, 
+the name of the other keys are the included relationships, and the values are arrays of fields.
+
+We can select only the `name` field of the category we have to eager loaded:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.include('category').select({
+    posts: ['title', 'text'],
+    category: ['name']
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?include=category&fields[posts]=title,text&fields[category]=name
+  ```
+
+  </code-block>
+  <code-block label="Response">
+
+  ```js
+  [
+    /* ... */
+    {
+      title: 'Post 1',
+      text: 'Some text here...',
+      category: {
+        name: 'Super Awesome!',
+      },
+    },
+    {
+      title: 'Post 2',
+      text: 'Some text here...',
+      category: {
+        name: 'Super Awesome!',
+      },
+    }
+    /* ... */
+  ]
+  ```
+
+  </code-block>
+</code-group>
 
 ## Applying Custom Parameters
 
