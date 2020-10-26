@@ -501,7 +501,7 @@ The argument is an object of the parameters to add to the query.
 
 See the [API reference](/api/query-builder-methods#custom)
 
-In some situations we may also need to define a custom resource for our model directly in the query. We can override 
+In some situations we may also need to define a custom resource endpoint for our model directly in the query. We can override 
 the default resource dynamically by calling the `custom` method.
 
 ### Defining a Static Resource
