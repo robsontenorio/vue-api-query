@@ -450,6 +450,8 @@ Let's append the `likes` attribute of our **Post**:
 
 ## Selecting Fields
 
+See the [API reference](/api/query-builder-methods#select)
+
 If we only need some fields of the model, we can easily select them using the `select` method.
 
 If the fields we want to select only belongs to the model, we can pass a list of `strings` as the arguments.
