@@ -76,15 +76,15 @@ describe('Utilities', () => {
    */
 
   test('[setProp]: Does not return output', () => {
-    const foo = { a: 1, b: 2 };
-    const out = setProp(foo, 'c', 3);
+    const foo = { a: 1, b: 2 }
+    const out = setProp(foo, 'c', 3)
 
     expect(out).toBeUndefined()
   })
 
   test('[setProp]: Mutates; adds simple key:val', () => {
-    const foo = { a: 1, b: 2 };
-    setProp(foo, 'c', 3);
+    const foo = { a: 1, b: 2 }
+    setProp(foo, 'c', 3)
 
     expect(foo).toStrictEqual({ a: 1, b: 2, c: 3 })
   })
@@ -93,7 +93,7 @@ describe('Utilities', () => {
     const foo = {}
 
     // Add deep
-    setProp(foo, 'a.b.c', 999);
+    setProp(foo, 'a.b.c', 999)
 
     expect(foo).toStrictEqual({ a: { b: { c: 999 } } })
   })
@@ -102,7 +102,7 @@ describe('Utilities', () => {
     const foo = {}
 
     // Add deep
-    setProp(foo, ['a', 'b', 'c'], 123);
+    setProp(foo, ['a', 'b', 'c'], 123)
 
     expect(foo).toStrictEqual({ a: { b: { c: 123 } } })
   })
@@ -135,10 +135,10 @@ describe('Utilities', () => {
   })
 
   test('[setProp]: Mutates; changes the value via array-type keys, but as "10.2" is float, it doesn\'t create an array', () => {
-    const foo = {};
+    const foo = {}
 
-    setProp(foo, ['x', '10.2', 'z'], 123);
-    expect(foo).toStrictEqual({ x: { '10.2': { z: 123 } } });
+    setProp(foo, ['x', '10.2', 'z'], 123)
+    expect(foo).toStrictEqual({ x: { '10.2': { z: 123 } } })
     expect(Array.isArray(foo.x)).toBeFalsy()
   })
 
@@ -146,7 +146,7 @@ describe('Utilities', () => {
     const foo = { a: 1 }
 
     // Create arrays instead of objects
-    setProp(foo, 'e.0.0', 2);
+    setProp(foo, 'e.0.0', 2)
 
     expect(foo.e[0][0]).toStrictEqual(2)
     expect(foo).toStrictEqual({ a: 1, e: [[2]] })
@@ -157,7 +157,7 @@ describe('Utilities', () => {
     const foo = { a: { b: { c: 123 } } }
 
     // Preserve existing structure
-    setProp(foo, 'a.b.x.y', 456);
+    setProp(foo, 'a.b.x.y', 456)
 
     expect(foo).toStrictEqual({ a: { b: { c: 123, x: { y: 456 } } } })
   })
