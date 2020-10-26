@@ -627,3 +627,31 @@ Let's say we are at page 1, and we want 20 **Posts** per page:
 </code-group>
 
 ## Applying Custom Parameters
+
+We may need to use parameters that are not provided by [vue-api-query](https://github.com/robsontenorio/vue-api-query),
+and that's when the `params` method comes in to help.
+
+The argument is an object of the parameters to add to the query.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.params({
+    doSomething: 'yes',
+    process: false,
+    multiple: ['awesome', 'amazing', 'super']
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?doSomething=yes&process=false&multiple=awesome,amazing,super
+  ```
+
+  </code-block>
+</code-group>
+
+## Calling a Custom Resource
