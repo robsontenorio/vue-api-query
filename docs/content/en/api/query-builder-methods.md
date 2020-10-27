@@ -1,7 +1,7 @@
 ---
 title: Query Builder Methods
 description: 'Query Builder methods.'
-position: 6
+position: 7
 category: API
 ---
 
