@@ -38,7 +38,7 @@ await Model.select(['title', 'content'])
 
 **Related entities:**
 ```js
-await Model.select({
+await Post.select({
   posts: ['title', 'content'],
   user: ['age', 'firstName']
 })
@@ -130,14 +130,14 @@ Build custom endpoints.
   <code-block Label="Simple Query" active>
 
   ```js
-  await Model.custom('resource/latest')
+  await Post.custom('posts/latest')
   ```
 
   </code-block>
   <code-block Label="Simple Request">
 
   ```http request
-  GET /resource/latest
+  GET /posts/latest
   ```
 
   </code-block>
