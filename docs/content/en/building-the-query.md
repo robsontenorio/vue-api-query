@@ -561,12 +561,33 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
 </code-group>
 
 
-## Composing Without Request
+## Needless Parent Request
 
-One thing to note is that in some cases you may not need to make a request to compose the query you want.
+One thing to note is that in some cases we may not need to make a request to parent to build the query we want.
+If we already know the model's ID, we just need to initialize the model instance with the ID, instead of use `find`.
 
-Using the example above, if we want to define a dynamic resource, but we already know the **User's** ID, 
-instead of use `find`, we can create a new **User** instance:
+We can get a list of **Posts** that belongs to an **User**:
+ 
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const user = new User({ id: 1 })
+  const posts = user.posts().get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /users/1/posts
+  ```
+
+  </code-block>
+</code-group>
+
+And the same thing using for the example above, if we want to define a dynamic resource, 
+we can create a new **User** instance with the ID:
  
 <code-group>
   <code-block label="Query" active>
@@ -613,14 +634,7 @@ paginate and custom parameters:
   ```
 
   </code-block>
-  <code-block label="User Request">
-
-  ```http request
-  GET /users/1
-  ```
-
-  </code-block>
-  <code-block label="Posts Request">
+  <code-block label="Request">
 
   ```http request
   GET /users/1/posts/latest
