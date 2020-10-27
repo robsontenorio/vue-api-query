@@ -127,7 +127,8 @@ primaryKey() {
 ### `relations`
 - Returns: `object`
 
-This method can be implemented in the model to apply model instances to eager loaded relationships.
+This method can be implemented in the model to apply model instances to eager loaded relationships. 
+It works for collections too.
 
 It must return an object, which the key is the property of the relationship, and the value is the
 model instance.
@@ -137,7 +138,7 @@ See [Configuration](/configuration#eager-loaded-relationships)
 ```js
 relations() {
   return {
-    relationKey: RelationModel
+    comments: Comment
   }
 }
 ```
@@ -153,7 +154,7 @@ It must receive a model instance as argument.
 See [Configuration](/configuration#lazy-loading-relationships)
 
 ```js
-customMethod() {
-  return this.hasMany(RelationModel)
+comments() {
+  return this.hasMany(Comment)
 }
 ```
