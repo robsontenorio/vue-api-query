@@ -40,7 +40,7 @@ export default class Model extends BaseModel {
 
 ## Creating the Domain Models
 
-Now let's create our domain models that extends the base model. You can create as many models as you like.
+Now let's create our domain models that extends the base model. We can create as many models as you like.
 
 Each model must implement:
 - `resource` - The resource route of the model.
@@ -96,15 +96,18 @@ applied to relationships, giving you access to all of their features.
 
 See the [API reference](/api/model-options#relations)
 
-For relationships that have been eager loaded, we only need to implement the `relations` method to apply their model instances.
+For relationships that have been eager loaded, we only need to implement the `relations` method 
+to apply their model instances. It works for collections too.
+
 The `relations` method must return an object, which the key is the property of the relationship, and the value is the
 model instance.
 
-Let's set up an eager loaded **User** for our **Post** model:
+Let's set up an eager loaded **User**, and an eager loaded collection of **Comments** for our **Post** model:
 
 ```js{}[~/models/Post.js]
 import Model from './Model'
 import User from './User'
+import Comment from './Comment'
 
 export default class Post extends Model {
   // Set the resource route of the model
@@ -120,7 +123,8 @@ export default class Post extends Model {
   // Apply model instances to eager loaded relationships
   relations() {
     return {
-      user: User
+      user: User,
+      comments: Comment
     }
   }
 ```
