@@ -270,7 +270,7 @@ We can update a `Comment` of a **Post**:
 
   ```js
   const post = await Post.find(1)
-  const comment = await post.comments().attach({
+  const comment = await post.comments().sync({
     text: 'Awesome post!'
   })
   ```
