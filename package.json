@@ -5,9 +5,9 @@
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build",
-    "prepare": "yarn build && yarn cc",
-    "test": "jest --watch --coverage",
-    "cc": "jest --coverage"
+    "lint": "eslint --ext .js .",
+    "test": "jest --coverage",
+    "test-watch": "jest --watch --coverage"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
@@ -27,6 +27,17 @@
     "laravel"
   ],
   "author": "Robson Tenório",
+  "contributors": [
+    {
+      "name": "João Pedro Antunes Silva",
+      "email": "joao-pedroas@hotmail.com",
+      "url": "https://github.com/JoaoPedroAS51"
+    },
+    {
+      "name": "Peter Krebs",
+      "url": "https://github.com/Peter-Krebs"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/robsontenorio/vue-api-query/issues"
