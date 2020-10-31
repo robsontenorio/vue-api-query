@@ -1,6 +1,6 @@
 {
   "name": "vue-api-query",
-  "version": "1.6.1",
+  "version": "0.0.0-development",
   "description": "💎 Elegant and simple way to build requests for REST API",
   "main": "build/index.js",
   "scripts": {
@@ -57,6 +57,7 @@
     "babel-eslint": "^10.1.0",
     "codecov": "^3.6.5",
     "eslint": "^6.8.0",
-    "jest": "^24.1.0"
+    "jest": "^24.1.0",
+    "semantic-release": "^17.2.2"
   }
 }
