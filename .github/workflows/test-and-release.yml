@@ -94,7 +94,7 @@ jobs:
   docs:
     name: Documentation
 
-    needs: test
+    needs: release
 
     runs-on: ${{ matrix.os }}
 
