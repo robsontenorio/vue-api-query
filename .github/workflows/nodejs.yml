@@ -48,8 +48,8 @@ jobs:
       - name: Test
         run: yarn test
 
-  publish:
-    name: Publish
+  release:
+    name: Release
 
     needs: test
 
@@ -85,11 +85,11 @@ jobs:
         with:
           directory: ./coverage
 
-      - name: Publish to NPM
-        uses: mikeal/merge-release@master
+      - name: Release
+        run: yarn semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   docs:
     name: Documentation
