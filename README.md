@@ -16,10 +16,6 @@
     </a>     
 </p>
 
-<p align="center">
-  <a href="https://robsontenorio.github.io/vue-api-query">Read Documentation</a>
-</p>
-
 # Elegant and simple way to build requests for REST API
 
 This package helps you quickly to build requests for REST API. Move your logic and backend requests to dedicated classes. 
@@ -27,6 +23,10 @@ Keep your code clean and elegant.
 
 🔥 If you use Laravel, this package matches perfectly with 
 [spatie/laravel-query-builder](https://github.com/spatie/laravel-query-builder).
+
+## Links
+- [✨ &nbsp;Release Notes](https://robsontenorio.github.io/vue-api-query/releases)
+- [📖 &nbsp;Documentation](https://robsontenorio.github.io/vue-api-query)
 
 ## Contributors
 

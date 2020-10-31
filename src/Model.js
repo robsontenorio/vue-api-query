@@ -259,7 +259,7 @@ export default class Model extends StaticModel {
       const _relation = getProp(model, relation)
 
       if (!_relation) {
-        return;
+        continue;
       }
 
       if (Array.isArray(_relation.data) || Array.isArray(_relation)) {
