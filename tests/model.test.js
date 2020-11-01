@@ -671,7 +671,7 @@ describe('Model methods', () => {
       const post = new Post({ text: 'Hello' }).for(user)
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method has a invalid id.')
+    expect(errorModel).toThrow('The object referenced on for() method has an invalid id.')
   })
 
   test('it throws a error when a custom() parameter is not a valid Model or a string', () => {
