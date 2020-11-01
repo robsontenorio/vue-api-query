@@ -112,7 +112,7 @@ export default class Model extends StaticModel {
       }
 
       if (!this.isValidId(object.getPrimaryKey())) {
-        throw new Error('The object referenced on for() method has a invalid id.')
+        throw new Error('The object referenced on for() method has an invalid id.')
       }
 
       url += `/${object.resource()}/${object.getPrimaryKey()}`
