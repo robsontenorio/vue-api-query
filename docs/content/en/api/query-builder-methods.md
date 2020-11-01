@@ -22,7 +22,7 @@ await Model.include('user', 'category')
 Append attributes.
 
 ```js
-await Model.include('likes')
+await Model.append('likes')
 ```
 
 ## `select`
