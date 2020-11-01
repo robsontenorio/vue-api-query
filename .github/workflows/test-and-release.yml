@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    name: Build & Test
+    name: Test
 
     runs-on: ${{ matrix.os }}
 
@@ -77,8 +77,8 @@ jobs:
         if: steps.cache-modules.outputs.cache-hit != 'true'
         run: yarn install
 
-      - name: Test
-        run: yarn test
+      - name: Build
+        run: yarn build
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v1
