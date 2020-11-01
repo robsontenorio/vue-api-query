@@ -107,12 +107,12 @@ export default class Model extends StaticModel {
     let url = `${this.baseURL()}`;
 
     args.forEach(object => {
-      if (object instanceof Model === false) {
+      if (!(object instanceof Model)) {
         throw new Error('The object referenced on for() method is not a valid Model.')
       }
 
       if (!this.isValidId(object.getPrimaryKey())) {
-        throw new Error('The object referenced on for() method has a invalid id.')
+        throw new Error('The object referenced on for() method has an invalid id.')
       }
 
       url += `/${object.resource()}/${object.getPrimaryKey()}`
@@ -139,7 +139,7 @@ export default class Model extends StaticModel {
   }
 
   isValidId(id) {
-    return id !== undefined && id !== 0 && id !== '' && id !== null
+    return !!id
   }
 
   endpoint() {
