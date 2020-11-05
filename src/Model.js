@@ -35,7 +35,7 @@ export default class Model extends StaticModel {
     return Model.$http
   }
 
-  config(config = {}) {
+  config(config) {
     this._config = config
     return this
   }
@@ -311,7 +311,7 @@ export default class Model extends StaticModel {
     }
   }
 
-  _reqConfig(config = {}, options = { forceMethod: false }) {
+  _reqConfig(config, options = { forceMethod: false }) {
     const _config = { ...config, ...this._config }
 
 
