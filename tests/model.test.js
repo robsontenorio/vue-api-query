@@ -602,6 +602,8 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       let _data
+      const _post = post
+      delete _post._config
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = JSON.stringify(Object.fromEntries(config.data))
@@ -611,7 +613,7 @@ describe('Model methods', () => {
 
       expect(config.method).toEqual('post')
       expect(config.headers['Content-Type']).toStrictEqual('multipart/form-data')
-      expect(_data).toEqual(JSON.stringify(post))
+      expect(_data).toEqual(JSON.stringify(_post))
       expect(config.url).toEqual('http://localhost/posts')
 
       return [200, _postResponse]
