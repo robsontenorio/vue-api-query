@@ -483,7 +483,7 @@ describe('Model methods', () => {
     }
 
     axiosMock.onAny().reply((config) => {
-      let _data;
+      let _data
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = JSON.stringify(Object.fromEntries(config.data))
@@ -537,7 +537,7 @@ describe('Model methods', () => {
     }
 
     axiosMock.onAny().reply((config) => {
-      let _data;
+      let _data
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = Object.fromEntries(config.data)
@@ -559,6 +559,60 @@ describe('Model methods', () => {
 
     post = new Post({ title: 'Cool!', files: [file, file] })
     post = await post.save()
+
+    expect(post).toEqual(_postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
+
+  test('save() method makes a POST request with a file when "headers" object is defined', async () => {
+    let post
+    const file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    })
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!',
+      text: 'Lorem Ipsum Dolor',
+      user: {
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+      },
+      relationships: {
+        tags: [
+          {
+            name: 'super'
+          },
+          {
+            name: 'awesome'
+          }
+        ]
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      let _data
+
+      if (config.headers['Content-Type'] === 'multipart/form-data') {
+        _data = JSON.stringify(Object.fromEntries(config.data))
+      } else {
+        _data = config.data
+      }
+
+      expect(config.method).toEqual('post')
+      expect(config.headers['Content-Type']).toStrictEqual('multipart/form-data')
+      expect(_data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, _postResponse]
+    })
+
+    post = new Post({ title: 'Cool!', file })
+    post = await post.config({ headers: {} }).save()
 
     expect(post).toEqual(_postResponse)
     expect(post).toBeInstanceOf(Post)
