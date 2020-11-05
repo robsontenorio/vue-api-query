@@ -314,14 +314,19 @@ export default class Model extends StaticModel {
   _reqConfig(config, options = { forceMethod: false }) {
     const _config = { ...config, ...this._config }
 
-
     // Prevent default request method from being overridden
     if (options.forceMethod) {
       _config.method = config.method
     }
 
     // Check if config has data
-    if (_config.data) {
+    if ('data' in _config) {
+      // Ditch private data
+      _config.data = Object.fromEntries(
+        Object.entries(_config.data)
+          .filter(([key]) => !key.startsWith('_'))
+      )
+
       const _hasFiles = Object.keys(_config.data).some(property => {
         if (Array.isArray(_config.data[property])) {
           return _config.data[property].some(value => value instanceof File)
