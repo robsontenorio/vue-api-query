@@ -292,6 +292,15 @@ export default class Model extends StaticModel {
       _config.method = config.method
     }
 
+    // Check if config has data
+    if ('data' in _config) {
+      // Ditch private data
+      _config.data = Object.fromEntries(
+        Object.entries(_config.data)
+          .filter(([key]) => !key.startsWith('_'))
+      )
+    }
+
     return _config
   }
 

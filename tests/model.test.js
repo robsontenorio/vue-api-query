@@ -403,8 +403,11 @@ describe('Model methods', () => {
     let post
 
     axiosMock.onAny().reply((config) => {
+      const _post = post
+      delete _post._config
+
       expect(config.method).toEqual('patch')
-      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.data).toEqual(JSON.stringify(_post))
       expect(config.url).toEqual('http://localhost/posts/1')
 
       return [200, {}]
@@ -438,8 +441,11 @@ describe('Model methods', () => {
     }
 
     axiosMock.onAny().reply((config) => {
+      const _post = post
+      delete _post._config
+
       expect(config.method).toEqual('post')
-      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.data).toEqual(JSON.stringify(_post))
       expect(config.url).toEqual('http://localhost/posts')
 
       return [200, _postResponse]
