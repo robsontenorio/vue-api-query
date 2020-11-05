@@ -383,6 +383,63 @@ describe('Model methods', () => {
     comment.save()
   })
 
+  test('save() method makes a PATCH request when method is set using `config`', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('patch')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    await post.config({ method: 'PATCH' }).save()
+  })
+
+  test('save() method makes a POST request even when `config` set to PATCH', async () => {
+    let post
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!',
+      text: 'Lorem Ipsum Dolor',
+      user: {
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+      },
+      relationships: {
+        tags: [
+          {
+            name: 'super'
+          },
+          {
+            name: 'awesome'
+          }
+        ]
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      expect(config.method).toEqual('post')
+      expect(config.data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, _postResponse]
+    })
+
+    post = new Post({ title: 'Cool!' })
+    post = await post.config({ method: 'PATCH' }).save()
+
+    expect(post).toEqual(_postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
+
   test('save() method makes a POST request when ID of object is null', async () => {
     let post
 
