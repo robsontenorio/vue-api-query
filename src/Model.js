@@ -52,6 +52,10 @@ export default class Model extends StaticModel {
     return this[this.primaryKey()]
   }
 
+  updateMethod() {
+    return 'PUT'
+  }
+
   custom(...args) {
 
     if (args.length === 0) {
@@ -403,7 +407,7 @@ export default class Model extends StaticModel {
   _update() {
     return this.request(
       this._reqConfig({
-        method: 'PUT',
+        method: this.updateMethod(),
         url: this.endpoint(),
         data: this
       })
@@ -429,7 +433,7 @@ export default class Model extends StaticModel {
   sync(params) {
     return this.request(
       this._reqConfig({
-        method: 'PUT',
+        method: this.updateMethod(),
         url: this.endpoint(),
         data: params
       })
