@@ -50,8 +50,18 @@ await Post.select({
 
 Add a basic where clause to the query.
 
+**Simple:**
+
 ```js
 await Model.where('status', 'active')
+```
+
+**Nested:**
+
+> Available in version >= v1.8.0
+
+```js
+await Model.where(['user', 'status'], 'active')
 ```
 
 ## `whereIn`
@@ -60,8 +70,18 @@ await Model.where('status', 'active')
 
 Add a "where in" clause to the query.
 
+**Simple:**
+
 ```js
 await Model.whereIn('id', [1, 2, 3])
+```
+
+**Nested:**
+
+> Available in version >= v1.8.0
+
+```js
+await Model.whereIn(['user', 'id'], [1, 2, 3])
 ```
 
 ## `orderBy`
