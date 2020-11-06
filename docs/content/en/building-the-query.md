@@ -562,7 +562,7 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
 
 ## Configuring the Request
 
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 See the [API reference](/api/query-builder-methods#config)
 
