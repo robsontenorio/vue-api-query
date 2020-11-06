@@ -1,6 +1,7 @@
+import { serialize } from 'object-to-formdata'
 import Builder from './Builder';
 import StaticModel from './StaticModel';
-import { getProp, setProp, serialize } from './utils'
+import { getProp, setProp } from './utils'
 
 export default class Model extends StaticModel {
 
