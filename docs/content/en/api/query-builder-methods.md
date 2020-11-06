@@ -161,7 +161,7 @@ Build custom endpoints.
 </code-group>
 
 ## `config`
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 - Arguments: `(config)`
 - Returns: `self`
