@@ -91,6 +91,38 @@ Then we can update our newly created **Post**:
   </code-block>
 </code-group>
 
+And if we want to use `PATCH`, we can easily do that using [config](/api/query-builder-methods#config).
+
+<code-group>
+  <code-block Label="Query" active>
+
+  ```js
+  const post = await Post.find(1)
+  
+  post.text = 'An updated text for our Post!'
+  
+  await post.config({ method: 'PATCH' }).save()
+  ```
+
+  </code-block>
+  <code-block Label="Find Request">
+
+  ```http request
+  GET /posts/1
+  ```
+
+  </code-block>
+  <code-block Label="Save Request">
+
+  ```http request
+  PATCH /posts/1
+  ```
+
+  </code-block>
+</code-group>
+
+<alert type="info">You can safely use `PATCH` with `save()`. The `POST` method will not be overridden, only `PUT`.</alert>
+
 ### Deleting a Model
 
 See the [API reference](/api/crud-operations#delete).
