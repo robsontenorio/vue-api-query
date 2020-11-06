@@ -160,6 +160,22 @@ Build custom endpoints.
   </code-block>
 </code-group>
 
+## `config`
+> Available in version >= v1.8.0
+
+- Arguments: `(config)`
+- Returns: `self`
+
+Configuration of HTTP Instance.
+
+```js
+await Model.config({
+  method: 'PATCH',
+  header: { /* ... */ },
+  data: { foo: 'bar' }
+}).save()
+```
+
 ## `get`
 - Returns: `Collection | { data: Collection }`
 

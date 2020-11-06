@@ -560,6 +560,21 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
   </code-block>
 </code-group>
 
+## Configuring the Request
+
+> Available in version >= v1.8.0
+
+See the [API reference](/api/query-builder-methods#config)
+
+The `config` method can be used to configure the current request at query builder. We can pass any config available 
+from the HTTP Instance. If we are using [Axios](https://github.com/axios/axios), 
+we should pass an [AxiosRequestConfig](https://github.com/axios/axios#request-config).
+
+We can add headers, change the method, anything we want:
+
+```js
+await Post.config({ headers: { /*...*/ } }).get()
+```
 
 ## Needless Parent Request
 
@@ -586,8 +601,10 @@ We can get a list of **Posts** that belongs to an **User**:
   </code-block>
 </code-group>
 
-And the same thing using for the example above, if we want to define a dynamic resource, 
-we can create a new **User** instance with the ID:
+And the same thing can be done if we want to define a 
+[dynamic resource](/building-the-query#defining-a-dynamic-resource).
+
+We can create a new **User** instance with the ID:
  
 <code-group>
   <code-block label="Query" active>
