@@ -244,7 +244,7 @@ We can filter our **Posts** to only get results where `status` is `published`:
 
 The first argument of `where` also accepts an array of keys, which are used to build a nested filter.
 
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 So we can filter our **Posts** to only get results where `status` of `user` is `active`:
 
@@ -298,7 +298,7 @@ We can filter our **Posts** to only get results where `status` is `published` or
 
 The first argument of `whereIn` also accepts an array of keys, which are used to build a nested filter.
 
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 So we can filter our **Posts** to only get results where `status` of `user` is `active` or `inactive`:
 

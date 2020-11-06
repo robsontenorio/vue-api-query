@@ -58,7 +58,7 @@ await Model.where('status', 'active')
 
 **Nested:**
 
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 ```js
 await Model.where(['user', 'status'], 'active')
@@ -78,7 +78,7 @@ await Model.whereIn('id', [1, 2, 3])
 
 **Nested:**
 
-> Available in version >= v1.8.0
+<alert type="success">Available in version >= v1.8.0</alert>
 
 ```js
 await Model.whereIn(['user', 'id'], [1, 2, 3])
