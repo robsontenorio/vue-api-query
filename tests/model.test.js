@@ -383,22 +383,6 @@ describe('Model methods', () => {
     comment.save()
   })
 
-  test('save() method makes a PATCH request when method is set using `updateMethod`', async () => {
-    let post
-
-    axiosMock.onAny().reply((config) => {
-      expect(config.method).toEqual('patch')
-      expect(config.data).toEqual(JSON.stringify(post))
-      expect(config.url).toEqual('http://localhost/posts/1')
-
-      return [200, {}]
-    })
-
-    post = new Post({ id: 1, title: 'Cool!' })
-    post.updateMethod = () => 'PATCH'
-    await post.save()
-  })
-
   test('save() method makes a PATCH request when method is set using `config`', async () => {
     let post
 
