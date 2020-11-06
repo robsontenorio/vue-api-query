@@ -3,7 +3,7 @@
  */
 
 import Parser from './Parser';
-import { setProp } from './utils'
+import setProp from 'dset'
 
 export default class Builder {
 
