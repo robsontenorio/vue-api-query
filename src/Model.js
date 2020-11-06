@@ -1,6 +1,7 @@
-import Builder from './Builder';
-import StaticModel from './StaticModel';
-import { getProp, setProp } from './utils'
+import getProp from 'dotprop'
+import setProp from 'dset'
+import Builder from './Builder'
+import StaticModel from './StaticModel'
 
 export default class Model extends StaticModel {
 
