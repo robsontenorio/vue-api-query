@@ -93,6 +93,21 @@ describe('Model Class', () => {
         })
       })
 
+      test('Should return the first Model of a Collection of Models, handling the Collection wrapped in "data"', async () => {
+        axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+        const post = (await PostCollectionEmbed.first()) as QueryResponseModel<
+          PostCollectionEmbed
+        >
+
+        expect(post).toEqual(postsEmbedResponse.data[0])
+        expect(post).toBeInstanceOf(PostCollectionEmbed)
+        expect(post.user).toBeInstanceOf(User)
+        post.relationships.tags.data.forEach((tag) => {
+          expect(tag).toBeInstanceOf(TagEmbed)
+        })
+      })
+
       test('Should return the first Model of a Collection of Models, handling Collection and Models wrapped in "data"', async () => {
         axiosMock
           .onGet('http://localhost/posts')
@@ -161,6 +176,13 @@ describe('Model Class', () => {
         post.relationships.tags.data.forEach((tag) => {
           expect(tag).toBeInstanceOf(TagEmbed)
         })
+      })
+
+      test('Should return an empty object when no items have found', async () => {
+        axiosMock.onGet('http://localhost/posts').reply(200, [])
+
+        const post = await Post.$first()
+        expect(post).toEqual({})
       })
     })
 
