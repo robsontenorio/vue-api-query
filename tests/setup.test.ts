@@ -1,10 +1,10 @@
 import EmptyBaseModel from './dummy/models/EmptyBaseModel'
 import Post from './dummy/models/Post'
 
-describe('Setup models', () => {
+describe('Setup Models', () => {
   let errorModel = {}
 
-  test('it throws an error if $http property has not been set', () => {
+  test('Should throw an error if $http property has not been set', () => {
     EmptyBaseModel.reset().withBaseURL().withRequest()
 
     errorModel = () => {
@@ -15,32 +15,34 @@ describe('Setup models', () => {
     expect(errorModel).toThrow('You must set $http property')
   })
 
-  test('it throws an error if baseURL() method was not declared', () => {
+  test('Should throw an error if baseURL() method was not declared', () => {
     EmptyBaseModel.reset().withRequest().withHttp()
 
     errorModel = () => {
       // @ts-ignore
       new EmptyBaseModel()
     }
+
     expect(errorModel).toThrow('You must declare baseURL() method.')
   })
 
-  test('it throws an error if request() method was not declared', () => {
+  test('Should throw an error if request() method was not declared', () => {
     EmptyBaseModel.reset().withBaseURL().withHttp()
 
     errorModel = () => {
       // @ts-ignore
       new EmptyBaseModel()
     }
+
     expect(errorModel).toThrow('You must declare request() method.')
   })
 
-  test('the resource() method pluralizes the class name', () => {
+  test('The resource() method should pluralizes the class name', () => {
     const post = new Post()
     expect(post.resource()).toEqual('posts')
   })
 
-  test('the resource() method can be overridden', () => {
+  test('The resource() method can be overridden', () => {
     Post.prototype['resource'] = () => {
       return 'postz'
     }
@@ -53,7 +55,7 @@ describe('Setup models', () => {
     delete Post.prototype['resource']
   })
 
-  test('the primaryKey() method can be overridden', () => {
+  test('The primaryKey() method can be overridden', () => {
     Post.prototype['primaryKey'] = () => {
       return 'someId'
     }
@@ -66,7 +68,7 @@ describe('Setup models', () => {
     delete Post.prototype['primaryKey']
   })
 
-  test('the baseURL() method can be overridden', () => {
+  test('The baseURL() method can be overridden', () => {
     Post.prototype['baseURL'] = () => {
       return 'http://api.com'
     }

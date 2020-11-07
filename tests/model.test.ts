@@ -12,7 +12,6 @@ import { Posts as postsAllEmbedResponse } from './dummy/data/postsAllEmbed'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
 import Comment from './dummy/models/Comment'
 import CommentWrapped from './dummy/models/CommentWrapped'
-import EmptyBaseModel from './dummy/models/EmptyBaseModel'
 import Post from './dummy/models/Post'
 import PostAllEmbed from './dummy/models/PostAllEmbed'
 import PostCollectionEmbed from './dummy/models/PostCollectionEmbed'
@@ -32,50 +31,6 @@ describe('Model Class', () => {
     Post.prototype['primaryKey'] = () => {
       return 'id'
     }
-  })
-
-  describe('Setup', () => {
-    test('Should throw an error if baseURL() is not defined', () => {
-      // @ts-ignore
-      EmptyBaseModel.prototype.baseURL = undefined
-
-      errorModel = () => {
-        // @ts-ignore
-        new EmptyBaseModel()
-      }
-
-      expect(errorModel).toThrow('You must declare baseURL() method.')
-    })
-
-    test('Should throw an error if request() is not defined', () => {
-      EmptyBaseModel.prototype.baseURL = () => ''
-      // @ts-ignore
-      EmptyBaseModel.prototype.request = undefined
-
-      errorModel = () => {
-        // @ts-ignore
-        new EmptyBaseModel()
-      }
-
-      expect(errorModel).toThrow('You must declare request() method.')
-    })
-
-    test('Should throw an error if $http is not defined', () => {
-      EmptyBaseModel.prototype.baseURL = () => ''
-      // @ts-ignore
-      EmptyBaseModel.prototype.request = () => ''
-      // @ts-ignore
-      Model.$http = undefined
-
-      errorModel = () => {
-        // @ts-ignore
-        new EmptyBaseModel()
-      }
-
-      expect(errorModel).toThrow('You must set $http property.')
-
-      Model.$http = axios
-    })
   })
 
   describe('Query Builder', () => {
