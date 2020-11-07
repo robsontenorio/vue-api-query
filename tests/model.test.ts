@@ -80,7 +80,7 @@ describe('Model Class', () => {
 
   describe('Query Builder', () => {
     describe('first()', () => {
-      test('Should return the first object in array, and apply the instance of such Model to the object', async () => {
+      test('Should return the first Model of a Collection of Models', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
         const post = (await Post.first()) as QueryResponseModel<Post, false>
@@ -93,7 +93,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return the first object in array (wrapped with "data"), and apply the instance of such Model to the object (wrapped with "data")', async () => {
+      test('Should return the first Model of a Collection of Models, handling Collection and Models wrapped in "data"', async () => {
         axiosMock
           .onGet('http://localhost/posts')
           .reply(200, postsAllEmbedResponse)
@@ -122,7 +122,7 @@ describe('Model Class', () => {
     })
 
     describe('$first()', () => {
-      test('Should return the first object in array, and apply the instance of such Model to the object', async () => {
+      test('Should return the first Model of a Collection of Models', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
         const post = await Post.$first()
@@ -135,7 +135,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return the first object in array (wrapped with "data"), and apply the instance of such Model to the object', async () => {
+      test('Should return the first Model of a Collection of Models, handling the Collection wrapped in "data"', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
         const post = await PostCollectionEmbed.$first()
@@ -148,7 +148,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return the first object in array (wrapped with "data"), and apply the instance of such Model to the object (wrapped with "data")', async () => {
+      test('Should return the first Model of a Collection of Models, handling Collection and Models wrapped in "data"', async () => {
         axiosMock
           .onGet('http://localhost/posts')
           .reply(200, postsAllEmbedResponse)
@@ -176,7 +176,7 @@ describe('Model Class', () => {
         )
       })
 
-      test('Should return an object, and apply the instance of such Model to the object', async () => {
+      test('Should return a Model', async () => {
         axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
         const post = (await Post.find(1)) as QueryResponseModel<Post, false>
@@ -188,7 +188,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return an object, and apply the instance of such Model to the object (wrapped with "data")', async () => {
+      test('Should return a Model, handling the "data" wrapper', async () => {
         axiosMock
           .onGet('http://localhost/posts/1')
           .reply(200, postEmbedResponse)
@@ -219,7 +219,7 @@ describe('Model Class', () => {
         )
       })
 
-      test('Should handle request with "data" wrapper', async () => {
+      test('Should return a Model, handling the "data" wrapper', async () => {
         axiosMock
           .onGet('http://localhost/posts/1')
           .reply(200, postEmbedResponse)
@@ -234,7 +234,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should handle request without "data" wrapper', async () => {
+      test('Should return a Model, without the "data" wrapper', async () => {
         axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
         const post = await Post.$find(1)
@@ -249,7 +249,7 @@ describe('Model Class', () => {
     })
 
     describe('get()', () => {
-      test('Should return an array of objects, and apply the instance of such Model to the objects', async () => {
+      test('Should return a Collection of Models', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
         const posts = (await Post.get()) as QueryResponseCollection<
@@ -267,7 +267,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return an array (wrapped with "data") of objects, and apply the instance of such Model to the objects', async () => {
+      test('Should return a Collection of Models, handling the Collection wrapped in "data"', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
         const {
@@ -284,7 +284,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should return an array (wrapped with "data") of objects, and apply the instance of such Model to the objects (wrapped with "data")', async () => {
+      test('Should return a Collection of Models, handling Collection and Models wrapped in "data"', async () => {
         axiosMock
           .onGet('http://localhost/posts')
           .reply(200, postsAllEmbedResponse)
@@ -303,7 +303,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should hit right resource (nested object)', async () => {
+      test('Should return a Collection of Models of a Lazy Relationship', async () => {
         axiosMock.onGet().reply((config) => {
           expect(config.method).toEqual('get')
           expect(config.url).toEqual('http://localhost/posts/1/comments')
@@ -322,7 +322,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should hit right resource (nested object, custom PK)', async () => {
+      test('Should return a Collection of Models of a Lazy Relationship, with a custom Primary Key', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -350,7 +350,7 @@ describe('Model Class', () => {
     })
 
     describe('$get()', () => {
-      test('Should fetch style request with "data" wrapper', async () => {
+      test('Should return a Collection of Models, handling the "data" wrapper', async () => {
         axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
         const posts = await Post.$get()
@@ -358,7 +358,7 @@ describe('Model Class', () => {
         expect(posts).toEqual(postsEmbedResponse.data)
       })
 
-      test('Should fetch style request without "data" wrapper', async () => {
+      test('Should return a Collection of Models, without the "data" wrapper', async () => {
         axiosMock
           .onGet('http://localhost/posts')
           .reply(200, postsEmbedResponse.data)
@@ -368,7 +368,7 @@ describe('Model Class', () => {
         expect(posts).toEqual(postsEmbedResponse.data)
       })
 
-      test('Should hit right resource with "data" wrapper (nested object)', async () => {
+      test('Should return a Collection of Models of a Lazy Relationship, handling the "data" wrapper', async () => {
         axiosMock.onGet().reply((config) => {
           expect(config.method).toEqual('get')
           expect(config.url).toEqual('http://localhost/posts/1/comments')
@@ -387,7 +387,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should hit right resource (nested object, custom PK)', async () => {
+      test('Should return a Collection of Models of a Lazy Relationship, handling the "data" wrapper, with a custom Primary Key', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -444,7 +444,7 @@ describe('Model Class', () => {
         await Post.custom('postz').first()
       })
 
-      test('Should gracefully handles accidental / for string arguments', async () => {
+      test('Should gracefully handle accidental / for string arguments', async () => {
         axiosMock.onAny().reply((config) => {
           expect(config.url).toBe('http://localhost/postz/recent')
 
@@ -454,7 +454,7 @@ describe('Model Class', () => {
         await Post.custom('/postz', 'recent').first()
       })
 
-      test('Should called with multiple objects/strings gets the correct resource', async () => {
+      test('Should get the correct resource when called with multiple objects/strings', async () => {
         axiosMock.onAny().reply((config) => {
           expect(config.method).toEqual('get')
           expect(config.url).toEqual('http://localhost/users/1/postz/comments')
@@ -567,6 +567,20 @@ describe('Model Class', () => {
         expect(post.data.user).toBeInstanceOf(User)
       })
 
+      test('Should make a POST request when ID of object is null', async () => {
+        const post = new Post({ id: null, title: 'Cool!' })
+
+        axiosMock.onAny().reply((config) => {
+          expect(config.method).toEqual('post')
+          expect(config.data).toEqual(JSON.stringify(post))
+          expect(config.url).toEqual('http://localhost/posts')
+
+          return [200, {}]
+        })
+
+        await post.save()
+      })
+
       test('Should make a PUT request when ID of object exists', async () => {
         let post:
           | Post
@@ -663,7 +677,7 @@ describe('Model Class', () => {
         expect(post.data.user).toBeInstanceOf(User)
       })
 
-      test('Should make a PUT request when ID of object exists (custom PK)', async () => {
+      test('Should make a PUT request when ID of object exists, with a custom Primary Key', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -681,7 +695,7 @@ describe('Model Class', () => {
         await post.save()
       })
 
-      test('Should make a PUT request when ID of object exists (nested object)', async () => {
+      test('Should make a PUT request when ID of object exists for a Lazy Relationship', async () => {
         // eslint-disable-next-line prefer-const
         let comment: Required<Pick<
           Comment,
@@ -715,7 +729,7 @@ describe('Model Class', () => {
         await comment.save()
       })
 
-      test('Should make a PUT request when ID of object exists (nested object, customPK)', async () => {
+      test('Should make a PUT request when ID of object exists for a Lazy Relationship, with a custom Primary Key of Parent', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -755,21 +769,7 @@ describe('Model Class', () => {
         await comment.save()
       })
 
-      test('Should make a POST request when ID of object is null', async () => {
-        const post = new Post({ id: null, title: 'Cool!' })
-
-        axiosMock.onAny().reply((config) => {
-          expect(config.method).toEqual('post')
-          expect(config.data).toEqual(JSON.stringify(post))
-          expect(config.url).toEqual('http://localhost/posts')
-
-          return [200, {}]
-        })
-
-        await post.save()
-      })
-
-      test('Should make a PUT request to the correct URL on nested object thas was fetched with find()', async () => {
+      test('Should make a PUT request for a Lazy Relationship that was fetched with find()', async () => {
         axiosMock
           .onGet('http://localhost/posts/1/comments/1')
           .reply(200, commentsResponse[0])
@@ -814,7 +814,7 @@ describe('Model Class', () => {
         post.delete()
       })
 
-      test('Should hit the right resource (custom PK)', async () => {
+      test('Should hit the right resource, with a custom Primary Key', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -831,7 +831,7 @@ describe('Model Class', () => {
         await post.delete()
       })
 
-      test('Should hit the right resource (nested object)', async () => {
+      test('Should hit the right resource for a Lazy Relationship', async () => {
         axiosMock
           .onGet('http://localhost/posts/1/comments')
           .reply(200, commentsResponse)
@@ -848,7 +848,7 @@ describe('Model Class', () => {
         comment.delete()
       })
 
-      test('Should hit the right resource (nested object) (nested object, customPK)', async () => {
+      test('Should hit the right resource for a Lazy Relationship, with a custom Primary Key of Parent', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -888,7 +888,7 @@ describe('Model Class', () => {
         await user.posts().get()
       })
 
-      test('Should hit right resource with a find()', async () => {
+      test('Should hit right resource with find()', async () => {
         axiosMock.onAny().reply((config) => {
           expect(config.method).toEqual('get')
           expect(config.url).toEqual('http://localhost/users/1/posts/1')
@@ -899,7 +899,7 @@ describe('Model Class', () => {
         await user.posts().find(1)
       })
 
-      test('Should return an array of Models', async () => {
+      test('Should return a Collection of Models', async () => {
         axiosMock
           .onGet('http://localhost/users/1/posts')
           .reply(200, postsResponse)
@@ -928,7 +928,7 @@ describe('Model Class', () => {
         })
       })
 
-      test('Should hit right endpoint with a POST request (custom PK)', async () => {
+      test('Should hit right endpoint with a POST request, with a custom Primary Key', async () => {
         Post.prototype['primaryKey'] = () => {
           return 'someId'
         }
@@ -1024,7 +1024,7 @@ describe('Model Class', () => {
         await post.save()
       })
 
-      test('Calling with multiple arguments should produce the correct URL', () => {
+      test('Should produce the correct URL when calling with multiple arguments', () => {
         const user = new User({ id: 1 })
         const post = new Post({ id: 2 })
         const comment = new Comment({
