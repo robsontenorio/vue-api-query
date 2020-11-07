@@ -1,8 +1,8 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
+import { QueryResponseCollection, QueryResponseModel } from '../src'
 import Model from '../src/Model'
-import { QueryResponseCollection, QueryResponseModel } from '../src/types'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 import { Post as postResponse } from './dummy/data/post'
