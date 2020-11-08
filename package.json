@@ -61,6 +61,7 @@
     "semantic-release": "^17.2.2"
   },
   "dependencies": {
+    "collect.js": "^4.28.4",
     "dotprop": "^1.2.0",
     "dset": "^2.0.1"
   }
