@@ -46,13 +46,10 @@ export default class Builder {
    *
    */
   _nestedFilter (keys, value) {
-    // Get first key from `keys` array
-    const _key = keys[0]
+    // Get first key from `keys` array, then remove it from array
+    const _key = keys.shift()
     // Initialize an empty object
     const _value = {}
-
-    // Remove first key from `keys` array
-    keys.shift()
 
     // Convert the keys into a deeply nested object, which the value of the deepest key is
     // the `value` property.
