@@ -11,6 +11,7 @@ import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
 import Tag from './dummy/models/Tag'
+import Collection from '../src/Collection'
 
 describe('Model methods', () => {
 
@@ -127,7 +128,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse);
     expect(post).toBeInstanceOf(Post);
     expect(post.user).toStrictEqual(null);
-    expect(post.relationships.tags).toStrictEqual([]);
+    expect(post.relationships.tags).toStrictEqual(new Collection());
   });
 
   test("find() method returns a object as instance of such Model with some empty relationships", async () => {
@@ -152,6 +153,8 @@ describe('Model methods', () => {
 
     const posts = await Post.get()
 
+    expect(posts).toBeInstanceOf(Collection)
+
     posts.forEach(post => {
       expect(post).toBeInstanceOf(Post)
       expect(post.user).toBeInstanceOf(User)
@@ -171,6 +174,8 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     const comments = await post.comments().get()
+
+    expect(comments).toBeInstanceOf(Collection)
 
     comments.forEach(comment => {
       expect(comment).toBeInstanceOf(Comment)
@@ -196,6 +201,8 @@ describe('Model methods', () => {
 
     const comments = await post.comments().get()
 
+    expect(comments).toBeInstanceOf(Collection)
+
     comments.forEach(comment => {
       expect(comment).toBeInstanceOf(Comment)
       comment.replies.forEach(reply => {
@@ -210,7 +217,7 @@ describe('Model methods', () => {
     const posts = await Post.$get()
 
     expect(posts).toEqual(postsEmbedResponse.data)
-
+    expect(posts).toBeInstanceOf(Collection)
   })
 
   test('$get() fetch style request without "data" wrapper', async () => {
@@ -219,7 +226,7 @@ describe('Model methods', () => {
     const posts = await Post.$get()
 
     expect(posts).toEqual(postsEmbedResponse.data)
-
+    expect(posts).toBeInstanceOf(Collection)
   })
 
   test('$get() hits right resource with "data" wrapper (nested object)', async () => {
@@ -232,6 +239,8 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     const comments = await post.comments().$get()
+
+    expect(comments).toBeInstanceOf(Collection)
 
     comments.forEach(comment => {
       expect(comment).toBeInstanceOf(Comment)
@@ -256,6 +265,8 @@ describe('Model methods', () => {
     })
 
     const comments = await post.comments().$get()
+
+    expect(comments).toBeInstanceOf(Collection)
 
     comments.forEach(comment => {
       expect(comment).toBeInstanceOf(Comment)
