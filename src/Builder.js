@@ -35,13 +35,13 @@ export default class Builder {
    * Nested filter via array-type keys.
    *
    * @example
-   * const { key: _key, value: _value } = this._nestedFilter(keys, value)
+   * const [_key, _value] = this._nestedFilter(keys, value)
    * this.filters[_key] = _value
    *
    * @param {string[]} keys - Array-type keys, like `['a', 'b', 'c']`.
    * @param {*} value - The value to be set.
    *
-   * @return {{ key: string, value: * }} - An object with the first key, which is the index to be used in `filters`
+   * @return {[]} - An array containing the first key, which is the index to be used in `filters`
    * object, and a value, which is the nested filter.
    *
    */
@@ -56,7 +56,7 @@ export default class Builder {
     // Then assign the object to `_value` property.
     setProp(_value, keys, value)
 
-    return { key: _key, value: _value }
+    return [_key, _value]
   }
 
   /**
@@ -105,7 +105,7 @@ export default class Builder {
     }
 
     if (Array.isArray(key)) {
-      const { key: _key, value: _value } = this._nestedFilter(key, value)
+      const [_key, _value] = this._nestedFilter(key, value)
 
       this.filters[_key] = _value
     } else {
@@ -121,7 +121,7 @@ export default class Builder {
     }
 
     if (Array.isArray(key)) {
-      const { key: _key, value: _value } = this._nestedFilter(key, array.join(','))
+      const [_key, _value] = this._nestedFilter(key, array.join(','))
 
       this.filters[_key] = _value
     } else {
