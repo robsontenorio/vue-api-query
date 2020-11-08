@@ -2,6 +2,7 @@ import getProp from 'dotprop'
 import setProp from 'dset'
 import Builder from './Builder'
 import StaticModel from './StaticModel'
+import Collection from './Collection'
 
 export default class Model extends StaticModel {
 
@@ -250,7 +251,8 @@ export default class Model extends StaticModel {
     collection = collection.map(c => {
       return this._applyInstance(c, model)
     })
-    return collection
+
+    return new Collection(...collection)
   }
 
   _applyRelations(model) {
