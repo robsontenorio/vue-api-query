@@ -117,6 +117,6 @@ const methods = Reflect.ownKeys(CollectJS.prototype).filter(x => {
 
 for (const method of methods) {
   Collection.prototype[method] = function (...args) {
-    return new Collection(this._collection()[method](...args).all())
+    return this._respond(this._collection()[method](...args))
   }
 }
