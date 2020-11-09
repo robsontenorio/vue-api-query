@@ -177,6 +177,10 @@ export default class Model extends StaticModel {
     }
   }
 
+  newModelQuery() {
+    return new this.constructor()
+  }
+
   /**
    *  Query
    */
