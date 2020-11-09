@@ -10,6 +10,8 @@ category: API
 
 Save or update a model in the database, then return the instance.
 
+<alert type="info">When uploading files, the `Content-Type` will be set to `multipart/form-data`.</alert>
+
 ### create
 
 <code-group>
@@ -96,6 +98,7 @@ Alias for:
 model.config({ method: 'PATCH' }).save()
 ```
 
+<alert type="info">When uploading files, the `Content-Type` will be set to `multipart/form-data`.</alert>
 
 ## `delete`
 
