@@ -50,8 +50,18 @@ await Post.select({
 
 Add a basic where clause to the query.
 
+**Simple:**
+
 ```js
 await Model.where('status', 'active')
+```
+
+**Nested:**
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.where(['user', 'status'], 'active')
 ```
 
 ## `whereIn`
@@ -60,8 +70,18 @@ await Model.where('status', 'active')
 
 Add a "where in" clause to the query.
 
+**Simple:**
+
 ```js
 await Model.whereIn('id', [1, 2, 3])
+```
+
+**Nested:**
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.whereIn(['user', 'id'], [1, 2, 3])
 ```
 
 ## `orderBy`
@@ -159,6 +179,22 @@ Build custom endpoints.
 
   </code-block>
 </code-group>
+
+## `config`
+<alert type="success">Available in version >= v1.8.0</alert>
+
+- Arguments: `(config)`
+- Returns: `self`
+
+Configuration of HTTP Instance.
+
+```js
+await Model.config({
+  method: 'PATCH',
+  header: { /* ... */ },
+  data: { foo: 'bar' }
+}).save()
+```
 
 ## `get`
 - Returns: `Collection | { data: Collection }`

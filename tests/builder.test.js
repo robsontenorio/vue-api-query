@@ -94,6 +94,11 @@ describe('Query builder', () => {
     post = Post.where('id', 1).where('title', 'Cool')
 
     expect(post._builder.filters).toEqual({ id: 1, title: 'Cool' })
+
+    post = Post.where(['user', 'status'], 'active')
+
+    expect(post._builder.filters).toEqual({ user: { status: 'active' } })
+    expect(post._builder.query()).toEqual('?filter[user][status]=active')
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -122,6 +127,10 @@ describe('Query builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
     expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
+
+    post = Post.whereIn(['user', 'status'], ['active', 'inactive'])
+
+    expect(post._builder.query()).toEqual('?filter[user][status]=active,inactive')
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {

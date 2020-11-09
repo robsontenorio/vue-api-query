@@ -65,6 +65,37 @@ Save or update a model in the database, then return the instance.
   </code-block>
 </code-group>
 
+## `patch`
+- Returns: `Model | { data: Model }`
+
+Make a `PATCH` request to update a model in the database, then return the instance.
+
+<code-group>
+  <code-block Label="Query" active>
+
+  ```js
+  const model = await Model.find(1)
+  
+  model.foo = 'bar'
+  
+  model.patch()
+  ```
+
+  </code-block>
+  <code-block Label="Request">
+
+  ```http request
+  PATCH /resource/1
+  ```
+
+  </code-block>
+</code-group>
+
+Alias for:
+```js
+model.config({ method: 'PATCH' }).save()
+```
+
 
 ## `delete`
 
