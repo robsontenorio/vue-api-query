@@ -242,6 +242,33 @@ We can filter our **Posts** to only get results where `status` is `published`:
   </code-block>
 </code-group>
 
+#### Nested Filter
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `where` also accepts an array of keys, which are used to build a nested filter.
+
+So we can filter our **Posts** to only get results where `status` of `user` is `active`:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where([
+    'user', 'status'
+  ], 'active').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[user][status]=active
+  ```
+
+  </code-block>
+</code-group>
+
 ### Evaluating Multiple Values
 
 See the [API reference](/api/query-builder-methods#wherein)
@@ -266,6 +293,33 @@ We can filter our **Posts** to only get results where `status` is `published` or
 
   ```http request
   GET /posts?filter[status]=published,archived
+  ```
+
+  </code-block>
+</code-group>
+
+#### Nested Filter
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `whereIn` also accepts an array of keys, which are used to build a nested filter.
+
+So we can filter our **Posts** to only get results where `status` of `user` is `active` or `inactive`:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.whereIn(['user', 'status'], [
+    'active', 'inactive'
+  ]).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[user][status]=active,inactive
   ```
 
   </code-block>
