@@ -213,6 +213,10 @@ export default class Model extends StaticModel {
     return this
   }
 
+  with(...args) {
+    return this.include(...args)
+  }
+
   append(...args) {
     this._builder.append(...args)
 
@@ -426,6 +430,14 @@ export default class Model extends StaticModel {
     return this
       .get()
       .then(response => response.data || response)
+  }
+
+  all() {
+    return this.get()
+  }
+
+  $all() {
+    return this.$get()
   }
 
   /**
