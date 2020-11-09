@@ -93,7 +93,7 @@ export default class Collection extends Array {
       return this._respond(this._collection().whereIn(this._primaryKey(), key))
     }
 
-    return this._collection().first(model => model.getPrimaryKey() === key)
+    return this._collection().first(model => model.getPrimaryKey() === key) || {}
   }
 
   /**
