@@ -50,12 +50,14 @@ export default class Collection extends Array {
    * @return this
    */
   _respond(collection) {
-    if (collection instanceof CollectJS) {
-      collection = collection.all()
-    }
+    if (Array.isArray(collection)) {
+      if (collection instanceof CollectJS) {
+        collection = collection.all()
+      }
 
-    if (!(collection instanceof Collection)) {
-      collection = new this.constructor(collection)
+      if (!(collection instanceof Collection)) {
+        collection = new this.constructor(collection)
+      }
     }
 
     return collection
