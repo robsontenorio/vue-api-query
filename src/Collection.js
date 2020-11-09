@@ -1,4 +1,4 @@
-import collect, { Collection as CollectJS } from 'collect.js'
+import { collect, Collection as CollectJS } from 'collect.js'
 import Model from './Model'
 
 export default class Collection extends Array {
@@ -246,7 +246,7 @@ export default class Collection extends Array {
 }
 
 const methods = Reflect.ownKeys(CollectJS.prototype).filter(x => {
-  return !Reflect.ownKeys(Collection.prototype).some(v => x !== v)
+  return !Reflect.ownKeys(Collection.prototype).includes(x)
 })
 
 for (const method of methods) {
