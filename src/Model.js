@@ -36,6 +36,11 @@ export default class Model extends StaticModel {
     return Model.$http
   }
 
+  config(config) {
+    this._config = config
+    return this
+  }
+
   resource() {
     return `${this.constructor.name.toLowerCase()}s`
   }
@@ -277,6 +282,25 @@ export default class Model extends StaticModel {
     }
   }
 
+  _reqConfig(config, options = { forceMethod: false }) {
+    const _config = { ...config, ...this._config }
+
+    if (options.forceMethod) {
+      _config.method = config.method
+    }
+
+    // Check if config has data
+    if ('data' in _config) {
+      // Ditch private data
+      _config.data = Object.fromEntries(
+        Object.entries(_config.data)
+          .filter(([key]) => !key.startsWith('_'))
+      )
+    }
+
+    return _config
+  }
+
   first() {
     return this.get().then(response => {
       let item
@@ -304,10 +328,12 @@ export default class Model extends StaticModel {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     let url = `${base}/${identifier}${this._builder.query()}`
 
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        url,
+        method: 'GET'
+      })
+    ).then(response => {
       return this._applyInstance(response.data)
     })
   }
@@ -327,10 +353,12 @@ export default class Model extends StaticModel {
     base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
     let url = `${base}${this._builder.query()}`
 
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        url,
+        method: 'GET'
+      })
+    ).then(response => {
       let collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
@@ -358,10 +386,12 @@ export default class Model extends StaticModel {
       throw new Error('This model has a empty ID.')
     }
 
-    return this.request({
-      url: this.endpoint(),
-      method: 'DELETE'
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'DELETE',
+        url: this.endpoint()
+      })
+    ).then(response => response)
   }
 
   save() {
@@ -369,23 +399,31 @@ export default class Model extends StaticModel {
   }
 
   _create() {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        method: 'POST',
+        url: this.endpoint(),
+        data: this
+      }, { forceMethod: true })
+    ).then(response => {
       return this._applyInstance(response.data.data || response.data)
     })
   }
 
   _update() {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        method: 'PUT',
+        url: this.endpoint(),
+        data: this
+      })
+    ).then(response => {
       return this._applyInstance(response.data.data || response.data)
     })
+  }
+
+  patch() {
+    return this.config({ method: 'PATCH' }).save()
   }
 
   /**
@@ -393,18 +431,22 @@ export default class Model extends StaticModel {
    */
 
   attach(params) {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: params
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'POST',
+        url: this.endpoint(),
+        data: params
+      })
+    ).then(response => response)
   }
 
   sync(params) {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: params
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'PUT',
+        url: this.endpoint(),
+        data: params
+      })
+    ).then(response => response)
   }
 }
