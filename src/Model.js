@@ -182,6 +182,10 @@ export default class Model extends StaticModel {
     }
   }
 
+  newModelQuery() {
+    return new this.constructor()
+  }
+
   /**
    *  Query
    */
@@ -218,6 +222,18 @@ export default class Model extends StaticModel {
     this._builder.whereIn(field, array)
 
     return this
+  }
+
+  whereKey(identifier) {
+    if (identifier === undefined) {
+      throw new Error('You must specify the identifier on whereKey() method.')
+    }
+
+    if (Array.isArray(identifier)) {
+      return this.whereIn(this.primaryKey(), identifier)
+    }
+
+    return this.where(this.primaryKey(), identifier)
   }
 
   orderBy(...args) {

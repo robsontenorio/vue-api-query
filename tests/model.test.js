@@ -986,4 +986,10 @@ describe('Model methods', () => {
     comment.text = 'Hola!'
     await comment.save()
   })
+
+  test('newModelQuery() should create a new instance of the model', async () => {
+    const post = new Post().newModelQuery()
+    expect(post).toBeInstanceOf(Post)
+    expect(post).toEqual(new Post())
+  })
 })

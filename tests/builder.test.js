@@ -163,6 +163,24 @@ describe('Query builder', () => {
     expect(errorModel).toThrow('The second argument on whereIn() method must be an array.')
   })
 
+  test('whereKey() sets properly the builder', () => {
+    let post = Post.whereKey(1)
+
+    expect(post._builder.filters).toEqual({ [post.primaryKey()]: 1 })
+
+    post = Post.whereKey([1, 2])
+
+    expect(post._builder.filters).toEqual({ [post.primaryKey()]: '1,2' })
+  })
+
+  test('whereKey() throws a exception when the identifier is not provided', () => {
+    let errorModel = () => {
+      const post = Post.whereKey()
+    }
+
+    expect(errorModel).toThrow('You must specify the identifier on whereKey() method.')
+  })
+
   test('page() sets properly the builder', () => {
     let post = Post.page(3)
 

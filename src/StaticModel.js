@@ -55,6 +55,13 @@ export default class StaticModel {
     return self
   }
 
+  static whereKey(identifier) {
+    let self = this.instance()
+    self.whereKey(identifier)
+
+    return self
+  }
+
   static orderBy(...args) {
     let self = this.instance()
     self.orderBy(...args)
