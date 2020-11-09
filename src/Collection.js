@@ -3,12 +3,32 @@ import Model from './Model'
 
 export default class Collection extends Array {
   /**
+   * Set the items of the array.
+   *
+   * @param {Model[]} collection
+   */
+  set items(collection) {
+    const deleteCount = this.length;
+    this.splice(0, deleteCount, ...collection);
+  }
+
+  /**
+   * Get the items of the array.
+   *
+   * @return Model[]
+   */
+  get items () {
+    return [...this]
+  }
+
+  /**
    * Apply [Collection]{@link CollectJS} instance of [collect.js]{@link https://github.com/ecrmnn/collect.js} to array.
    *
+   * @param {Model[]} [items]
    * @return CollectJS
    */
-  _collection() {
-    return collect([...this])
+  _collection(items) {
+    return collect(items || this.items)
   }
 
   /**
@@ -23,39 +43,42 @@ export default class Collection extends Array {
   /**
    * Apply {@link Collection} instance to array.
    *
-   * @return Collection
+   * @return this
    */
   _respond(collection) {
     if (collection instanceof CollectJS) {
       collection = collection.all()
     }
 
-    return new this.constructor(collection)
+    if (!(collection instanceof Collection)) {
+      collection = new this.constructor(collection)
+    }
+
+    return collection
   }
 
   /**
    * Get a dictionary keyed by primary keys.
    *
-   * @param  {[]|null} items
-   * @return array
+   * @param {Model[]} [items]
+   * @return Record<string, Model>
    */
-  getDictionary(items = null)
-  {
-    items = !items ? [...this] : items
-    const dictionary = []
+  getDictionary(items) {
+    items = items || this.items
+    const dictionary = {}
 
     for (value of items) {
       dictionary[value.getPrimaryKey()] = value
     }
 
-    return dictionary;
+    return dictionary
   }
 
   /**
    * Find a model in the collection by key.
    *
-   * @param {string|string[]|Model} key
-   * @return Model|CollectJS|null
+   * @param {string|number|string[]|number[]|Model} key
+   * @return Model|this
    */
   find(key) {
     if (key instanceof Model) {
@@ -64,7 +87,7 @@ export default class Collection extends Array {
 
     if (Array.isArray(key)) {
       if (this._collection().isEmpty()) {
-        return this._respond()
+        return this
       }
 
       return this._respond(this._collection().whereIn(this._primaryKey(), key))
@@ -96,11 +119,11 @@ export default class Collection extends Array {
    * Returns only the models from the collection with the specified keys.
    *
    * @param {string[]} keys
-   * @return CollectJS
+   * @return this
    */
   only(keys) {
     if (!keys) {
-      return this._respond()
+      return this
     }
 
     return this._respond(this._collection().whereIn(this._primaryKey(), keys))
@@ -114,10 +137,111 @@ export default class Collection extends Array {
    */
   except(keys) {
     if (!keys) {
-      return this._respond()
+      return this
     }
 
     return this._respond(this._collection().whereNotIn(this._primaryKey(), keys))
+  }
+
+  /**
+   * Return only unique items from the collection.
+   *
+   * @param {string|Function} [key]
+   * @return this
+   */
+  unique(key) {
+    if (key) {
+      return this._respond(this._collection().unique(key))
+    }
+
+    return this._respond([...this.getDictionary()])
+  }
+
+  /**
+   * Diff the collection with the given items.
+   *
+   * @param {Model[]} items
+   * @return this
+   */
+  diff(items) {
+    const dictionary = this.getDictionary(items)
+    const collection = this.items.filter(item => !dictionary[item.getPrimaryKey()])
+
+    return this._respond(collection)
+  }
+
+  /**
+   * Intersect the collection with the given items.
+   *
+   * @param {Model[]} items
+   * @return this
+   */
+  intersect(items) {
+    const dictionary = this.getDictionary(items)
+    const collection = this.items
+      .filter(item => !!dictionary[item.getPrimaryKey()])
+
+    return this._respond(collection)
+  }
+
+  /**
+   * Get the array of primary keys.
+   *
+   * @return string[]|number[]
+   */
+  modelKeys() {
+    const collection = this.items.map((model) => model.getPrimaryKey())
+
+    return this._respond(collection)
+  }
+
+  /**
+   * Get the Query Builder from the collection.
+   *
+   * @return Model
+   *
+   * @throws Error
+   */
+  toQuery() {
+    const collection = this._collection()
+    const model = collection.first()
+
+    if (!model) {
+      throw new Error('Unable to create query for empty collection.')
+    }
+
+    if (collection.filter((_model) => {
+      return !_model instanceof model.constructor
+    }).isNotEmpty()) {
+      throw new Error('Unable to create query for collection with mixed types.')
+    }
+
+    return model.newModelQuery().whereKey(this.modelKeys())
+  }
+
+  /**
+   * Reload a fresh model instance from the database for all the entities.
+   *
+   * @param {string|string[]} include
+   * @return this
+   */
+  fresh(include) {
+    include = Array.isArray(include) ? include : arguments
+    const collection = this._collection()
+
+    if (collection.isEmpty()) {
+      return this
+    }
+
+    const freshModels = this.toQuery().include(...include).$get().getDictionary()
+
+    return this._respond(collection.map((model) => {
+      const freshModel = freshModels[model.getPrimaryKey()]
+
+      if (model.hasId() && !!freshModel) {
+        return freshModel
+      }
+    }))
   }
 }
 
