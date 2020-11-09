@@ -91,7 +91,7 @@ Then we can update our newly created **Post**:
   </code-block>
 </code-group>
 
-And if we want to use `PATCH`, we can easily do that using [config](/api/query-builder-methods#config).
+And if we want to use `PATCH`, we can easily do that using [patch](/api/crud-operations#patch).
 
 <code-group>
   <code-block Label="Query" active>
@@ -101,7 +101,7 @@ And if we want to use `PATCH`, we can easily do that using [config](/api/query-b
   
   post.text = 'An updated text for our Post!'
   
-  await post.config({ method: 'PATCH' }).save()
+  await post.patch()
   ```
 
   </code-block>
