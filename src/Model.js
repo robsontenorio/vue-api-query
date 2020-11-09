@@ -211,6 +211,14 @@ export default class Model extends StaticModel {
     return this
   }
 
+  whereKey(identifier) {
+    if (Array.isArray(identifier)) {
+      return this.whereIn(this.primaryKey(), identifier)
+    }
+
+    return this.where(this.primaryKey(), identifier)
+  }
+
   orderBy(...args) {
     this._builder.orderBy(...args)
 
