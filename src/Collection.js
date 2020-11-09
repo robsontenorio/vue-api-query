@@ -11,10 +11,20 @@ export default class Collection extends Array {
     return collect([...this])
   }
 
+  /**
+   * Get the primary key of the [Models]{@link Model} in the {@link Collection}.
+   *
+   * @return string
+   */
   _primaryKey() {
     this._collection().first().primaryKey()
   }
 
+  /**
+   * Apply {@link Collection} instance to array.
+   *
+   * @return Collection
+   */
   _respond(collection) {
     if (collection instanceof CollectJS) {
       collection = collection.all()
