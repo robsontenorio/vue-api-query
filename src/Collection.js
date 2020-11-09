@@ -2,6 +2,10 @@ import { collect, Collection as CollectJS } from 'collect.js'
 import Model from './Model'
 
 export default class Collection extends Array {
+  constructor (collection = []) {
+    super(...collection)
+  }
+
   /**
    * Set the items of the array.
    *
