@@ -269,7 +269,7 @@ export default class Model extends StaticModel {
       return this._applyInstance(c, model)
     })
 
-    return new Collection(...collection)
+    return new Collection(collection)
   }
 
   _applyRelations(model) {
