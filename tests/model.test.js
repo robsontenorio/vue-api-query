@@ -401,7 +401,7 @@ describe('Model methods', () => {
     await post.config({ method: 'PATCH' }).save()
   })
 
-  test('save() method makes a POST request even when `config` set to PATCH', async () => {
+  test('save() method makes a POST request when ID of object does not exists, even when `config` set to PATCH', async () => {
     let post
     const _postResponse = {
       id: 1,

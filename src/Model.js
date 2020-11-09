@@ -473,6 +473,10 @@ export default class Model extends StaticModel {
     })
   }
 
+  patch() {
+    return this.config({ method: 'PATCH' }).save()
+  }
+
   /**
    * Relationship operations
    */
