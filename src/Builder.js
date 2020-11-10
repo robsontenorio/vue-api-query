@@ -3,6 +3,7 @@
  */
 
 import Parser from './Parser';
+import setProp from 'dset'
 
 export default class Builder {
 
@@ -21,23 +22,57 @@ export default class Builder {
     this.parser = new Parser(this)
   }
 
-  // query string parsed 
+  // query string parsed
   query() {
     return this.parser.query()
+  }
+
+  /**
+   * Helpers
+   */
+
+  /**
+   * Nested filter via array-type keys.
+   *
+   * @example
+   * const [_key, _value] = this._nestedFilter(keys, value)
+   * this.filters[_key] = _value
+   *
+   * @param {string[]} keys - Array-type keys, like `['a', 'b', 'c']`.
+   * @param {*} value - The value to be set.
+   *
+   * @return {[]} - An array containing the first key, which is the index to be used in `filters`
+   * object, and a value, which is the nested filter.
+   *
+   */
+  _nestedFilter (keys, value) {
+    // Get first key from `keys` array, then remove it from array
+    const _key = keys.shift()
+    // Initialize an empty object
+    const _value = {}
+
+    // Convert the keys into a deeply nested object, which the value of the deepest key is
+    // the `value` property.
+    // Then assign the object to `_value` property.
+    setProp(_value, keys, value)
+
+    return [_key, _value]
   }
 
   /**
    * Query builder
    */
 
-  include(...args) {
-    this.includes = args
+  include(...relationships) {
+    relationships = Array.isArray(relationships[0]) ? relationships[0] : relationships
+    this.includes = relationships
 
     return this
   }
 
-  append(...args) {
-    this.appends = args
+  append(...attributes) {
+    attributes = Array.isArray(attributes[0]) ? attributes[0] : attributes
+    this.appends = attributes
 
     return this
   }
@@ -63,28 +98,44 @@ export default class Builder {
   }
 
   where(key, value) {
-    if (key === undefined || value === undefined)
+    if (key === undefined || value === undefined) {
       throw new Error('The KEY and VALUE are required on where() method.')
+    }
 
-    if (Array.isArray(value) || value instanceof Object)
+    if (Array.isArray(value) || value instanceof Object) {
       throw new Error('The VALUE must be primitive on where() method.')
+    }
 
-    this.filters[key] = value
+    if (Array.isArray(key)) {
+      const [_key, _value] = this._nestedFilter(key, value)
+
+      this.filters[_key] = _value
+    } else {
+      this.filters[key] = value
+    }
 
     return this
   }
 
   whereIn(key, array) {
-    if (!Array.isArray(array))
+    if (!Array.isArray(array)) {
       throw new Error('The second argument on whereIn() method must be an array.')
+    }
 
-    this.filters[key] = array.join(',')
+    if (Array.isArray(key)) {
+      const [_key, _value] = this._nestedFilter(key, array.join(','))
+
+      this.filters[_key] = _value
+    } else {
+      this.filters[key] = array.join(',')
+    }
 
     return this
   }
 
-  orderBy(...args) {
-    this.sorts = args
+  orderBy(...fields) {
+    fields = Array.isArray(fields[0]) ? fields[0] : fields
+    this.sorts = fields
 
     return this
   }

@@ -14,7 +14,7 @@ With our models already set up, it's time to start using them!
 See the [API reference](/api/query-builder-methods#get)
 
 Let's start initializing a model and building a simple query that gets all records from the database. 
-To achieve this, we can use the `get` method.
+To achieve this, we can use the `get` method or its alias `all`.
 
 We can get a list of posts using the **Post** model:
 
@@ -242,6 +242,33 @@ We can filter our **Posts** to only get results where `status` is `published`:
   </code-block>
 </code-group>
 
+#### Nested Filter
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `where` also accepts an array of keys, which are used to build a nested filter.
+
+So we can filter our **Posts** to only get results where `status` of `user` is `active`:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where([
+    'user', 'status'
+  ], 'active').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[user][status]=active
+  ```
+
+  </code-block>
+</code-group>
+
 ### Evaluating Multiple Values
 
 See the [API reference](/api/query-builder-methods#wherein)
@@ -271,6 +298,33 @@ We can filter our **Posts** to only get results where `status` is `published` or
   </code-block>
 </code-group>
 
+#### Nested Filter
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `whereIn` also accepts an array of keys, which are used to build a nested filter.
+
+So we can filter our **Posts** to only get results where `status` of `user` is `active` or `inactive`:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.whereIn(['user', 'status'], [
+    'active', 'inactive'
+  ]).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[user][status]=active,inactive
+  ```
+
+  </code-block>
+</code-group>
+
 ## Sorting
 
 See the [API reference](/api/query-builder-methods#orderby)
@@ -280,7 +334,7 @@ We also need to sort our queries, so let's do this now!
 The method we want to use now is `orderBy`. The arguments are the names of the properties we want to sort.
 We can pass as many arguments as we want. 
 
-**Single Sort**
+#### Single Sort
 
 We can sort our **Posts** by the `created_at` date:
 
@@ -301,7 +355,7 @@ We can sort our **Posts** by the `created_at` date:
   </code-block>
 </code-group>
 
-**Multiple Sort**
+#### Multiple Sort
 
 And we can sort by their `title` too:
 
@@ -326,27 +380,73 @@ And we can sort by their `title` too:
   Sorting is ascending by default and can be reversed by adding a hyphen (-) to the start of the property name.
 </alert>
 
-## Including Relationships
+#### Using an Array
 
-See the [API reference](/api/query-builder-methods#include)
+<alert type="success">Available in version >= v1.8.0</alert>
 
-Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method.
-The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
-
-Let's eager load the `category` relationship of our **Post**:
+The first argument of `orderBy` also accepts an array of string.
 
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = await Post.include('category').get()
+  const posts = await Post.orderBy(['-created_at', 'title']).get()
   ```
 
   </code-block>
   <code-block label="Request">
 
   ```http request
-  GET /posts?include=category
+  GET /posts?sort=-created_at
+  ```
+
+  </code-block>
+</code-group>
+
+## Including Relationships
+
+See the [API reference](/api/query-builder-methods#include)
+
+Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method or its alias `with`.
+The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
+
+Let's eager load the relationships `category` and `tags` of our **Post**:
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.include('category', 'tags').get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?include=category,tags
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `include` also accepts an array of string.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.include(['category', 'tags']).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?include=category,tags
   ```
 
   </code-block>
@@ -359,20 +459,43 @@ See the [API reference](/api/query-builder-methods#append)
 We can also append attributes to our queries using the `append` method.
 The arguments are the names of the attributes we want to append. We can pass as many arguments as we want.
 
-Let's append the `likes` attribute of our **Post**:
+Let's append the attribute `likes` and `shares` of our **Post**:
 
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = await Post.append('likes').get()
+  const posts = await Post.append('likes', 'shares').get()
   ```
 
   </code-block>
   <code-block label="Request">
 
   ```http request
-  GET /posts?append=likes
+  GET /posts?append=likes,shares
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `append` also accepts an array of string.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.append(['likes', 'shares']).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?append=likes,shares
   ```
 
   </code-block>
@@ -560,6 +683,21 @@ We can build a resource to get the latest `Posts` that belongs to a **User**:
   </code-block>
 </code-group>
 
+## Configuring the Request
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+See the [API reference](/api/query-builder-methods#config)
+
+The `config` method can be used to configure the current request at query builder. We can pass any config available 
+from the HTTP Instance. If we are using [Axios](https://github.com/axios/axios), 
+we should pass an [AxiosRequestConfig](https://github.com/axios/axios#request-config).
+
+We can add headers, change the method, anything we want:
+
+```js
+await Post.config({ headers: { /*...*/ } }).get()
+```
 
 ## Needless Parent Request
 
@@ -586,8 +724,10 @@ We can get a list of **Posts** that belongs to an **User**:
   </code-block>
 </code-group>
 
-And the same thing using for the example above, if we want to define a dynamic resource, 
-we can create a new **User** instance with the ID:
+And the same thing can be done if we want to define a 
+[dynamic resource](/building-the-query#defining-a-dynamic-resource).
+
+We can create a new **User** instance with the ID:
  
 <code-group>
   <code-block label="Query" active>

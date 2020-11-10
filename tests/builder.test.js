@@ -64,6 +64,20 @@ describe('Query builder', () => {
     post = Post.include('user', 'category')
 
     expect(post._builder.includes).toEqual(['user', 'category'])
+
+    post = Post.include(['user', 'category'])
+
+    expect(post._builder.includes).toEqual(['user', 'category'])
+  })
+
+  test('with() sets properly the builder', () => {
+    let post = Post.with('user')
+
+    expect(post._builder.includes).toEqual(['user'])
+
+    post = Post.with('user', 'category')
+
+    expect(post._builder.includes).toEqual(['user', 'category'])
   })
 
   test('append() sets properly the builder', () => {
@@ -72,6 +86,10 @@ describe('Query builder', () => {
     expect(post._builder.appends).toEqual(['likes'])
 
     post = Post.append('likes', 'visits')
+
+    expect(post._builder.appends).toEqual(['likes', 'visits'])
+
+    post = Post.append(['likes', 'visits'])
 
     expect(post._builder.appends).toEqual(['likes', 'visits'])
   })
@@ -84,6 +102,10 @@ describe('Query builder', () => {
     post = Post.orderBy('created_at', '-visits')
 
     expect(post._builder.sorts).toEqual(['created_at', '-visits'])
+
+    post = Post.orderBy(['created_at', '-visits'])
+
+    expect(post._builder.sorts).toEqual(['created_at', '-visits'])
   })
 
   test('where() sets properly the builder', () => {
@@ -94,6 +116,11 @@ describe('Query builder', () => {
     post = Post.where('id', 1).where('title', 'Cool')
 
     expect(post._builder.filters).toEqual({ id: 1, title: 'Cool' })
+
+    post = Post.where(['user', 'status'], 'active')
+
+    expect(post._builder.filters).toEqual({ user: { status: 'active' } })
+    expect(post._builder.query()).toEqual('?filter[user][status]=active')
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -122,6 +149,10 @@ describe('Query builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
     expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
+
+    post = Post.whereIn(['user', 'status'], ['active', 'inactive'])
+
+    expect(post._builder.query()).toEqual('?filter[user][status]=active,inactive')
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {
@@ -131,7 +162,6 @@ describe('Query builder', () => {
 
     expect(errorModel).toThrow('The second argument on whereIn() method must be an array.')
   })
-
 
   test('page() sets properly the builder', () => {
     let post = Post.page(3)

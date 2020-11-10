@@ -15,6 +15,16 @@ Eager load relationships.
 await Model.include('user', 'category')
 ```
 
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.include(['user', 'category'])
+```
+
+<alert type="info">`with` is an alias of this method.</alert>
+
 ## `append`
 - Arguments: `(...args)`
 - Returns: `self`
@@ -22,7 +32,15 @@ await Model.include('user', 'category')
 Append attributes.
 
 ```js
-await Model.append('likes')
+await Model.append('likes', 'shares')
+```
+
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.append(['likes', 'shares'])
 ```
 
 ## `select`
@@ -31,12 +49,12 @@ await Model.append('likes')
 
 Set the columns to be selected.
 
-**Single entity:**
+#### Single entity
 ```js
 await Model.select(['title', 'content'])
 ```
 
-**Related entities:**
+#### Related entities
 ```js
 await Post.select({
   posts: ['title', 'content'],
@@ -54,6 +72,14 @@ Add a basic where clause to the query.
 await Model.where('status', 'active')
 ```
 
+#### Nested
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.where(['user', 'status'], 'active')
+```
+
 ## `whereIn`
 - Arguments: `(field, array)`
 - Returns: `self`
@@ -64,6 +90,14 @@ Add a "where in" clause to the query.
 await Model.whereIn('id', [1, 2, 3])
 ```
 
+#### Nested
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.whereIn(['user', 'id'], [1, 2, 3])
+```
+
 ## `orderBy`
 - Arguments: `(...args)`
 - Returns: `self`
@@ -72,6 +106,14 @@ Add an "order by" clause to the query.
 
 ```js
 await Model.orderBy('-created_at', 'category_id')  
+```
+
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.orderBy(['-created_at', 'category_id'])  
 ```
 
 ## `page`
@@ -160,6 +202,22 @@ Build custom endpoints.
   </code-block>
 </code-group>
 
+## `config`
+<alert type="success">Available in version >= v1.8.0</alert>
+
+- Arguments: `(config)`
+- Returns: `self`
+
+Configuration of HTTP Instance.
+
+```js
+await Model.config({
+  method: 'PATCH',
+  header: { /* ... */ },
+  data: { foo: 'bar' }
+}).save()
+```
+
 ## `get`
 - Returns: `Collection | { data: Collection }`
 
@@ -168,6 +226,8 @@ Execute the query as a "select" statement.
 ```js
 await Model.get()
 ```
+
+<alert type="info">`all` is an alias of this method.</alert>
 
 ## `first`
 - Returns: `Model | { data: Model }`
@@ -193,14 +253,14 @@ await Model.find(1)
 
 Execute the query as a "select" statement.
 
-These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
-
 ```js
 await Model.$get()
 ```
 
-<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+<alert type="info">These `$`-prefixed convenience methods always return the requested content.
 They handle and unwrap responses within "data".</alert>
+
+<alert type="info">`$all` is an alias of this method.</alert>
 
 ## `$first`
 - Returns: `Model`

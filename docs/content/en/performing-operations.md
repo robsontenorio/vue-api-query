@@ -61,6 +61,8 @@ We can create a new **Post**:
   </code-block>
 </code-group>
 
+<alert type="info">When uploading files, the `Content-Type` will be set to `multipart/form-data`.</alert>
+
 Then we can update our newly created **Post**:
 
 <code-group>
@@ -90,6 +92,38 @@ Then we can update our newly created **Post**:
 
   </code-block>
 </code-group>
+
+And if we want to use `PATCH`, we can easily do that using [patch](/api/crud-operations#patch).
+
+<code-group>
+  <code-block Label="Query" active>
+
+  ```js
+  const post = await Post.find(1)
+  
+  post.text = 'An updated text for our Post!'
+  
+  await post.patch()
+  ```
+
+  </code-block>
+  <code-block Label="Find Request">
+
+  ```http request
+  GET /posts/1
+  ```
+
+  </code-block>
+  <code-block Label="Save Request">
+
+  ```http request
+  PATCH /posts/1
+  ```
+
+  </code-block>
+</code-group>
+
+<alert type="info">You can safely use `PATCH` with `save()`. The `POST` method will not be overridden, only `PUT`.</alert>
 
 ### Deleting a Model
 

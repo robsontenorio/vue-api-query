@@ -59,5 +59,10 @@
     "eslint": "^6.8.0",
     "jest": "^24.1.0",
     "semantic-release": "^17.2.2"
+  },
+  "dependencies": {
+    "dotprop": "^1.2.0",
+    "dset": "^2.0.1",
+    "object-to-formdata": "^4.1.0"
   }
 }

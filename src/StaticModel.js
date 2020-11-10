@@ -18,6 +18,13 @@ export default class StaticModel {
     return self
   }
 
+  static with(...args) {
+    let self = this.instance()
+    self.with(...args)
+
+    return self
+  }
+
   static append(...args) {
     let self = this.instance()
     self.append(...args)
@@ -111,9 +118,21 @@ export default class StaticModel {
     return self.get()
   }
 
+  static all() {
+    let self = this.instance()
+
+    return self.all()
+  }
+
   static $get() {
     let self = this.instance()
 
     return self.$get()
+  }
+
+  static $all() {
+    let self = this.instance()
+
+    return self.$all()
   }
 }

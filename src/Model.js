@@ -1,6 +1,8 @@
-import Builder from './Builder';
-import StaticModel from './StaticModel';
-import { getProp, setProp } from './utils'
+import { serialize } from 'object-to-formdata'
+import getProp from 'dotprop'
+import setProp from 'dset'
+import Builder from './Builder'
+import StaticModel from './StaticModel'
 
 export default class Model extends StaticModel {
 
@@ -33,6 +35,37 @@ export default class Model extends StaticModel {
 
   get $http() {
     return Model.$http
+  }
+
+  config(config) {
+    this._config = config
+    return this
+  }
+
+  formData(options = {}) {
+    const defaultOptions = {
+      /**
+       * Include array indices in FormData keys
+       */
+      indices: false,
+
+      /**
+       * Treat null values like undefined values and ignore them
+       */
+      nullsAsUndefineds: false,
+
+      /**
+       * Convert true or false to 1 or 0 respectively
+       */
+      booleansAsIntegers: false,
+
+      /**
+       * Store arrays even if they're empty
+       */
+      allowEmptyArrays: false,
+    }
+
+    return { ...defaultOptions, ...options }
   }
 
   resource() {
@@ -180,6 +213,10 @@ export default class Model extends StaticModel {
     return this
   }
 
+  with(...args) {
+    return this.include(...args)
+  }
+
   append(...args) {
     this._builder.append(...args)
 
@@ -276,6 +313,49 @@ export default class Model extends StaticModel {
     }
   }
 
+  _reqConfig(config, options = { forceMethod: false }) {
+    const _config = { ...config, ...this._config }
+
+    // Prevent default request method from being overridden
+    if (options.forceMethod) {
+      _config.method = config.method
+    }
+
+    // Check if config has data
+    if ('data' in _config) {
+      // Ditch private data
+      _config.data = Object.fromEntries(
+        Object.entries(_config.data)
+          .filter(([key]) => !key.startsWith('_'))
+      )
+
+      const _hasFiles = Object.keys(_config.data).some(property => {
+        if (Array.isArray(_config.data[property])) {
+          return _config.data[property].some(value => value instanceof File)
+        }
+
+        return _config.data[property] instanceof File
+      })
+
+      // Check if the data has files
+      if (_hasFiles) {
+        // Check if `config` has `headers` property
+        if (!('headers' in _config)) {
+          // If not, then set an empty object
+          _config.headers = {}
+        }
+
+        // Set header Content-Type
+        _config.headers['Content-Type'] = 'multipart/form-data'
+
+        // Convert object to form data
+        _config.data = serialize(_config.data, this.formData())
+      }
+    }
+
+    return _config
+  }
+
   first() {
     return this.get().then(response => {
       let item
@@ -303,10 +383,12 @@ export default class Model extends StaticModel {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     let url = `${base}/${identifier}${this._builder.query()}`
 
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        url,
+        method: 'GET'
+      })
+    ).then(response => {
       return this._applyInstance(response.data)
     })
   }
@@ -326,10 +408,12 @@ export default class Model extends StaticModel {
     base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
     let url = `${base}${this._builder.query()}`
 
-    return this.request({
-      url,
-      method: 'GET'
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        url,
+        method: 'GET'
+      })
+    ).then(response => {
       let collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
@@ -348,6 +432,14 @@ export default class Model extends StaticModel {
       .then(response => response.data || response)
   }
 
+  all() {
+    return this.get()
+  }
+
+  $all() {
+    return this.$get()
+  }
+
   /**
    * Common CRUD operations
    */
@@ -357,10 +449,12 @@ export default class Model extends StaticModel {
       throw new Error('This model has a empty ID.')
     }
 
-    return this.request({
-      url: this.endpoint(),
-      method: 'DELETE'
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'DELETE',
+        url: this.endpoint()
+      })
+    ).then(response => response)
   }
 
   save() {
@@ -368,23 +462,31 @@ export default class Model extends StaticModel {
   }
 
   _create() {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        method: 'POST',
+        url: this.endpoint(),
+        data: this
+      }, { forceMethod: true })
+    ).then(response => {
       return this._applyInstance(response.data.data || response.data)
     })
   }
 
   _update() {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: this
-    }).then(response => {
+    return this.request(
+      this._reqConfig({
+        method: 'PUT',
+        url: this.endpoint(),
+        data: this
+      })
+    ).then(response => {
       return this._applyInstance(response.data.data || response.data)
     })
+  }
+
+  patch() {
+    return this.config({ method: 'PATCH' }).save()
   }
 
   /**
@@ -392,18 +494,22 @@ export default class Model extends StaticModel {
    */
 
   attach(params) {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: params
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'POST',
+        url: this.endpoint(),
+        data: params
+      })
+    ).then(response => response)
   }
 
   sync(params) {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: params
-    }).then(response => response)
+    return this.request(
+      this._reqConfig({
+        method: 'PUT',
+        url: this.endpoint(),
+        data: params
+      })
+    ).then(response => response)
   }
 }
