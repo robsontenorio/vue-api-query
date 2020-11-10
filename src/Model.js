@@ -42,30 +42,8 @@ export default class Model extends StaticModel {
     return this
   }
 
-  formData(options = {}) {
-    const defaultOptions = {
-      /**
-       * Include array indices in FormData keys
-       */
-      indices: false,
-
-      /**
-       * Treat null values like undefined values and ignore them
-       */
-      nullsAsUndefineds: false,
-
-      /**
-       * Convert true or false to 1 or 0 respectively
-       */
-      booleansAsIntegers: false,
-
-      /**
-       * Store arrays even if they're empty
-       */
-      allowEmptyArrays: false,
-    }
-
-    return { ...defaultOptions, ...options }
+  formData() {
+    return {}
   }
 
   resource() {
