@@ -193,3 +193,47 @@ export default class Model extends BaseModel {
   }
 }
 ```
+
+## Configuring FormData
+
+See the [API reference](/api/model-options#formdata) and [object-to-formdata](https://github.com/therealparmesh/object-to-formdata#usage)
+
+When uploading files, the data of our request will be automatically converted to `FormData` using `object-to-formdata`.
+
+If needed, we can easily configure the options by overriding the `formData` method.
+
+We can globally configure this in the [Base Model](/configuration#creating-a-base-model):
+
+```js{}[~/models/Model.js]
+import { Model as BaseModel } from 'vue-api-query'
+
+export default class Model extends BaseModel {
+
+  // Define a base url for a REST API
+  baseURL() {
+    return 'http://my-api.com'
+  }
+
+  // Implement a default request method
+  request(config) {
+    return this.$http.request(config)
+  }
+
+  // Override default query parameter names
+  parameterNames() {
+    const defaultParams = super.parameterNames()
+    const customParams = {
+      include: 'include_custom'
+    }
+    
+    return { ...defaultParams, ...customParams }
+  }
+  
+  // Configure object-to-formadata
+  formData() {
+    return {
+      indices: true
+    }
+  }
+}
+```
