@@ -15,17 +15,7 @@ Eager load relationships.
 await Model.include('user', 'category')
 ```
 
-## `with`
-- Arguments: `(...args)`
-- Returns: `self`
-
-Eager load relationships.
-
-```js
-await Model.with('user', 'category')
-```
-
-<alert type="info">This method is an alias of [include](/api/query-builder-methods#include)</alert>
+<alert type="info">`with` is an alias of this method.</alert>
 
 ## `append`
 - Arguments: `(...args)`
@@ -217,16 +207,7 @@ Execute the query as a "select" statement.
 await Model.get()
 ```
 
-## `all`
-- Returns: `Collection | { data: Collection }`
-
-Execute the query as a "select" statement.
-
-```js
-await Model.all()
-```
-
-<alert type="info">This method is an alias of [get](/api/query-builder-methods#get)</alert>
+<alert type="info">`all` is an alias of this method.</alert>
 
 ## `first`
 - Returns: `Model | { data: Model }`
@@ -259,19 +240,7 @@ await Model.$get()
 <alert type="info">These `$`-prefixed convenience methods always return the requested content.
 They handle and unwrap responses within "data".</alert>
 
-## `$all`
-- Returns: `Collection`
-
-Execute the query as a "select" statement.
-
-```js
-await Model.$all()
-```
-
-<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
-They handle and unwrap responses within "data".</alert>
-
-<alert type="info">This method is an alias of [$get](/api/query-builder-methods#get-1)</alert>
+<alert type="info">`$all` is an alias of this method.</alert>
 
 ## `$first`
 - Returns: `Model`
