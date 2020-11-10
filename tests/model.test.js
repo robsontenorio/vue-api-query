@@ -265,6 +265,24 @@ describe('Model methods', () => {
     })
   })
 
+  test('all() method should be an alias of get() method', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
+
+    const postsAll = await Post.all()
+    const postsGet = await Post.get()
+
+    expect(postsAll).toStrictEqual(postsGet)
+  })
+
+  test('$all() method should be an alias of $get() method', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const postsAll = await Post.$all()
+    const postsGet = await Post.$get()
+
+    expect(postsAll).toStrictEqual(postsGet)
+  })
+
   test('save() method makes a POST request when ID of object does not exists', async () => {
     let post
     const _postResponse = {
