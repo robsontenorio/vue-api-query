@@ -64,6 +64,10 @@ describe('Query builder', () => {
     post = Post.include('user', 'category')
 
     expect(post._builder.includes).toEqual(['user', 'category'])
+
+    post = Post.include(['user', 'category'])
+
+    expect(post._builder.includes).toEqual(['user', 'category'])
   })
 
   test('append() sets properly the builder', () => {
@@ -74,6 +78,10 @@ describe('Query builder', () => {
     post = Post.append('likes', 'visits')
 
     expect(post._builder.appends).toEqual(['likes', 'visits'])
+
+    post = Post.append(['likes', 'visits'])
+
+    expect(post._builder.appends).toEqual(['likes', 'visits'])
   })
 
   test('orderBy() sets properly the builder', () => {
@@ -82,6 +90,10 @@ describe('Query builder', () => {
     expect(post._builder.sorts).toEqual(['created_at'])
 
     post = Post.orderBy('created_at', '-visits')
+
+    expect(post._builder.sorts).toEqual(['created_at', '-visits'])
+
+    post = Post.orderBy(['created_at', '-visits'])
 
     expect(post._builder.sorts).toEqual(['created_at', '-visits'])
   })
@@ -140,7 +152,6 @@ describe('Query builder', () => {
 
     expect(errorModel).toThrow('The second argument on whereIn() method must be an array.')
   })
-
 
   test('page() sets properly the builder', () => {
     let post = Post.page(3)

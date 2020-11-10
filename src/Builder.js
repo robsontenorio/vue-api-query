@@ -63,14 +63,16 @@ export default class Builder {
    * Query builder
    */
 
-  include(...args) {
-    this.includes = args
+  include(...relationships) {
+    relationships = Array.isArray(relationships[0]) ? relationships[0] : relationships
+    this.includes = relationships
 
     return this
   }
 
-  append(...args) {
-    this.appends = args
+  append(...attributes) {
+    attributes = Array.isArray(attributes[0]) ? attributes[0] : attributes
+    this.appends = attributes
 
     return this
   }
@@ -131,8 +133,9 @@ export default class Builder {
     return this
   }
 
-  orderBy(...args) {
-    this.sorts = args
+  orderBy(...fields) {
+    fields = Array.isArray(fields[0]) ? fields[0] : fields
+    this.sorts = fields
 
     return this
   }
