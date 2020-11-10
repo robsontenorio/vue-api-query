@@ -334,7 +334,7 @@ We also need to sort our queries, so let's do this now!
 The method we want to use now is `orderBy`. The arguments are the names of the properties we want to sort.
 We can pass as many arguments as we want. 
 
-**Single Sort**
+#### Single Sort
 
 We can sort our **Posts** by the `created_at` date:
 
@@ -355,7 +355,7 @@ We can sort our **Posts** by the `created_at` date:
   </code-block>
 </code-group>
 
-**Multiple Sort**
+#### Multiple Sort
 
 And we can sort by their `title` too:
 
@@ -380,6 +380,29 @@ And we can sort by their `title` too:
   Sorting is ascending by default and can be reversed by adding a hyphen (-) to the start of the property name.
 </alert>
 
+#### Using an Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `orderBy` also accepts an array of string.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.orderBy(['-created_at', 'title']).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?sort=-created_at
+  ```
+
+  </code-block>
+</code-group>
+
 ## Including Relationships
 
 See the [API reference](/api/query-builder-methods#include)
@@ -387,20 +410,43 @@ See the [API reference](/api/query-builder-methods#include)
 Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method or its alias `with`.
 The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
 
-Let's eager load the `category` relationship of our **Post**:
+Let's eager load the relationships `category` and `tags` of our **Post**:
 
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = await Post.include('category').get()
+  const posts = await Post.include('category', 'tags').get()
   ```
 
   </code-block>
   <code-block label="Request">
 
   ```http request
-  GET /posts?include=category
+  GET /posts?include=category,tags
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `include` also accepts an array of string.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.include(['category', 'tags']).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?include=category,tags
   ```
 
   </code-block>
@@ -413,20 +459,43 @@ See the [API reference](/api/query-builder-methods#append)
 We can also append attributes to our queries using the `append` method.
 The arguments are the names of the attributes we want to append. We can pass as many arguments as we want.
 
-Let's append the `likes` attribute of our **Post**:
+Let's append the attribute `likes` and `shares` of our **Post**:
 
 <code-group>
   <code-block label="Query" active>
 
   ```js
-  const posts = await Post.append('likes').get()
+  const posts = await Post.append('likes', 'shares').get()
   ```
 
   </code-block>
   <code-block label="Request">
 
   ```http request
-  GET /posts?append=likes
+  GET /posts?append=likes,shares
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+The first argument of `append` also accepts an array of string.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.append(['likes', 'shares']).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?append=likes,shares
   ```
 
   </code-block>
