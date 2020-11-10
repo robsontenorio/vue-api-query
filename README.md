@@ -38,6 +38,8 @@ Thanks to the following people who have contributed to this project:
 * [@JoaoPedroAS51](https://github.com/JoaoPedroAS51)
 * [@Peter-Krebs](https://github.com/Peter-Krebs)
 
+[See all contributors](https://github.com/robsontenorio/vue-api-query/graphs/contributors)
+
 ## Thanks
 
 * Inspiration from [milroyfraser/sarala](https://github.com/milroyfraser/sarala).
