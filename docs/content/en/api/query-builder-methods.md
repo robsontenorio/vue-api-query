@@ -15,6 +15,18 @@ Eager load relationships.
 await Model.include('user', 'category')
 ```
 
+## `with`
+- Arguments: `(...args)`
+- Returns: `self`
+
+Eager load relationships.
+
+```js
+await Model.with('user', 'category')
+```
+
+<alert type="info">This method is an alias of [include](/api/query-builder-methods#include)</alert>
+
 ## `append`
 - Arguments: `(...args)`
 - Returns: `self`
@@ -205,6 +217,17 @@ Execute the query as a "select" statement.
 await Model.get()
 ```
 
+## `all`
+- Returns: `Collection | { data: Collection }`
+
+Execute the query as a "select" statement.
+
+```js
+await Model.all()
+```
+
+<alert type="info">This method is an alias of [get](/api/query-builder-methods#get)</alert>
+
 ## `first`
 - Returns: `Model | { data: Model }`
 
@@ -229,14 +252,26 @@ await Model.find(1)
 
 Execute the query as a "select" statement.
 
-These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
-
 ```js
 await Model.$get()
 ```
 
+<alert type="info">These `$`-prefixed convenience methods always return the requested content.
+They handle and unwrap responses within "data".</alert>
+
+## `$all`
+- Returns: `Collection`
+
+Execute the query as a "select" statement.
+
+```js
+await Model.$all()
+```
+
 <alert type="info">These `$`-prefixed convenience methods always return the requested content. 
 They handle and unwrap responses within "data".</alert>
+
+<alert type="info">This method is an alias of [$get](/api/query-builder-methods#get-1)</alert>
 
 ## `$first`
 - Returns: `Model`

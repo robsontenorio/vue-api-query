@@ -14,7 +14,7 @@ With our models already set up, it's time to start using them!
 See the [API reference](/api/query-builder-methods#get)
 
 Let's start initializing a model and building a simple query that gets all records from the database. 
-To achieve this, we can use the `get` method.
+To achieve this, we can use the `get` method or its alias `all`.
 
 We can get a list of posts using the **Post** model:
 
@@ -384,7 +384,7 @@ And we can sort by their `title` too:
 
 See the [API reference](/api/query-builder-methods#include)
 
-Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method.
+Sometimes, we will want to eager load a relationship, and to do so, we can use the `include` method or its alias `with`.
 The arguments are the names of the relationships we want to include. We can pass as many arguments as we want.
 
 Let's eager load the `category` relationship of our **Post**:
