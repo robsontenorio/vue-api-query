@@ -15,6 +15,14 @@ Eager load relationships.
 await Model.include('user', 'category')
 ```
 
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.include(['user', 'category'])
+```
+
 ## `append`
 - Arguments: `(...args)`
 - Returns: `self`
@@ -22,7 +30,15 @@ await Model.include('user', 'category')
 Append attributes.
 
 ```js
-await Model.append('likes')
+await Model.append('likes', 'shares')
+```
+
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.append(['likes', 'shares'])
 ```
 
 ## `select`
@@ -31,12 +47,12 @@ await Model.append('likes')
 
 Set the columns to be selected.
 
-**Single entity:**
+#### Single entity
 ```js
 await Model.select(['title', 'content'])
 ```
 
-**Related entities:**
+#### Related entities
 ```js
 await Post.select({
   posts: ['title', 'content'],
@@ -50,13 +66,11 @@ await Post.select({
 
 Add a basic where clause to the query.
 
-**Simple:**
-
 ```js
 await Model.where('status', 'active')
 ```
 
-**Nested:**
+#### Nested
 
 <alert type="success">Available in version >= v1.8.0</alert>
 
@@ -70,13 +84,11 @@ await Model.where(['user', 'status'], 'active')
 
 Add a "where in" clause to the query.
 
-**Simple:**
-
 ```js
 await Model.whereIn('id', [1, 2, 3])
 ```
 
-**Nested:**
+#### Nested
 
 <alert type="success">Available in version >= v1.8.0</alert>
 
@@ -92,6 +104,14 @@ Add an "order by" clause to the query.
 
 ```js
 await Model.orderBy('-created_at', 'category_id')  
+```
+
+#### Array
+
+<alert type="success">Available in version >= v1.8.0</alert>
+
+```js
+await Model.orderBy(['-created_at', 'category_id'])  
 ```
 
 ## `page`
