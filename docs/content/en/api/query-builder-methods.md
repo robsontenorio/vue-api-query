@@ -23,6 +23,8 @@ await Model.include('user', 'category')
 await Model.include(['user', 'category'])
 ```
 
+<alert type="info">`with` is an alias of this method.</alert>
+
 ## `append`
 - Arguments: `(...args)`
 - Returns: `self`
@@ -225,6 +227,8 @@ Execute the query as a "select" statement.
 await Model.get()
 ```
 
+<alert type="info">`all` is an alias of this method.</alert>
+
 ## `first`
 - Returns: `Model | { data: Model }`
 
@@ -249,14 +253,14 @@ await Model.find(1)
 
 Execute the query as a "select" statement.
 
-These `$`-prefixed convenience methods always return the requested content as [`JSON`](https://developer.mozilla.org/en-US/docs/Web/API/Body/json).
-
 ```js
 await Model.$get()
 ```
 
-<alert type="info">These `$`-prefixed convenience methods always return the requested content. 
+<alert type="info">These `$`-prefixed convenience methods always return the requested content.
 They handle and unwrap responses within "data".</alert>
+
+<alert type="info">`$all` is an alias of this method.</alert>
 
 ## `$first`
 - Returns: `Model`

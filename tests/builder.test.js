@@ -70,6 +70,16 @@ describe('Query builder', () => {
     expect(post._builder.includes).toEqual(['user', 'category'])
   })
 
+  test('with() sets properly the builder', () => {
+    let post = Post.with('user')
+
+    expect(post._builder.includes).toEqual(['user'])
+
+    post = Post.with('user', 'category')
+
+    expect(post._builder.includes).toEqual(['user', 'category'])
+  })
+
   test('append() sets properly the builder', () => {
     let post = Post.append('likes')
 
