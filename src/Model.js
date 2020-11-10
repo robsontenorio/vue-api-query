@@ -1,3 +1,4 @@
+import { serialize } from 'object-to-formdata'
 import getProp from 'dotprop'
 import setProp from 'dset'
 import Builder from './Builder'
@@ -39,6 +40,32 @@ export default class Model extends StaticModel {
   config(config) {
     this._config = config
     return this
+  }
+
+  formData(options = {}) {
+    const defaultOptions = {
+      /**
+       * Include array indices in FormData keys
+       */
+      indices: false,
+
+      /**
+       * Treat null values like undefined values and ignore them
+       */
+      nullsAsUndefineds: false,
+
+      /**
+       * Convert true or false to 1 or 0 respectively
+       */
+      booleansAsIntegers: false,
+
+      /**
+       * Store arrays even if they're empty
+       */
+      allowEmptyArrays: false,
+    }
+
+    return { ...defaultOptions, ...options }
   }
 
   resource() {
@@ -285,6 +312,7 @@ export default class Model extends StaticModel {
   _reqConfig(config, options = { forceMethod: false }) {
     const _config = { ...config, ...this._config }
 
+    // Prevent default request method from being overridden
     if (options.forceMethod) {
       _config.method = config.method
     }
@@ -296,6 +324,29 @@ export default class Model extends StaticModel {
         Object.entries(_config.data)
           .filter(([key]) => !key.startsWith('_'))
       )
+
+      const _hasFiles = Object.keys(_config.data).some(property => {
+        if (Array.isArray(_config.data[property])) {
+          return _config.data[property].some(value => value instanceof File)
+        }
+
+        return _config.data[property] instanceof File
+      })
+
+      // Check if the data has files
+      if (_hasFiles) {
+        // Check if `config` has `headers` property
+        if (!('headers' in _config)) {
+          // If not, then set an empty object
+          _config.headers = {}
+        }
+
+        // Set header Content-Type
+        _config.headers['Content-Type'] = 'multipart/form-data'
+
+        // Convert object to form data
+        _config.data = serialize(_config.data, this.formData())
+      }
     }
 
     return _config

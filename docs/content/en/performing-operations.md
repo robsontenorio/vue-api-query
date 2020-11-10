@@ -61,6 +61,8 @@ We can create a new **Post**:
   </code-block>
 </code-group>
 
+<alert type="info">When uploading files, the `Content-Type` will be set to `multipart/form-data`.</alert>
+
 Then we can update our newly created **Post**:
 
 <code-group>

@@ -446,6 +446,195 @@ describe('Model methods', () => {
     })
   })
 
+  test('save() method makes a POST request when ID of object does not exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
+    let post
+    const file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    })
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!'
+    }
+
+    axiosMock.onAny().reply((config) => {
+      let _data
+
+      if (config.headers['Content-Type'] === 'multipart/form-data') {
+        _data = Object.fromEntries(config.data)
+
+        if (_data['files[]']) {
+          _data.files = [{}, {}]
+          delete _data['files[]']
+        }
+
+        _data = JSON.stringify(_data)
+      } else {
+        _data = config.data
+      }
+
+      expect(config.method).toEqual('post')
+      expect(config.headers['Content-Type']).toEqual('multipart/form-data')
+      expect(_data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, _postResponse]
+    })
+
+    // Single files
+    post = new Post({ title: 'Cool!', file })
+    await post.save()
+
+    // Multiple files
+    post = new Post({ title: 'Cool!', files: [file, file] })
+    await post.save()
+  })
+
+  test('save() method makes a PUT request when ID of when ID of object exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
+    let post
+    const file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    })
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!'
+    }
+
+    axiosMock.onAny().reply((config) => {
+      let _data
+
+      if (config.headers['Content-Type'] === 'multipart/form-data') {
+        _data = Object.fromEntries(config.data)
+        _data.id = 1
+
+        if (_data['files[]']) {
+          _data.files = [{}, {}]
+          delete _data['files[]']
+        }
+
+        _data = JSON.stringify(_data)
+      } else {
+        _data = config.data
+      }
+
+      expect(config.method).toEqual('put')
+      expect(config.headers['Content-Type']).toEqual('multipart/form-data')
+      expect(_data).toEqual(JSON.stringify(post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, _postResponse]
+    })
+
+    // Single file
+    post = new Post({ id: 1, title: 'Cool!', file })
+    await post.save()
+
+    // Multiple files
+    post = new Post({ id: 1, title: 'Cool!', files: [file, file] })
+    await post.save()
+  })
+
+  test('patch() method makes a PATCH request when ID of when ID of object exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
+    let post
+    const file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    })
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!'
+    }
+
+    axiosMock.onAny().reply((config) => {
+      let _data
+      const _post = post
+      delete _post._config
+
+      if (config.headers['Content-Type'] === 'multipart/form-data') {
+        _data = Object.fromEntries(config.data)
+        _data.id = 1
+
+        if (_data['files[]']) {
+          _data.files = [{}, {}]
+          delete _data['files[]']
+        }
+
+        _data = JSON.stringify(_data)
+      } else {
+        _data = config.data
+      }
+
+      expect(config.method).toEqual('patch')
+      expect(config.headers['Content-Type']).toEqual('multipart/form-data')
+      expect(_data).toEqual(JSON.stringify(_post))
+      expect(config.url).toEqual('http://localhost/posts/1')
+
+      return [200, _postResponse]
+    })
+
+    // Single file
+    post = new Post({ id: 1, title: 'Cool!', file })
+    await post.patch()
+
+    // Multiple files
+    post = new Post({ id: 1, title: 'Cool!', files: [file, file] })
+    await post.patch()
+  })
+
+  test('save() method can add header "Content-Type: multipart/form-data" when "headers" object is already defined', async () => {
+    let post
+    const file = new File(["foo"], "foo.txt", {
+      type: "text/plain",
+    })
+    const _postResponse = {
+      id: 1,
+      title: 'Cool!',
+      text: 'Lorem Ipsum Dolor',
+      user: {
+        firstname: 'John',
+        lastname: 'Doe',
+        age: 25
+      },
+      relationships: {
+        tags: [
+          {
+            name: 'super'
+          },
+          {
+            name: 'awesome'
+          }
+        ]
+      }
+    }
+
+    axiosMock.onAny().reply((config) => {
+      let _data
+      const _post = post
+      delete _post._config
+
+      if (config.headers['Content-Type'] === 'multipart/form-data') {
+        _data = JSON.stringify(Object.fromEntries(config.data))
+      } else {
+        _data = config.data
+      }
+
+      expect(config.method).toEqual('post')
+      expect(config.headers['Content-Type']).toStrictEqual('multipart/form-data')
+      expect(_data).toEqual(JSON.stringify(_post))
+      expect(config.url).toEqual('http://localhost/posts')
+
+      return [200, _postResponse]
+    })
+
+    post = new Post({ title: 'Cool!', file })
+    post = await post.config({ headers: {} }).save()
+
+    expect(post).toEqual(_postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach(tag => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
+
   test('save() method makes a POST request when ID of object is null', async () => {
     let post
 
