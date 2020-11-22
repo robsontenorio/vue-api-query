@@ -992,4 +992,76 @@ describe('Model methods', () => {
     expect(post).toBeInstanceOf(Post)
     expect(post).toEqual(new Post())
   })
+
+  test('primaryKey() method of collection should return the primary key of the model', async () => {
+    Post.prototype['primaryKey'] = () => {
+      return 'slug'
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, [
+      {
+        id: 1,
+        text: 'My first post'
+      },
+      {
+        id: 2,
+        text: 'My second post'
+      },
+      {
+        id: 3,
+        text: 'My third post'
+      }
+    ])
+
+    const posts = await Post.get()
+
+    expect(posts).toBeInstanceOf(Collection)
+    expect(posts.primaryKey()).toBe('slug')
+  })
+
+  test('toQuery() method of collection should create a new instance of the model with the ids of the models within the collection', async () => {
+    axiosMock.onGet('http://localhost/posts').reply(200, [
+      {
+        id: 1,
+        text: 'My first post'
+      },
+      {
+        id: 2,
+        text: 'My second post'
+      },
+      {
+        id: 3,
+        text: 'My third post'
+      }
+    ])
+
+    const posts = await Post.get()
+
+    expect(posts).toBeInstanceOf(Collection)
+    expect(posts.toQuery()._builder.query()).toBe('?filter[id]=1,2,3')
+  })
+
+  test('fresh() method of collection should return a fresh instance of the same models', async () => {
+    const _postsResponse = [
+      {
+        id: 1,
+        text: 'My first post'
+      },
+      {
+        id: 2,
+        text: 'My second post'
+      },
+      {
+        id: 3,
+        text: 'My third post'
+      }
+    ]
+    axiosMock.onGet('http://localhost/posts').reply(200, _postsResponse)
+    axiosMock.onGet('http://localhost/posts?filter[id]=1,2,3').reply(200, _postsResponse)
+
+    const posts = await Post.get()
+
+    expect(posts).toBeInstanceOf(Collection)
+    expect(await posts.fresh()).toEqual(_postsResponse)
+  })
 })

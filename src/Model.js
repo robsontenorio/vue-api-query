@@ -5,6 +5,32 @@ import setProp from 'dset'
 import Builder from './Builder'
 import StaticModel from './StaticModel'
 
+/**
+ * @param {Collection<Model>} collection
+ * @param {Model} item
+ * @return {Model}
+ */
+Collection.newQuery = ({ collection, item }) => {
+  return item.newModelQuery().whereKey(collection.modelKeys())
+}
+
+/**
+ * @param {Collection<Model>} collection
+ * @param {string[]} include
+ * @return {Promise<Collection<Model>>}
+ */
+Collection.getFresh = async ({ collection, include }) => {
+  return await collection.toQuery().include(...include).$get()
+}
+
+/**
+ * @param {Collection<Model>} collection
+ * @return {string}
+ */
+Collection.primaryKey = ({ collection }) => {
+  return collection.first().primaryKey()
+}
+
 export default class Model extends StaticModel {
 
   constructor(...attributes) {
