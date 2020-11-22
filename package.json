@@ -61,6 +61,7 @@
     "semantic-release": "^17.2.2"
   },
   "dependencies": {
+    "@eloqjs/collection": "^1.0.0-alpha.2",
     "dotprop": "^1.2.0",
     "dset": "^2.0.1",
     "object-to-formdata": "^4.1.0",
