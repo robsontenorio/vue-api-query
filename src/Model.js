@@ -394,11 +394,11 @@ export default class Model extends StaticModel {
 
   /**
    * @typedef {Object} WrappedResponse
-   * @property {Collection} data
+   * @property {Collection<Model>} data
    */
 
   /**
-   * @return {Promise<Collection|WrappedResponse>}
+   * @return {Promise<Collection<Model>|WrappedResponse>}
    */
   get() {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
@@ -424,7 +424,7 @@ export default class Model extends StaticModel {
   }
 
   /**
-   * @return {Promise<Collection>}
+   * @return {Promise<Collection<Model>>}
    */
   $get() {
     return this

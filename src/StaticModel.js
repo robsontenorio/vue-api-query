@@ -123,11 +123,11 @@ export default class StaticModel {
 
   /**
    * @typedef {Object} WrappedResponse
-   * @property {Collection} data
+   * @property {Collection<Model>} data
    */
 
   /**
-   * @return {Promise<Collection|WrappedResponse>}
+   * @return {Promise<Collection<Model>|WrappedResponse>}
    */
   static get() {
     let self = this.instance()
@@ -142,7 +142,7 @@ export default class StaticModel {
   }
 
   /**
-   * @return {Promise<Collection>}
+   * @return {Promise<Collection<Model>>}
    */
   static $get() {
     let self = this.instance()
