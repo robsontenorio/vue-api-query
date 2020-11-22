@@ -301,7 +301,11 @@ export default class Model extends StaticModel {
   }
 
   _applyInstanceCollection(data, model = this.constructor) {
-    return collect(data.data || data).mapInto(model)
+    return collect(data.data || data).mapInto(model, (item) => {
+      if(this._fromResource) {
+        item._from(this._fromResource)
+      }
+    })
   }
 
   _applyRelations(model) {
