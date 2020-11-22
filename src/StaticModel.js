@@ -1,3 +1,5 @@
+import { Collection } from '@eloqjs/collection'
+
 /**
  *  Provide static calls for all methods.
  *
@@ -112,6 +114,14 @@ export default class StaticModel {
     return self.$find(id)
   }
 
+  /**
+   * @typedef {Object} WrappedResponse
+   * @property {Collection} data
+   */
+
+  /**
+   * @return {Promise<Collection|WrappedResponse>}
+   */
   static get() {
     let self = this.instance()
 
@@ -124,6 +134,9 @@ export default class StaticModel {
     return self.all()
   }
 
+  /**
+   * @return {Promise<Collection>}
+   */
   static $get() {
     let self = this.instance()
 

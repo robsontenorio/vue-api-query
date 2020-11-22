@@ -1,4 +1,5 @@
 import { serialize } from 'object-to-formdata'
+import { collect, Collection } from '@eloqjs/collection'
 import getProp from 'dotprop'
 import setProp from 'dset'
 import Builder from './Builder'
@@ -258,13 +259,7 @@ export default class Model extends StaticModel {
   }
 
   _applyInstanceCollection(data, model = this.constructor) {
-    let collection = data.data || data
-    collection = Array.isArray(collection) ? collection : [collection]
-
-    collection = collection.map(c => {
-      return this._applyInstance(c, model)
-    })
-    return collection
+    return collect(data.data || data).mapInto(model)
   }
 
   _applyRelations(model) {
@@ -381,6 +376,14 @@ export default class Model extends StaticModel {
       .then(response => this._applyInstance(response.data || response))
   }
 
+  /**
+   * @typedef {Object} WrappedResponse
+   * @property {Collection} data
+   */
+
+  /**
+   * @return {Promise<Collection|WrappedResponse>}
+   */
   get() {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
     base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
@@ -404,6 +407,9 @@ export default class Model extends StaticModel {
     })
   }
 
+  /**
+   * @return {Promise<Collection>}
+   */
   $get() {
     return this
       .get()
