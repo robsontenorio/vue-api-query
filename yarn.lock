@@ -802,10 +802,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@eloqjs/collection@^1.0.0-alpha.2":
-  version "1.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@eloqjs/collection/-/collection-1.0.0-alpha.2.tgz#132adfbb4a4e3e6fc14bf3238c6808c24ef35654"
-  integrity sha512-1EkWW0B36xU6ftHekVJAn6ATzFPnS5ypkDbq2968GXiAlCJ8vDsCQGC9HOaFCj9BmvFsix9g42vS3+StgWgjxA==
+"@eloqjs/collection@^1.0.0-alpha.6":
+  version "1.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/@eloqjs/collection/-/collection-1.0.0-alpha.6.tgz#6ab497dc968b8ec6135fadaf9c61254745a20bc2"
+  integrity sha512-4dG6fLUIwBlrprVe0jIbjrEBmNyZ568BwjhgTk7HzhyCYj4Knlqy2ww03Z2QNayOOd6dmyiAusbg1oip0AP3/g==
 
 "@iarna/cli@^1.2.0":
   version "1.2.0"
