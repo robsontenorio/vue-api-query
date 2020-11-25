@@ -5,30 +5,32 @@ import setProp from 'dset'
 import Builder from './Builder'
 import StaticModel from './StaticModel'
 
-/**
- * @param {Collection<Model>} collection
- * @param {Model} item
- * @return {Model}
- */
-Collection.newQuery = ({ collection, item }) => {
-  return item.newModelQuery().whereKey(collection.modelKeys())
-}
+Collection.config = {
+  /**
+   * @param {Collection<Model>} collection
+   * @param {string[]} include
+   * @return {Promise<Collection<Model>>}
+   */
+  async fresh({ collection, include }) {
+    return await collection.toQuery().include(...include).$get()
+  },
 
-/**
- * @param {Collection<Model>} collection
- * @param {string[]} include
- * @return {Promise<Collection<Model>>}
- */
-Collection.getFresh = async ({ collection, include }) => {
-  return await collection.toQuery().include(...include).$get()
-}
+  /**
+   * @param {Collection<Model>} collection
+   * @return {string}
+   */
+  primaryKey({ collection }) {
+    return collection.first().primaryKey()
+  },
 
-/**
- * @param {Collection<Model>} collection
- * @return {string}
- */
-Collection.primaryKey = ({ collection }) => {
-  return collection.first().primaryKey()
+  /**
+   * @param {Collection<Model>} collection
+   * @param {Model} item
+   * @return {Model}
+   */
+  toQuery({ collection, item }) {
+    return item.newModelQuery().whereKey(collection.modelKeys())
+  }
 }
 
 export default class Model extends StaticModel {
