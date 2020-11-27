@@ -109,7 +109,7 @@ export default class Builder {
     if (Array.isArray(key)) {
       const [_key, _value] = this._nestedFilter(key, value)
 
-      this.filters[_key] = _value
+      this.filters[_key] = { ...this.filters[_key], ..._value }
     } else {
       this.filters[key] = value
     }
@@ -125,7 +125,7 @@ export default class Builder {
     if (Array.isArray(key)) {
       const [_key, _value] = this._nestedFilter(key, array.join(','))
 
-      this.filters[_key] = _value
+      this.filters[_key] = { ...this.filters[_key], ..._value }
     } else {
       this.filters[key] = array.join(',')
     }
