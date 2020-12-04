@@ -156,6 +156,35 @@ export default class Post extends Model {
 Now we can easily access an instance of the **User** model containing the eager loaded data 
 using the specified key: `post.user`
 
+The `relations` method also support nested keys, by dot notation:
+
+```js{}[~/models/Post.js]
+import Model from './Model'
+import User from './User'
+import Comment from './Comment'
+
+export default class Post extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'posts'
+  }
+
+  // Define the primary key of the model
+  primaryKey() {
+    return 'slug'
+  }
+
+  // Apply model instances to eager loaded relationships
+  relations() {
+    return {
+      'relationships.user': User,
+      'relationships.comments': Comment
+    }
+  }
+```
+
+Then we can access using the specified key: `post.relationships.user`
+
 ### Lazy Loading Relationships
 
 See the [API reference](/api/model-options#hasmany)
