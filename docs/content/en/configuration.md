@@ -40,7 +40,7 @@ export default class Model extends BaseModel {
 
 ## Creating the Domain Models
 
-Now let's create our domain models that extends the base model. We can create as many models as you like.
+Now let's create our domain models that extends the base model. We can create as many models as we like.
 
 Each model must implement:
 - `resource` - The resource route of the model.
@@ -58,6 +58,30 @@ export default class User extends Model {
 ```
 
 This **User** model will make request to `/users` route as defined in `resource`.
+
+We can also add extra methods and computed properties:
+
+```js{}[~/models/User.js]
+import Model from './Model'
+
+export default class User extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'users'
+  }
+
+  // Computed properties are reactive -> user.fullName
+  // Make sure to use "get" prefix 
+  get fullName () {
+    return `${this.firstname} ${this.lastname}`
+  }
+
+  // Method -> user.makeBirthday()
+  makeBirthday() {
+    return this.age += 1
+  }
+}
+```
 
 ## Changing the Primary Key
 
@@ -153,6 +177,17 @@ export default class User extends Model {
   // Lazy load the posts that belongs to the user
   posts() {
     return this.hasMany(Post)
+  }
+
+  // Computed properties are reactive -> user.fullName
+  // Make sure to use "get" prefix 
+  get fullName () {
+    return `${this.firstname} ${this.lastname}`
+  }
+
+  // Method -> user.makeBirthday()
+  makeBirthday() {
+    return this.age += 1
   }
 }
 ```
