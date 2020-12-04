@@ -83,12 +83,12 @@ export default class Builder {
     }
 
     // single entity .select(['age', 'firstname'])
-    if (fields[0].constructor === String || Array.isArray(fields[0])) {
+    if (typeof fields[0] === 'string' || Array.isArray(fields[0])) {
       this.fields[this.model.resource()] = fields.join(',')
     }
 
     // related entities .select({ posts: ['title', 'content'], user: ['age', 'firstname']} )
-    if (fields[0].constructor === Object) {
+    if (typeof fields[0] === 'object') {
       Object.entries(fields[0]).forEach(([key, value]) => {
         this.fields[key] = value.join(',')
       })
@@ -109,7 +109,7 @@ export default class Builder {
     if (Array.isArray(key)) {
       const [_key, _value] = this._nestedFilter(key, value)
 
-      this.filters[_key] = _value
+      this.filters[_key] = { ...this.filters[_key], ..._value }
     } else {
       this.filters[key] = value
     }
@@ -125,7 +125,7 @@ export default class Builder {
     if (Array.isArray(key)) {
       const [_key, _value] = this._nestedFilter(key, array.join(','))
 
-      this.filters[_key] = _value
+      this.filters[_key] = { ...this.filters[_key], ..._value }
     } else {
       this.filters[key] = array.join(',')
     }
@@ -161,7 +161,7 @@ export default class Builder {
   }
 
   params(payload) {
-    if (payload === undefined || payload.constructor !== Object) {
+    if (payload === undefined || typeof payload !== 'object') {
       throw new Error('You must pass a payload/object as param.')
     }
 

@@ -121,6 +121,13 @@ describe('Query builder', () => {
 
     expect(post._builder.filters).toEqual({ user: { status: 'active' } })
     expect(post._builder.query()).toEqual('?filter[user][status]=active')
+
+    post = Post
+      .where(['schedule', 'start'], '2020-11-27')
+      .where(['schedule', 'end'], '2020-11-28')
+
+    expect(post._builder.filters).toEqual({ schedule: { start: '2020-11-27', end: '2020-11-28' } })
+    expect(post._builder.query()).toEqual('?filter[schedule][start]=2020-11-27&filter[schedule][end]=2020-11-28')
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -152,7 +159,15 @@ describe('Query builder', () => {
 
     post = Post.whereIn(['user', 'status'], ['active', 'inactive'])
 
+    expect(post._builder.filters).toEqual({ user: { status: 'active,inactive'  } })
     expect(post._builder.query()).toEqual('?filter[user][status]=active,inactive')
+
+    post = Post
+      .whereIn(['schedule', 'start'], ['2020-11-27', '2020-11-28'])
+      .whereIn(['schedule', 'end'], ['2020-11-28', '2020-11-29'])
+
+    expect(post._builder.filters).toEqual({ schedule: { start: '2020-11-27,2020-11-28', end: '2020-11-28,2020-11-29' } })
+    expect(post._builder.query()).toEqual('?filter[schedule][start]=2020-11-27,2020-11-28&filter[schedule][end]=2020-11-28,2020-11-29')
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {
