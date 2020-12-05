@@ -114,6 +114,9 @@ Just for convenience, it's possible to make Static calls. We are going to use th
   </code-block>
 </code-group>
 
+<alert type="info">It's also possible to use `$get` method or its alias `$all`,
+which handle and unwrap responses within "data".</alert>
+
 ## Retrieving a Single Record
 
 To retrieve a single record from the database, we can use two methods:
@@ -163,6 +166,8 @@ To get the first **Post** of a list:
   </code-block>
 </code-group>
 
+<alert type="info">It's also possible to use `$first` method, which handle and unwrap responses within "data".</alert>
+
 ###  Finding a Specific Record
 
 See the [API reference](/api/query-builder-methods#find)
@@ -204,6 +209,8 @@ To find a specific **Post**:
 
   </code-block>
 </code-group>
+
+<alert type="info">It's also possible to use `$find` method, which handle and unwrap responses within "data".</alert>
 
 ## Filtering
 

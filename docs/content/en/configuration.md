@@ -40,7 +40,7 @@ export default class Model extends BaseModel {
 
 ## Creating the Domain Models
 
-Now let's create our domain models that extends the base model. We can create as many models as you like.
+Now let's create our domain models that extends the base model. We can create as many models as we like.
 
 Each model must implement:
 - `resource` - The resource route of the model.
@@ -58,6 +58,30 @@ export default class User extends Model {
 ```
 
 This **User** model will make request to `/users` route as defined in `resource`.
+
+We can also add extra methods and computed properties:
+
+```js{}[~/models/User.js]
+import Model from './Model'
+
+export default class User extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'users'
+  }
+
+  // Computed properties are reactive -> user.fullName
+  // Make sure to use "get" prefix 
+  get fullName () {
+    return `${this.firstname} ${this.lastname}`
+  }
+
+  // Method -> user.makeBirthday()
+  makeBirthday() {
+    return this.age += 1
+  }
+}
+```
 
 ## Changing the Primary Key
 
@@ -132,6 +156,35 @@ export default class Post extends Model {
 Now we can easily access an instance of the **User** model containing the eager loaded data 
 using the specified key: `post.user`
 
+The `relations` method also support nested keys, by dot notation:
+
+```js{}[~/models/Post.js]
+import Model from './Model'
+import User from './User'
+import Comment from './Comment'
+
+export default class Post extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'posts'
+  }
+
+  // Define the primary key of the model
+  primaryKey() {
+    return 'slug'
+  }
+
+  // Apply model instances to eager loaded relationships
+  relations() {
+    return {
+      'relationships.user': User,
+      'relationships.comments': Comment
+    }
+  }
+```
+
+Then we can access using the specified key: `post.relationships.user`
+
 ### Lazy Loading Relationships
 
 See the [API reference](/api/model-options#hasmany)
@@ -153,6 +206,17 @@ export default class User extends Model {
   // Lazy load the posts that belongs to the user
   posts() {
     return this.hasMany(Post)
+  }
+
+  // Computed properties are reactive -> user.fullName
+  // Make sure to use "get" prefix 
+  get fullName () {
+    return `${this.firstname} ${this.lastname}`
+  }
+
+  // Method -> user.makeBirthday()
+  makeBirthday() {
+    return this.age += 1
   }
 }
 ```
