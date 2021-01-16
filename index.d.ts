@@ -606,6 +606,16 @@ export class Model extends StaticModel {
   save (): Promise<this>
 
   /**
+   * Save a model in the database, then return the instance.
+   */
+  private _create (): Promise<this>
+
+  /**
+   * Update a model in the database, then return the instance.
+   */
+  private _update (): Promise<this>
+
+  /**
    * Make a `PATCH` request to update a model in the database, then return the instance.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/crud-operations#patch|API Reference}
