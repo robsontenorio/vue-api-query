@@ -44,7 +44,7 @@ export type QueryPromise<T> = Promise<T | WrappedResponse<T>>
 
 declare class StaticModel {
   /**
-   * Crate an instance of itself.
+   * Create an instance of itself.
    */
   static instance<M extends typeof Model> (this: M): InstanceType<M>
 
