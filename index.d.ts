@@ -74,7 +74,7 @@ declare class StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
-  static include<M extends typeof Model> (this: M, relationships: any[]): InstanceType<M>
+  static include<M extends typeof Model> (this: M, relationships: string[]): InstanceType<M>
 
   /**
    * Eager load relationships.
