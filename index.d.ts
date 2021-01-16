@@ -49,20 +49,22 @@ declare class StaticModel {
   static instance<M extends typeof Model> (this: M): InstanceType<M>
 
   /**
+   * Query
+   */
+
+  /**
    * Configuration of HTTP Instance.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#config|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#configuring-the-request|Building the Query}
    */
   static config<M extends typeof Model> (this: M, config: HTTPRequestConfig): InstanceType<M>
-
-  /**
-   * Query
-   */
 
   /**
    * Eager load relationships.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   static include<M extends typeof Model> (this: M, ...relationships: string[]): InstanceType<M>
 
@@ -70,6 +72,7 @@ declare class StaticModel {
    * Eager load relationships.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   static include<M extends typeof Model> (this: M, relationships: any[]): InstanceType<M>
 
@@ -79,6 +82,7 @@ declare class StaticModel {
    * Alias for the [include()]{@link include} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   static with<M extends typeof Model> (this: M, ...relationships: string[]): InstanceType<M>
 
@@ -88,6 +92,7 @@ declare class StaticModel {
    * Alias for the [include()]{@link include} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   static with<M extends typeof Model> (this: M, relationships: string[]): InstanceType<M>
 
@@ -95,6 +100,7 @@ declare class StaticModel {
    * Append attributes.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
    */
   static append<M extends typeof Model> (this: M, ...attributes: string[]): InstanceType<M>
 
@@ -102,6 +108,7 @@ declare class StaticModel {
    * Append attributes.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
    */
   static append<M extends typeof Model> (this: M, attributes: string[]): InstanceType<M>
 
@@ -109,6 +116,7 @@ declare class StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   static select<M extends typeof Model> (this: M, ...columns: string[]): InstanceType<M>
 
@@ -116,6 +124,7 @@ declare class StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   static select<M extends typeof Model> (this: M, columns: string[]): InstanceType<M>
 
@@ -123,6 +132,7 @@ declare class StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   static select<M extends typeof Model> (this: M, columns: {
     [related: string]: string[]
@@ -132,6 +142,7 @@ declare class StaticModel {
    * Add a basic where clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
    */
   static where<M extends typeof Model> (
     this: M,
@@ -143,6 +154,7 @@ declare class StaticModel {
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
    */
   static whereIn<M extends typeof Model> (
     this: M,
@@ -154,6 +166,7 @@ declare class StaticModel {
    * Add an "order by" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
    */
   static orderBy<M extends typeof Model> (this: M, ...columns: string[]): InstanceType<M>
 
@@ -161,6 +174,7 @@ declare class StaticModel {
    * Add an "order by" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
    */
   static orderBy<M extends typeof Model> (this: M, columns: string[]): InstanceType<M>
 
@@ -168,6 +182,7 @@ declare class StaticModel {
    * Set the current page.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#page|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
    */
   static page<M extends typeof Model> (this: M, number: number): InstanceType<M>
 
@@ -175,22 +190,25 @@ declare class StaticModel {
    * Set the page limit.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#limit|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
    */
   static limit<M extends typeof Model> (this: M, number: number): InstanceType<M>
-
-  /**
-   * Build custom endpoints.
-   *
-   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#custom|API Reference}
-   */
-  static custom<M extends typeof Model> (this: M, ...endpoint: (Model | string)[]): InstanceType<M>
 
   /**
    * Add custom parameters to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#params|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#applying-custom-parameters|Building the Query}
    */
   static params<M extends typeof Model> (this: M, payload: Record<string, string | number | boolean>): InstanceType<M>
+
+  /**
+   * Build custom endpoints.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#custom|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#calling-a-custom-resource|Building the Query}
+   */
+  static custom<M extends typeof Model> (this: M, ...endpoint: (Model | string)[]): InstanceType<M>
 
   /**
    * Results
@@ -200,6 +218,7 @@ declare class StaticModel {
    * Execute the query and get the first result.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#first|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#getting-the-first-record|Building the Query}
    */
   static first<M extends typeof Model> (this: M): QueryPromise<InstanceType<M>>
 
@@ -207,6 +226,7 @@ declare class StaticModel {
    * Execute the query and get the first result.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#first-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#getting-the-first-record|Building the Query}
    */
   static $first<M extends typeof Model> (this: M): Promise<InstanceType<M>>
 
@@ -214,6 +234,7 @@ declare class StaticModel {
    * Find a model by its primary key.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#find|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#finding-a-specific-record|Building the Query}
    */
   static find<M extends typeof Model> (this: M, id: number | string): QueryPromise<InstanceType<M>>
 
@@ -221,6 +242,7 @@ declare class StaticModel {
    * Find a model by its primary key.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#find-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#finding-a-specific-record|Building the Query}
    */
   static $find<M extends typeof Model> (this: M, id: number | string): Promise<InstanceType<M>>
 
@@ -228,6 +250,7 @@ declare class StaticModel {
    * Execute the query and get all results.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   static get<M extends typeof Model> (this: M): QueryPromise<InstanceType<M>[]>
 
@@ -235,6 +258,7 @@ declare class StaticModel {
    * Execute the query and get all results.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   static $get<M extends typeof Model> (this: M): Promise<InstanceType<M>[]>
 
@@ -244,6 +268,7 @@ declare class StaticModel {
    * Alias for the [get()]{@link get} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   static all<M extends typeof Model> (this: M): QueryPromise<InstanceType<M>[]>
 
@@ -253,6 +278,7 @@ declare class StaticModel {
    * Alias for the [$get()]{@link $get} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   static $all<M extends typeof Model> (this: M): Promise<InstanceType<M>[]>
 }
@@ -279,13 +305,6 @@ export class Model extends StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/installation|Installation}
    */
   get $http (): any
-
-  /**
-   * Configuration of HTTP Instance.
-   *
-   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#config|API Reference}
-   */
-  config (config: HTTPRequestConfig): this
 
   /**
    * This method can be overridden in the model to configure
@@ -316,13 +335,6 @@ export class Model extends StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/configuration#changing-the-primary-key|Configuration}
    */
   primaryKey (): string
-
-  /**
-   * Build custom endpoints.
-   *
-   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#custom|API Reference}
-   */
-  custom (...endpoint: (Model | string)[]): this
 
   /**
    * This method can be used to lazy load relationships of a model and apply model instances to them.
@@ -406,9 +418,18 @@ export class Model extends StaticModel {
    */
 
   /**
+   * Configuration of HTTP Instance.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#config|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#configuring-the-request|Building the Query}
+   */
+  config (config: HTTPRequestConfig): this
+
+  /**
    * Eager load relationships.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   include (...relationships: string[]): this
 
@@ -416,6 +437,7 @@ export class Model extends StaticModel {
    * Eager load relationships.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   include (relationships: string[]): this
 
@@ -425,6 +447,7 @@ export class Model extends StaticModel {
    * Alias for the [include()]{@link include} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   with (...relationships: string[]): this
 
@@ -434,6 +457,7 @@ export class Model extends StaticModel {
    * Alias for the [include()]{@link include} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
    */
   with (relationships: string[]): this
 
@@ -441,6 +465,7 @@ export class Model extends StaticModel {
    * Append attributes.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
    */
   append (...attributes: string[]): this
 
@@ -448,6 +473,7 @@ export class Model extends StaticModel {
    * Append attributes.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
    */
   append (attributes: string[]): this
 
@@ -455,6 +481,7 @@ export class Model extends StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   select (...columns: string[]): this
 
@@ -462,6 +489,7 @@ export class Model extends StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   select (columns: string[]): this
 
@@ -469,6 +497,7 @@ export class Model extends StaticModel {
    * Set the columns to be selected.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
    */
   select (columns: {
     [related: string]: string[]
@@ -478,6 +507,7 @@ export class Model extends StaticModel {
    * Add a basic where clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
    */
   where (field: string | string[], value: string | number | boolean): this
 
@@ -485,6 +515,7 @@ export class Model extends StaticModel {
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
    */
   whereIn (field: string | string[], array: (string | number | boolean)[]): this
 
@@ -492,6 +523,7 @@ export class Model extends StaticModel {
    * Add an "order by" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
    */
   orderBy (...columns: string[]): this
 
@@ -499,6 +531,7 @@ export class Model extends StaticModel {
    * Add an "order by" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
    */
   orderBy (columns: string[]): this
 
@@ -506,6 +539,7 @@ export class Model extends StaticModel {
    * Set the current page.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#page|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
    */
   page (number: number): this
 
@@ -513,6 +547,7 @@ export class Model extends StaticModel {
    * Set the page limit.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#limit|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
    */
   limit (number: number): this
 
@@ -520,8 +555,17 @@ export class Model extends StaticModel {
    * Add custom parameters to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#params|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#applying-custom-parameters|Building the Query}
    */
   params (payload: Record<string, string | number | boolean>): this
+
+  /**
+   * Build custom endpoints.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#custom|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#calling-a-custom-resource|Building the Query}
+   */
+  custom (...endpoint: (Model | string)[]): this
 
   /**
    * Results
@@ -531,6 +575,7 @@ export class Model extends StaticModel {
    * Execute the query and get the first result.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#first|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#getting-the-first-record|Building the Query}
    */
   first (): QueryPromise<this>
 
@@ -538,6 +583,7 @@ export class Model extends StaticModel {
    * Execute the query and get the first result.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#first-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#getting-the-first-record|Building the Query}
    */
   $first (): Promise<this>
 
@@ -545,6 +591,7 @@ export class Model extends StaticModel {
    * Find a model by its primary key.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#find|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#finding-a-specific-record|Building the Query}
    */
   find (identifier: number | string): QueryPromise<this>
 
@@ -552,6 +599,7 @@ export class Model extends StaticModel {
    * Find a model by its primary key.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#find-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#finding-a-specific-record|Building the Query}
    */
   $find (identifier: number | string): Promise<this>
 
@@ -559,6 +607,7 @@ export class Model extends StaticModel {
    * Execute the query and get all results.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   get (): QueryPromise<this[]>
 
@@ -566,6 +615,7 @@ export class Model extends StaticModel {
    * Execute the query and get all results.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   $get (): Promise<this[]>
 
@@ -575,6 +625,7 @@ export class Model extends StaticModel {
    * Alias for the [get()]{@link get} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   all (): QueryPromise<this[]>
 
@@ -584,6 +635,7 @@ export class Model extends StaticModel {
    * Alias for the [$get()]{@link $get} method.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#get-1|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   $all (): Promise<this[]>
 
@@ -595,6 +647,7 @@ export class Model extends StaticModel {
    * Delete the model from the database.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/crud-operations#delete|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#deleting-a-model|Performing Operations}
    */
   delete (): Promise<any>
 
@@ -602,6 +655,7 @@ export class Model extends StaticModel {
    * Save or update a model in the database, then return the instance.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/crud-operations#save|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#saving-a-model|Performing Operations}
    */
   save (): Promise<this>
 
@@ -619,6 +673,7 @@ export class Model extends StaticModel {
    * Make a `PATCH` request to update a model in the database, then return the instance.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/crud-operations#patch|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#saving-a-model|Performing Operations}
    */
   patch (): Promise<this>
 
@@ -630,6 +685,7 @@ export class Model extends StaticModel {
    * Create a new related model.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/relationship-operations#for|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#creating-related-models|Performing Operations}
    */
   for (...args: any[]): this
 
@@ -637,6 +693,7 @@ export class Model extends StaticModel {
    * Create a new related model.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/relationship-operations#attach|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#attaching-a-model|Performing Operations}
    */
   attach (params: Record<string, any>): Promise<any>
 
@@ -644,6 +701,7 @@ export class Model extends StaticModel {
    * Update a related model.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/relationship-operations#sync|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#syncing-a-model|Performing Operations}
    */
   sync (params: Record<string, any>): Promise<any>
 }
