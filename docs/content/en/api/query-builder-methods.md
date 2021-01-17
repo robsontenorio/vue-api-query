@@ -221,7 +221,7 @@ await Model.config({
 ## `get`
 - Returns: `Collection | { data: Collection }`
 
-Execute the query as a "select" statement.
+Execute the query and get all results.
 
 ```js
 await Model.get()
@@ -251,7 +251,7 @@ await Model.find(1)
 ## `$get`
 - Returns: `Collection`
 
-Execute the query as a "select" statement.
+Execute the query and get all results.
 
 ```js
 await Model.$get()
