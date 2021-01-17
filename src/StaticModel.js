@@ -11,6 +11,13 @@ export default class StaticModel {
     return new this
   }
 
+  static config(config) {
+    let self = this.instance()
+    self.config(config)
+
+    return self
+  }
+
   static include(...args) {
     let self = this.instance()
     self.include(...args)
