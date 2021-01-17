@@ -65,24 +65,6 @@ parameterNames() {
 }
 ```
 
-### `formData`
-- Returns: `object`
-
-This method can be overridden in the model to configure `object-to-formdata`.
-
-See [object-to-formdata](https://github.com/therealparmesh/object-to-formdata#usage)
-
-```js
-formData() {
-  return {
-    indices: false,
-    nullsAsUndefineds: false,
-    booleansAsIntegers: false,
-    allowEmptyArrays: false,
-  }
-}
-```
-
 #### `include`
 - Default: `include`
 - Returns: `string`
@@ -110,6 +92,24 @@ formData() {
 #### `limit`
 - Default: `limit`
 - Returns: `string`
+
+### `formData`
+- Returns: `object`
+
+This method can be overridden in the model to configure `object-to-formdata`.
+
+See [object-to-formdata](https://github.com/therealparmesh/object-to-formdata#usage)
+
+```js
+formData() {
+  return {
+    indices: false,
+    nullsAsUndefineds: false,
+    booleansAsIntegers: false,
+    allowEmptyArrays: false,
+  }
+}
+```
 
 ## Model Options
 
