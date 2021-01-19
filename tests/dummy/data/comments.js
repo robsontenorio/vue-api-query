@@ -9,7 +9,7 @@ export const Comments = [
         id: 3,
         comment_id: 1,
         someId: 'ma020-9ha15',
-        text: 'Hello',
+        text: 'Hello'
       }
     ]
   },
@@ -23,13 +23,13 @@ export const Comments = [
         id: 4,
         comment_id: 2,
         someId: 'mw023-9ha18',
-        text: 'Hello',
+        text: 'Hello'
       },
       {
         id: 5,
         comment_id: 2,
         someId: 'mw035-0ha22',
-        text: 'Hello',
+        text: 'Hello'
       }
     ]
   }

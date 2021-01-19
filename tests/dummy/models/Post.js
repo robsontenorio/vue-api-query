@@ -1,14 +1,14 @@
 import BaseModel from './BaseModel'
 import Comment from './Comment'
-import User from './User'
 import Tag from './Tag'
+import User from './User'
 
 export default class Post extends BaseModel {
-  comments () {
+  comments() {
     return this.hasMany(Comment)
   }
 
-  relations () {
+  relations() {
     return {
       user: User,
       'relationships.tags': Tag
