@@ -423,6 +423,10 @@ export default class Model extends StaticModel {
    */
 
   delete() {
+    if (this._customResource) {
+      throw Error("The delete() method cannot be used in conjunction with the custom() method. Use for() instead.")
+    }
+
     if (!this.hasId()) {
       throw new Error('This model has a empty ID.')
     }
@@ -436,6 +440,10 @@ export default class Model extends StaticModel {
   }
 
   save() {
+    if (this._customResource) {
+      throw Error("The save() method cannot be used in conjunction with the custom() method. Use for() instead.")
+    }
+
     return this.hasId() ? this._update() : this._create()
   }
 
@@ -472,6 +480,10 @@ export default class Model extends StaticModel {
    */
 
   attach(params) {
+    if (this._customResource) {
+      throw Error("The attach() method cannot be used in conjunction with the custom() method. Use for() instead.")
+    }
+
     return this.request(
       this._reqConfig({
         method: 'POST',
@@ -482,6 +494,10 @@ export default class Model extends StaticModel {
   }
 
   sync(params) {
+    if (this._customResource) {
+      throw Error("The sync() method cannot be used in conjunction with the custom() method. Use for() instead.")
+    }
+
     return this.request(
       this._reqConfig({
         method: 'PUT',

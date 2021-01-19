@@ -960,6 +960,38 @@ describe('Model methods', () => {
     expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
   })
 
+  test('it throws an error when CRUD and relationship operations are used in conjunction with custom()', () => {
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).custom('foo/bar').save()
+    }
+
+    expect(errorModel).toThrow("The save() method cannot be used in conjunction with the custom() method. Use for() instead.")
+
+    errorModel = () => {
+      const post = new Post({ id: 1 }).custom('foo/bar').delete()
+    }
+
+    expect(errorModel).toThrow("The delete() method cannot be used in conjunction with the custom() method. Use for() instead.")
+
+    errorModel = () => {
+      const post = new Post({ id: 1 })
+      const comment = post.comments().custom('foo/bar').attach({
+        text: 'Awesome post!'
+      })
+    }
+
+    expect(errorModel).toThrow("The attach() method cannot be used in conjunction with the custom() method. Use for() instead.")
+
+    errorModel = () => {
+      const post = new Post({ id: 1 })
+      const comment = post.comments().custom('foo/bar').sync({
+        text: 'Awesome post!'
+      })
+    }
+
+    expect(errorModel).toThrow("The sync() method cannot be used in conjunction with the custom() method. Use for() instead.")
+  })
+
   test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
     axiosMock.onGet('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
     axiosMock.onPut('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
