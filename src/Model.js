@@ -436,6 +436,10 @@ export default class Model extends StaticModel {
   }
 
   save() {
+    if (this._customResource) {
+      throw Error("The save() method cannot be used in conjunction with the custom() method.")
+    }
+
     return this.hasId() ? this._update() : this._create()
   }
 
