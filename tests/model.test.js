@@ -960,6 +960,14 @@ describe('Model methods', () => {
     expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
   })
 
+  test('it throws an error when save() is used in conjunction with custom()', () => {
+    errorModel = () => {
+      const post = new Post({ text: 'Hello' }).custom('foo/bar').save()
+    }
+
+    expect(errorModel).toThrow("The save() method cannot be used in conjunction with the custom() method.")
+  })
+
   test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
     axiosMock.onGet('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
     axiosMock.onPut('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
