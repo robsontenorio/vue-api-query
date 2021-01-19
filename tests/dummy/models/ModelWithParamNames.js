@@ -1,8 +1,7 @@
 import BaseModel from './BaseModel'
 
 export default class ModelWithParamNames extends BaseModel {
-
-  parameterNames () {
+  parameterNames() {
     return {
       include: 'include_custom',
       filter: 'filter_custom',
@@ -13,5 +12,4 @@ export default class ModelWithParamNames extends BaseModel {
       limit: 'limit_custom'
     }
   }
-
 }

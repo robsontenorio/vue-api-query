@@ -2,11 +2,11 @@
  * Prepare attributes to be parsed
  */
 
-import Parser from './Parser';
 import setProp from 'dset'
 
-export default class Builder {
+import Parser from './Parser'
 
+export default class Builder {
   constructor(model) {
     this.model = model
     this.includes = []
@@ -45,7 +45,7 @@ export default class Builder {
    * object, and a value, which is the nested filter.
    *
    */
-  _nestedFilter (keys, value) {
+  _nestedFilter(keys, value) {
     // Get first key from `keys` array, then remove it from array
     const _key = keys.shift()
     // Initialize an empty object
@@ -64,7 +64,9 @@ export default class Builder {
    */
 
   include(...relationships) {
-    relationships = Array.isArray(relationships[0]) ? relationships[0] : relationships
+    relationships = Array.isArray(relationships[0])
+      ? relationships[0]
+      : relationships
     this.includes = relationships
 
     return this
@@ -119,7 +121,9 @@ export default class Builder {
 
   whereIn(key, array) {
     if (!Array.isArray(array)) {
-      throw new Error('The second argument on whereIn() method must be an array.')
+      throw new Error(
+        'The second argument on whereIn() method must be an array.'
+      )
     }
 
     if (Array.isArray(key)) {
