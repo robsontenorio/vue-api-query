@@ -965,13 +965,13 @@ describe('Model methods', () => {
       const post = new Post({ text: 'Hello' }).custom('foo/bar').save()
     }
 
-    expect(errorModel).toThrow("The save() method cannot be used in conjunction with the custom() method.")
+    expect(errorModel).toThrow("The save() method cannot be used in conjunction with the custom() method. Use for() instead.")
 
     errorModel = () => {
       const post = new Post({ id: 1 }).custom('foo/bar').delete()
     }
 
-    expect(errorModel).toThrow("The delete() method cannot be used in conjunction with the custom() method.")
+    expect(errorModel).toThrow("The delete() method cannot be used in conjunction with the custom() method. Use for() instead.")
 
     errorModel = () => {
       const post = new Post({ id: 1 })
@@ -980,7 +980,7 @@ describe('Model methods', () => {
       })
     }
 
-    expect(errorModel).toThrow("The attach() method cannot be used in conjunction with the custom() method.")
+    expect(errorModel).toThrow("The attach() method cannot be used in conjunction with the custom() method. Use for() instead.")
 
     errorModel = () => {
       const post = new Post({ id: 1 })
@@ -989,7 +989,7 @@ describe('Model methods', () => {
       })
     }
 
-    expect(errorModel).toThrow("The sync() method cannot be used in conjunction with the custom() method.")
+    expect(errorModel).toThrow("The sync() method cannot be used in conjunction with the custom() method. Use for() instead.")
   })
 
   test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
