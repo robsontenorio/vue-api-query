@@ -5,7 +5,11 @@
         {"type": "chore", "scope":"deps", "release": "patch"}
       ]
     }],
-    "@semantic-release/release-notes-generator",
+    ["@semantic-release/release-notes-generator", {
+      "writerOpts": {
+        "headerPartial": ""
+      }
+    }],
     "@semantic-release/npm",
     "@semantic-release/github"
   ]
