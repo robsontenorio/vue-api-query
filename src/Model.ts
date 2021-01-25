@@ -99,8 +99,8 @@ export default class Model extends StaticModel {
   }
 
   hasMany(model) {
-    let instance = new model()
-    let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
+    const instance = new model()
+    const url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
     instance._from(url)
 
@@ -367,8 +367,8 @@ export default class Model extends StaticModel {
     if (identifier === undefined) {
       throw new Error('You must specify the param on find() method.')
     }
-    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-    let url = `${base}/${identifier}${this._builder.query()}`
+    const base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    const url = `${base}/${identifier}${this._builder.query()}`
 
     return this.request(
       this._reqConfig({
@@ -395,7 +395,7 @@ export default class Model extends StaticModel {
     base = this._customResource
       ? `${this.baseURL()}/${this._customResource}`
       : base
-    let url = `${base}${this._builder.query()}`
+    const url = `${base}${this._builder.query()}`
 
     return this.request(
       this._reqConfig({
@@ -403,7 +403,7 @@ export default class Model extends StaticModel {
         method: 'GET'
       })
     ).then((response) => {
-      let collection = this._applyInstanceCollection(response.data)
+      const collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
         response.data.data = collection
