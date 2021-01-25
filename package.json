@@ -11,8 +11,9 @@
   "scripts": {
     "build": "babel src -d build",
     "lint": "eslint --ext .js .",
-    "test": "jest --coverage",
-    "test-watch": "jest --watch --coverage"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "jest": {
     "coverageDirectory": "./coverage/",

@@ -114,8 +114,8 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Test
-        run: yarn test
+      - name: Test and Generate Coverage
+        run: yarn coverage
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v1
