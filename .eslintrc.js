@@ -8,20 +8,29 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'prettier/@typescript-eslint',
+    'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'plugin:import/typescript',
     'plugin:jest/recommended',
     'plugin:jest/style'
   ],
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
     allowImportExportEverywhere: false,
     codeFrame: true
   },
-  plugins: ['prettier', 'import', 'simple-import-sort', 'jest'],
+  plugins: [
+    'prettier',
+    '@typescript-eslint',
+    'import',
+    'simple-import-sort',
+    'jest'
+  ],
   ignorePatterns: ['build'],
   rules: {
     'prettier/prettier': 'error',
@@ -36,9 +45,18 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['tests/*.js'],
+      files: ['*.ts'],
       rules: {
-        'no-console': 'off'
+        '@typescript-eslint/explicit-member-accessibility': ['error']
+      }
+    },
+    {
+      files: ['test/**/*.ts'],
+      rules: {
+        'no-console': 'off',
+        '@typescript-eslint/explicit-member-accessibility': ['off'],
+        '@typescript-eslint/explicit-module-boundary-types': ['off'],
+        '@typescript-eslint/no-non-null-assertion': ['off']
       }
     }
   ]
