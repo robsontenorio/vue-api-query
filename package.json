@@ -15,10 +15,6 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
   },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/robsontenorio/vue-api-query.git"
