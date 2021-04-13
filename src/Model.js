@@ -4,6 +4,7 @@ import { serialize } from 'object-to-formdata'
 
 import Builder from './Builder'
 import StaticModel from './StaticModel'
+import Jsona from 'jsona'
 
 export default class Model extends StaticModel {
   constructor(...attributes) {
@@ -345,6 +346,34 @@ export default class Model extends StaticModel {
     return _config
   }
 
+  _handleJsonApiResponse(response) {
+    if (!this._isJsonApiResponse(response)) {
+      return response
+    }
+
+    const formatter = new Jsona()
+    return formatter.deserialize(response)
+  }
+
+  _isJsonApiResponse(response) {
+    if (!response.data) {
+      return false
+    }
+
+    let object
+
+    if (Array.isArray(response.data)) {
+      object = response.data[0]
+    } else {
+      object = response.data
+    }
+
+    return (
+      Object.hasOwnProperty.call(object, 'id') &&
+      Object.hasOwnProperty.call(object, 'type')
+    )
+  }
+
   first() {
     return this.get().then((response) => {
       let item
@@ -376,6 +405,7 @@ export default class Model extends StaticModel {
         method: 'GET'
       })
     ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data)
     })
   }
@@ -403,6 +433,7 @@ export default class Model extends StaticModel {
         method: 'GET'
       })
     ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       let collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
@@ -439,7 +470,7 @@ export default class Model extends StaticModel {
     }
 
     if (!this.hasId()) {
-      throw new Error('This model has a empty ID.')
+      throw new Error('This model has an empty ID.')
     }
 
     return this.request(
@@ -471,6 +502,7 @@ export default class Model extends StaticModel {
         { forceMethod: true }
       )
     ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data.data || response.data)
     })
   }
@@ -483,6 +515,7 @@ export default class Model extends StaticModel {
         data: this
       })
     ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data.data || response.data)
     })
   }

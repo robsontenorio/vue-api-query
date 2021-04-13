@@ -4,10 +4,13 @@ import MockAdapter from 'axios-mock-adapter'
 import { Model } from '../src'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
+import { JsonApi as jsonApiResponse } from './dummy/data/jsonApi'
 import { Post as postResponse } from './dummy/data/post'
 import { Post as postEmbedResponse } from './dummy/data/postEmbed'
 import { Posts as postsResponse } from './dummy/data/posts'
 import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
+import Article from './dummy/models/Article'
+import Author from './dummy/models/Author'
 import Comment from './dummy/models/Comment'
 import Post from './dummy/models/Post'
 import Tag from './dummy/models/Tag'
@@ -25,7 +28,7 @@ describe('Model methods', () => {
     }
   })
 
-  test('it throws a error when find() has no parameters', () => {
+  test('it throws an error when find() has no parameters', () => {
     errorModel = () => {
       Post.find()
     }
@@ -33,7 +36,7 @@ describe('Model methods', () => {
     expect(errorModel).toThrow('You must specify the param on find() method.')
   })
 
-  test('it throws a error when $find() has no parameters', () => {
+  test('it throws an error when $find() has no parameters', () => {
     errorModel = () => {
       Post.$find()
     }
@@ -68,14 +71,14 @@ describe('Model methods', () => {
     })
   })
 
-  test('first() method returns a empty object when no items have found', async () => {
+  test('first() method returns an empty object when no items have found', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, [])
 
     const post = await Post.first()
     expect(post).toEqual({})
   })
 
-  test('find() method returns a object as instance of such Model', async () => {
+  test('find() method returns an object as instance of such Model', async () => {
     axiosMock.onGet('http://localhost/posts/1').reply(200, postResponse)
 
     const post = await Post.find(1)
@@ -113,7 +116,7 @@ describe('Model methods', () => {
     })
   })
 
-  test('find() method returns a object as instance of such Model with empty relationships', async () => {
+  test('find() method returns an object as instance of such Model with empty relationships', async () => {
     const _postResponse = postResponse
     _postResponse.user = null
     _postResponse.relationships.tags = []
@@ -128,7 +131,7 @@ describe('Model methods', () => {
     expect(post.relationships.tags).toStrictEqual([])
   })
 
-  test('find() method returns a object as instance of such Model with some empty relationships', async () => {
+  test('find() method returns an object as instance of such Model with some empty relationships', async () => {
     const _postResponse = postResponse
     _postResponse.user = null
 
@@ -145,7 +148,7 @@ describe('Model methods', () => {
     })
   })
 
-  test('get() method returns a array of objects as instance of suchModel', async () => {
+  test('get() method returns an array of objects as instance of suchModel', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
     const posts = await Post.get()
@@ -708,13 +711,13 @@ describe('Model methods', () => {
     await post.delete()
   })
 
-  test('a request from delete() method when model has not ID throws a exception', async () => {
+  test('a request from delete() method when model has not ID throws an exception', async () => {
     errorModel = () => {
       let post = new Post()
       post.delete()
     }
 
-    expect(errorModel).toThrow('This model has a empty ID.')
+    expect(errorModel).toThrow('This model has an empty ID.')
   })
 
   test('a request from delete() method hits the right resource (nested object)', async () => {
@@ -823,7 +826,7 @@ describe('Model methods', () => {
     await user.posts().find(1)
   })
 
-  test('a request hasMany() method returns a array of Models', async () => {
+  test('a request hasMany() method returns an array of Models', async () => {
     axiosMock.onGet('http://localhost/users/1/posts').reply(200, postsResponse)
 
     const user = new User({ id: 1 })
@@ -907,7 +910,7 @@ describe('Model methods', () => {
     await post.save()
   })
 
-  test('Calling for() with multiple arguments productes the correct URL', () => {
+  test('Calling for() with multiple arguments produces the correct URL', () => {
     const user = new User({ id: 1 })
     const post = new Post({ id: 2 })
     const comment = new Comment({
@@ -920,7 +923,7 @@ describe('Model methods', () => {
     )
   })
 
-  test('it throws a error when for() method does not recieve a instance of Model', () => {
+  test('it throws an error when for() method does not receive a instance of Model', () => {
     errorModel = () => {
       new Post({ text: 'Hello' }).for()
     }
@@ -954,7 +957,7 @@ describe('Model methods', () => {
     )
   })
 
-  test('it throws a error when for() when referenced object has not a valid id', () => {
+  test('it throws an error when for() when referenced object has not a valid id', () => {
     errorModel = () => {
       const user = new User({ name: 'Mary' })
       new Post({ text: 'Hello' }).for(user)
@@ -965,7 +968,7 @@ describe('Model methods', () => {
     )
   })
 
-  test('it throws a error when a custom() parameter is not a valid Model or a string', () => {
+  test('it throws an error when a custom() parameter is not a valid Model or a string', () => {
     errorModel = () => {
       new Post({ text: 'Hello' }).custom()
     }
@@ -1044,5 +1047,19 @@ describe('Model methods', () => {
 
     comment.text = 'Hola!'
     await comment.save()
+  })
+
+  test('Model handles JSON:API responses correctly', async () => {
+    axiosMock.onGet('http://localhost/articles').reply(200, jsonApiResponse)
+
+    const articles = await Article.all()
+    console.log(articles)
+    console.log(articles[0])
+    expect(articles[0]).toBeInstanceOf(Article)
+    expect(articles[0].author).toBeInstanceOf(Author)
+    expect(articles[0].comments).toBeInstanceOf(Array)
+    articles[0].comments.forEach((comment) => {
+      expect(comment).toBeInstanceOf(Comment)
+    })
   })
 })

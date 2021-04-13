@@ -1,7 +1,7 @@
 {
-  "name": "vue-api-query",
+  "name": "json-api-query",
   "version": "0.0.0-development",
-  "description": "💎 Elegant and simple way to build requests for REST API",
+  "description": "Elegant and simple way to build requests for JSON:API",
   "main": "build/index.js",
   "types": "./index.d.ts",
   "files": [
@@ -17,34 +17,30 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robsontenorio/vue-api-query.git"
+    "url": "git+https://github.com/iwavesmedia/json-api-query.git"
   },
   "keywords": [
-    "vue",
-    "nuxt",
     "api",
     "rest",
+    "json",
     "query",
     "builder",
-    "laravel"
+    "laravel",
+    "fractal"
   ],
-  "author": "Robson Tenório",
+  "author": "IWAVES Medientechnik e.U.",
   "contributors": [
     {
-      "name": "João Pedro Antunes Silva",
-      "email": "joao-pedroas@hotmail.com",
-      "url": "https://github.com/JoaoPedroAS51"
-    },
-    {
-      "name": "Peter Krebs",
-      "url": "https://github.com/Peter-Krebs"
+      "name": "Josua Müller",
+      "email": "mueller.j.at@gmail.com",
+      "url": "https://github.com/hypnotox"
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/robsontenorio/vue-api-query/issues"
+    "url": "https://github.com/iwavesmedia/json-api-query/issues"
   },
-  "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
+  "homepage": "https://github.com/iwavesmedia/json-api-query#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
@@ -71,6 +67,7 @@
   "dependencies": {
     "dotprop": "^1.2.0",
     "dset": "^2.0.1",
+    "jsona": "^1.8.0",
     "object-to-formdata": "^4.1.0",
     "qs": "^6.9.4"
   }
