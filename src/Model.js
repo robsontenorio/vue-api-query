@@ -1,11 +1,12 @@
-import { serialize } from 'object-to-formdata'
 import getProp from 'dotprop'
 import setProp from 'dset'
+import { serialize } from 'object-to-formdata'
+
 import Builder from './Builder'
 import StaticModel from './StaticModel'
+import Jsona from 'jsona'
 
 export default class Model extends StaticModel {
-
   constructor(...attributes) {
     super()
 
@@ -59,7 +60,6 @@ export default class Model extends StaticModel {
   }
 
   custom(...args) {
-
     if (args.length === 0) {
       throw new Error('The custom() method takes a minimum of one argument.')
     }
@@ -68,29 +68,31 @@ export default class Model extends StaticModel {
     // multiple arguments. We don't need it for the first argument if it's
     // a string, but subsequent string arguments need the '/' at the beginning.
     // We handle this implementation detail here to simplify the readme.
-    let slash = '';
-    let resource = '';
+    let slash = ''
+    let resource = ''
 
-    args.forEach(value => {
+    args.forEach((value) => {
       switch (true) {
-        case (typeof value === 'string'):
-          resource += slash + value.replace(/^\/+/, '');
-          break;
-        case (value instanceof Model):
-          resource += slash + value.resource();
+        case typeof value === 'string':
+          resource += slash + value.replace(/^\/+/, '')
+          break
+        case value instanceof Model:
+          resource += slash + value.resource()
 
           if (value.isValidId(value.getPrimaryKey())) {
-            resource += '/' + value.getPrimaryKey();
+            resource += '/' + value.getPrimaryKey()
           }
-          break;
+          break
         default:
-          throw new Error('Arguments to custom() must be strings or instances of Model.')
+          throw new Error(
+            'Arguments to custom() must be strings or instances of Model.'
+          )
       }
 
       if (!slash.length) {
-        slash = '/';
+        slash = '/'
       }
-    });
+    })
 
     this._customResource = resource
 
@@ -98,7 +100,7 @@ export default class Model extends StaticModel {
   }
 
   hasMany(model) {
-    let instance = new model
+    let instance = new model()
     let url = `${this.baseURL()}/${this.resource()}/${this.getPrimaryKey()}/${instance.resource()}`
 
     instance._from(url)
@@ -115,15 +117,19 @@ export default class Model extends StaticModel {
       throw new Error('The for() method takes a minimum of one argument.')
     }
 
-    let url = `${this.baseURL()}`;
+    let url = `${this.baseURL()}`
 
-    args.forEach(object => {
+    args.forEach((object) => {
       if (!(object instanceof Model)) {
-        throw new Error('The object referenced on for() method is not a valid Model.')
+        throw new Error(
+          'The object referenced on for() method is not a valid Model.'
+        )
       }
 
       if (!this.isValidId(object.getPrimaryKey())) {
-        throw new Error('The object referenced on for() method has an invalid id.')
+        throw new Error(
+          'The object referenced on for() method has an invalid id.'
+        )
       }
 
       url += `/${object.resource()}/${object.getPrimaryKey()}`
@@ -136,7 +142,7 @@ export default class Model extends StaticModel {
     return this
   }
 
-  relations () {
+  relations() {
     return {}
   }
 
@@ -250,7 +256,7 @@ export default class Model extends StaticModel {
   _applyInstance(data, model = this.constructor) {
     const item = new model(data)
 
-    if(this._fromResource) {
+    if (this._fromResource) {
       item._from(this._fromResource)
     }
 
@@ -261,7 +267,7 @@ export default class Model extends StaticModel {
     let collection = data.data || data
     collection = Array.isArray(collection) ? collection : [collection]
 
-    collection = collection.map(c => {
+    collection = collection.map((c) => {
       return this._applyInstance(c, model)
     })
     return collection
@@ -270,15 +276,18 @@ export default class Model extends StaticModel {
   _applyRelations(model) {
     const relations = model.relations()
 
-    for(const relation of Object.keys(relations)) {
+    for (const relation of Object.keys(relations)) {
       const _relation = getProp(model, relation)
 
       if (!_relation) {
-        continue;
+        continue
       }
 
       if (Array.isArray(_relation.data) || Array.isArray(_relation)) {
-        const collection = this._applyInstanceCollection(_relation, relations[relation])
+        const collection = this._applyInstanceCollection(
+          _relation,
+          relations[relation]
+        )
 
         if (_relation.data !== undefined) {
           _relation.data = collection
@@ -286,7 +295,11 @@ export default class Model extends StaticModel {
           setProp(model, relation, collection)
         }
       } else {
-        setProp(model, relation, this._applyInstance(_relation, relations[relation]))
+        setProp(
+          model,
+          relation,
+          this._applyInstance(_relation, relations[relation])
+        )
       }
     }
   }
@@ -303,13 +316,12 @@ export default class Model extends StaticModel {
     if ('data' in _config) {
       // Ditch private data
       _config.data = Object.fromEntries(
-        Object.entries(_config.data)
-          .filter(([key]) => !key.startsWith('_'))
+        Object.entries(_config.data).filter(([key]) => !key.startsWith('_'))
       )
 
-      const _hasFiles = Object.keys(_config.data).some(property => {
+      const _hasFiles = Object.keys(_config.data).some((property) => {
         if (Array.isArray(_config.data[property])) {
-          return _config.data[property].some(value => value instanceof File)
+          return _config.data[property].some((value) => value instanceof File)
         }
 
         return _config.data[property] instanceof File
@@ -334,8 +346,36 @@ export default class Model extends StaticModel {
     return _config
   }
 
+  _handleJsonApiResponse(response) {
+    if (!this._isJsonApiResponse(response)) {
+      return response
+    }
+
+    const formatter = new Jsona()
+    return formatter.deserialize(response)
+  }
+
+  _isJsonApiResponse(response) {
+    if (!response.data) {
+      return false
+    }
+
+    let object
+
+    if (Array.isArray(response.data)) {
+      object = response.data[0]
+    } else {
+      object = response.data
+    }
+
+    return (
+      Object.hasOwnProperty.call(object, 'id') &&
+      Object.hasOwnProperty.call(object, 'type')
+    )
+  }
+
   first() {
-    return this.get().then(response => {
+    return this.get().then((response) => {
       let item
 
       if (response.data) {
@@ -349,9 +389,7 @@ export default class Model extends StaticModel {
   }
 
   $first() {
-    return this
-      .first()
-      .then(response => response.data || response)
+    return this.first().then((response) => response.data || response)
   }
 
   find(identifier) {
@@ -366,7 +404,8 @@ export default class Model extends StaticModel {
         url,
         method: 'GET'
       })
-    ).then(response => {
+    ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data)
     })
   }
@@ -376,14 +415,16 @@ export default class Model extends StaticModel {
       throw new Error('You must specify the param on $find() method.')
     }
 
-    return this
-      .find(identifier)
-      .then(response => this._applyInstance(response.data || response))
+    return this.find(identifier).then((response) =>
+      this._applyInstance(response.data || response)
+    )
   }
 
   get() {
     let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
-    base = this._customResource ? `${this.baseURL()}/${this._customResource}` : base
+    base = this._customResource
+      ? `${this.baseURL()}/${this._customResource}`
+      : base
     let url = `${base}${this._builder.query()}`
 
     return this.request(
@@ -391,7 +432,8 @@ export default class Model extends StaticModel {
         url,
         method: 'GET'
       })
-    ).then(response => {
+    ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       let collection = this._applyInstanceCollection(response.data)
 
       if (response.data.data !== undefined) {
@@ -405,9 +447,7 @@ export default class Model extends StaticModel {
   }
 
   $get() {
-    return this
-      .get()
-      .then(response => response.data || response)
+    return this.get().then((response) => response.data || response)
   }
 
   all() {
@@ -423,8 +463,14 @@ export default class Model extends StaticModel {
    */
 
   delete() {
+    if (this._customResource) {
+      throw Error(
+        'The delete() method cannot be used in conjunction with the custom() method. Use for() instead.'
+      )
+    }
+
     if (!this.hasId()) {
-      throw new Error('This model has a empty ID.')
+      throw new Error('This model has an empty ID.')
     }
 
     return this.request(
@@ -432,21 +478,31 @@ export default class Model extends StaticModel {
         method: 'DELETE',
         url: this.endpoint()
       })
-    ).then(response => response)
+    ).then((response) => response)
   }
 
   save() {
+    if (this._customResource) {
+      throw Error(
+        'The save() method cannot be used in conjunction with the custom() method. Use for() instead.'
+      )
+    }
+
     return this.hasId() ? this._update() : this._create()
   }
 
   _create() {
     return this.request(
-      this._reqConfig({
-        method: 'POST',
-        url: this.endpoint(),
-        data: this
-      }, { forceMethod: true })
-    ).then(response => {
+      this._reqConfig(
+        {
+          method: 'POST',
+          url: this.endpoint(),
+          data: this
+        },
+        { forceMethod: true }
+      )
+    ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data.data || response.data)
     })
   }
@@ -458,7 +514,8 @@ export default class Model extends StaticModel {
         url: this.endpoint(),
         data: this
       })
-    ).then(response => {
+    ).then((response) => {
+      response.data = this._handleJsonApiResponse(response.data)
       return this._applyInstance(response.data.data || response.data)
     })
   }
@@ -472,22 +529,34 @@ export default class Model extends StaticModel {
    */
 
   attach(params) {
+    if (this._customResource) {
+      throw Error(
+        'The attach() method cannot be used in conjunction with the custom() method. Use for() instead.'
+      )
+    }
+
     return this.request(
       this._reqConfig({
         method: 'POST',
         url: this.endpoint(),
         data: params
       })
-    ).then(response => response)
+    ).then((response) => response)
   }
 
   sync(params) {
+    if (this._customResource) {
+      throw Error(
+        'The sync() method cannot be used in conjunction with the custom() method. Use for() instead.'
+      )
+    }
+
     return this.request(
       this._reqConfig({
         method: 'PUT',
         url: this.endpoint(),
         data: params
       })
-    ).then(response => response)
+    ).then((response) => response)
   }
 }

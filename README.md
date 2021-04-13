@@ -1,23 +1,9 @@
-<p align="center">
-  <img src="bird.png">  
-</p>
-<p align="center">
-  <a href="https://codecov.io/gh/robsontenorio/vue-api-query">
-    <img src="https://codecov.io/gh/robsontenorio/vue-api-query/branch/master/graph/badge.svg" />
-  </a>
-  <a href="https://actions-badge.atrox.dev/robsontenorio/vue-api-query/goto?ref=dev">
-    <img src="https://img.shields.io/github/workflow/status/robsontenorio/vue-api-query/Test%20and%20Release?style=flat&label=actions&logo=github" />
-  </a>
-  <a href="https://www.npmjs.com/package/vue-api-query">
-    <img src="https://img.shields.io/npm/dt/vue-api-query.svg" />
-  </a>
-  <a href="https://www.npmjs.com/package/vue-api-query">
-    <img src="https://img.shields.io/npm/v/vue-api-query.svg" />
-  </a>
-  <a href="https://github.com/robsontenorio/vue-api-query/blob/master/LICENSE">
-    <img src="https://img.shields.io/apm/l/vim-mode.svg" />
-  </a>     
-</p>
+# This package is a fork of [vue-api-query](https://github.com/robsontenorio/vue-api-query) modified for the JSON:API spec and our own needs.
+# Use at your own discretion
+
+### Following is the original readme.
+
+---
 
 # Elegant and simple way to build requests for REST API
 

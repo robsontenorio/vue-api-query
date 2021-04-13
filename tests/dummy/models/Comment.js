@@ -1,7 +1,11 @@
 import BaseModel from './BaseModel'
 
 export default class Comment extends BaseModel {
-  relations () {
+  resource() {
+    return 'comments'
+  }
+
+  relations() {
     return {
       replies: Comment
     }

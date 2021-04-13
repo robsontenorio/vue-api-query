@@ -1,7 +1,7 @@
 {
-  "name": "vue-api-query",
+  "name": "json-api-query",
   "version": "0.0.0-development",
-  "description": "💎 Elegant and simple way to build requests for REST API",
+  "description": "Elegant and simple way to build requests for JSON:API",
   "main": "build/index.js",
   "types": "./index.d.ts",
   "files": [
@@ -11,43 +11,36 @@
   "scripts": {
     "build": "babel src -d build",
     "lint": "eslint --ext .js .",
-    "test": "jest --coverage",
-    "test-watch": "jest --watch --coverage"
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robsontenorio/vue-api-query.git"
+    "url": "git+https://github.com/iwavesmedia/json-api-query.git"
   },
   "keywords": [
-    "vue",
-    "nuxt",
     "api",
     "rest",
+    "json",
     "query",
     "builder",
-    "laravel"
+    "laravel",
+    "fractal"
   ],
-  "author": "Robson Tenório",
+  "author": "IWAVES Medientechnik e.U.",
   "contributors": [
     {
-      "name": "João Pedro Antunes Silva",
-      "email": "joao-pedroas@hotmail.com",
-      "url": "https://github.com/JoaoPedroAS51"
-    },
-    {
-      "name": "Peter Krebs",
-      "url": "https://github.com/Peter-Krebs"
+      "name": "Josua Müller",
+      "email": "mueller.j.at@gmail.com",
+      "url": "https://github.com/hypnotox"
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/robsontenorio/vue-api-query/issues"
+    "url": "https://github.com/iwavesmedia/json-api-query/issues"
   },
-  "homepage": "https://github.com/robsontenorio/vue-api-query#readme",
+  "homepage": "https://github.com/iwavesmedia/json-api-query#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
@@ -61,13 +54,20 @@
     "axios-mock-adapter": "^1.18.1",
     "babel-eslint": "^10.1.0",
     "codecov": "^3.6.5",
-    "eslint": "^6.8.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^24.1.0",
+    "prettier": "^2.2.1",
     "semantic-release": "^17.2.2"
   },
   "dependencies": {
     "dotprop": "^1.2.0",
     "dset": "^2.0.1",
+    "jsona": "^1.8.0",
     "object-to-formdata": "^4.1.0",
     "qs": "^6.9.4"
   }

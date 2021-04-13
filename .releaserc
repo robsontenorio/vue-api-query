@@ -1,0 +1,21 @@
+{
+  "plugins": [
+    ["@semantic-release/commit-analyzer", {
+      "releaseRules": [
+        {"type": "chore", "scope":"deps", "release": "patch"}
+      ]
+    }],
+    ["@semantic-release/release-notes-generator", {
+      "writerOpts": {
+        "headerPartial": ""
+      }
+    }],
+    [
+        "@semantic-release/npm",
+        {
+            "npmPublish": false
+        }
+    ],
+    "@semantic-release/github"
+  ]
+}
