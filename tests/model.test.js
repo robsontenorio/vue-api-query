@@ -414,7 +414,6 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       const _post = post
-      delete _post._config
 
       expect(config.method).toEqual('patch')
       expect(config.data).toEqual(JSON.stringify(_post))
@@ -452,7 +451,6 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       const _post = post
-      delete _post._config
 
       expect(config.method).toEqual('post')
       expect(config.data).toEqual(JSON.stringify(_post))
@@ -572,7 +570,6 @@ describe('Model methods', () => {
     axiosMock.onAny().reply((config) => {
       let _data
       const _post = post
-      delete _post._config
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = Object.fromEntries(config.data)
@@ -634,7 +631,6 @@ describe('Model methods', () => {
     axiosMock.onAny().reply((config) => {
       let _data
       const _post = post
-      delete _post._config
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = JSON.stringify(Object.fromEntries(config.data))
