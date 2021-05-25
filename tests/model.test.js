@@ -1041,4 +1041,28 @@ describe('Model methods', () => {
     comment.text = 'Hola!'
     await comment.save()
   })
+
+  test('config() method can change request config', async () => {
+    axiosMock.onGet('http://localhost/posts').reply((config) => {
+      expect(config.params).toEqual({
+        foo: 'bar'
+      })
+
+      return [200, postsResponse]
+    })
+
+    const posts = await Post.config({
+      params: {
+        foo: 'bar'
+      }
+    }).get()
+
+    posts.forEach((post) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post.user).toBeInstanceOf(User)
+      post.relationships.tags.forEach((tag) => {
+        expect(tag).toBeInstanceOf(Tag)
+      })
+    })
+  })
 })
