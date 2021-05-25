@@ -1065,4 +1065,25 @@ describe('Model methods', () => {
       })
     })
   })
+
+  test('config() method can merge request config recursively', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      const _post = { ...post, foo: 'bar' }
+
+      expect(config.data).toEqual(JSON.stringify(_post))
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    await post
+      .config({
+        data: {
+          foo: 'bar'
+        }
+      })
+      .save()
+  })
 })
