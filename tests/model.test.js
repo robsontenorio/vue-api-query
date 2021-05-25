@@ -1,19 +1,19 @@
-import Post from './dummy/models/Post'
-import User from './dummy/models/User'
-import Comment from './dummy/models/Comment'
-import { Model } from '../src'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
-import { Posts as postsResponse } from './dummy/data/posts'
-import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
-import { Post as postResponse } from './dummy/data/post'
-import { Post as postEmbedResponse } from './dummy/data/postEmbed'
+
+import { Model } from '../src'
 import { Comments as commentsResponse } from './dummy/data/comments'
 import { Comments as commentsEmbedResponse } from './dummy/data/commentsEmbed'
+import { Post as postResponse } from './dummy/data/post'
+import { Post as postEmbedResponse } from './dummy/data/postEmbed'
+import { Posts as postsResponse } from './dummy/data/posts'
+import { Posts as postsEmbedResponse } from './dummy/data/postsEmbed'
+import Comment from './dummy/models/Comment'
+import Post from './dummy/models/Post'
 import Tag from './dummy/models/Tag'
+import User from './dummy/models/User'
 
 describe('Model methods', () => {
-
   let errorModel = {}
   Model.$http = axios
   let axiosMock = new MockAdapter(axios)
@@ -27,7 +27,7 @@ describe('Model methods', () => {
 
   test('it throws a error when find() has no parameters', () => {
     errorModel = () => {
-      const post = Post.find()
+      Post.find()
     }
 
     expect(errorModel).toThrow('You must specify the param on find() method.')
@@ -35,14 +35,13 @@ describe('Model methods', () => {
 
   test('it throws a error when $find() has no parameters', () => {
     errorModel = () => {
-      const post = Post.$find()
+      Post.$find()
     }
 
     expect(errorModel).toThrow('You must specify the param on $find() method.')
   })
 
   test('first() returns first object in array as instance of such Model', async () => {
-
     axiosMock.onGet('http://localhost/posts').reply(200, {
       data: postsResponse
     })
@@ -51,13 +50,12 @@ describe('Model methods', () => {
     expect(post).toEqual(postsResponse[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
 
   test('$first() returns first object in array as instance of such Model', async () => {
-
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
     const post = await Post.$first()
@@ -65,7 +63,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postsEmbedResponse.data[0])
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -84,7 +82,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -97,7 +95,7 @@ describe('Model methods', () => {
     expect(post).toEqual(postEmbedResponse.data)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.data.forEach(tag => {
+    post.relationships.tags.data.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -110,52 +108,52 @@ describe('Model methods', () => {
     expect(post).toEqual(postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
 
-  test("find() method returns a object as instance of such Model with empty relationships", async () => {
-    const _postResponse = postResponse;
-    _postResponse.user = null;
-    _postResponse.relationships.tags = [];
+  test('find() method returns a object as instance of such Model with empty relationships', async () => {
+    const _postResponse = postResponse
+    _postResponse.user = null
+    _postResponse.relationships.tags = []
 
-    axiosMock.onGet("http://localhost/posts/1").reply(200, _postResponse);
+    axiosMock.onGet('http://localhost/posts/1').reply(200, _postResponse)
 
-    const post = await Post.find(1);
+    const post = await Post.find(1)
 
-    expect(post).toEqual(postResponse);
-    expect(post).toBeInstanceOf(Post);
-    expect(post.user).toStrictEqual(null);
-    expect(post.relationships.tags).toStrictEqual([]);
-  });
+    expect(post).toEqual(postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeNull()
+    expect(post.relationships.tags).toStrictEqual([])
+  })
 
-  test("find() method returns a object as instance of such Model with some empty relationships", async () => {
-    const _postResponse = postResponse;
-    _postResponse.user = null;
+  test('find() method returns a object as instance of such Model with some empty relationships', async () => {
+    const _postResponse = postResponse
+    _postResponse.user = null
 
-    axiosMock.onGet("http://localhost/posts/1").reply(200, _postResponse);
+    axiosMock.onGet('http://localhost/posts/1').reply(200, _postResponse)
 
-    const post = await Post.find(1);
+    const post = await Post.find(1)
 
-    expect(post).toEqual(postResponse);
-    expect(post).toBeInstanceOf(Post);
-    expect(post.user).toStrictEqual(null);
+    expect(post).toEqual(postResponse)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeNull()
 
     post.relationships.tags.forEach((tag) => {
-      expect(tag).toBeInstanceOf(Tag);
-    });
-  });
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
 
   test('get() method returns a array of objects as instance of suchModel', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsResponse)
 
     const posts = await Post.get()
 
-    posts.forEach(post => {
+    posts.forEach((post) => {
       expect(post).toBeInstanceOf(Post)
       expect(post.user).toBeInstanceOf(User)
-      post.relationships.tags.forEach(tag => {
+      post.relationships.tags.forEach((tag) => {
         expect(tag).toBeInstanceOf(Tag)
       })
     })
@@ -172,9 +170,9 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
     const comments = await post.comments().get()
 
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       expect(comment).toBeInstanceOf(Comment)
-      comment.replies.forEach(reply => {
+      comment.replies.forEach((reply) => {
         expect(reply).toBeInstanceOf(Comment)
       })
     })
@@ -189,16 +187,18 @@ describe('Model methods', () => {
 
     axiosMock.onGet().reply((config) => {
       expect(config.method).toEqual('get')
-      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+      expect(config.url).toEqual(
+        `http://localhost/posts/${post.someId}/comments`
+      )
 
       return [200, commentsResponse]
     })
 
     const comments = await post.comments().get()
 
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       expect(comment).toBeInstanceOf(Comment)
-      comment.replies.forEach(reply => {
+      comment.replies.forEach((reply) => {
         expect(reply).toBeInstanceOf(Comment)
       })
     })
@@ -210,16 +210,16 @@ describe('Model methods', () => {
     const posts = await Post.$get()
 
     expect(posts).toEqual(postsEmbedResponse.data)
-
   })
 
   test('$get() fetch style request without "data" wrapper', async () => {
-    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse.data)
+    axiosMock
+      .onGet('http://localhost/posts')
+      .reply(200, postsEmbedResponse.data)
 
     const posts = await Post.$get()
 
     expect(posts).toEqual(postsEmbedResponse.data)
-
   })
 
   test('$get() hits right resource with "data" wrapper (nested object)', async () => {
@@ -233,9 +233,9 @@ describe('Model methods', () => {
     const post = new Post({ id: 1 })
     const comments = await post.comments().$get()
 
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       expect(comment).toBeInstanceOf(Comment)
-      comment.replies.data.forEach(reply => {
+      comment.replies.data.forEach((reply) => {
         expect(reply).toBeInstanceOf(Comment)
       })
     })
@@ -250,16 +250,18 @@ describe('Model methods', () => {
 
     axiosMock.onGet().reply((config) => {
       expect(config.method).toEqual('get')
-      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+      expect(config.url).toEqual(
+        `http://localhost/posts/${post.someId}/comments`
+      )
 
       return [200, commentsResponse]
     })
 
     const comments = await post.comments().$get()
 
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       expect(comment).toBeInstanceOf(Comment)
-      comment.replies.forEach(reply => {
+      comment.replies.forEach((reply) => {
         expect(reply).toBeInstanceOf(Comment)
       })
     })
@@ -320,7 +322,7 @@ describe('Model methods', () => {
     expect(post).toEqual(_postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -361,7 +363,9 @@ describe('Model methods', () => {
   test('save() method makes a PUT request when ID of object exists (nested object)', async () => {
     let comment
 
-    axiosMock.onGet('http://localhost/posts/1/comments').reply(200, commentsResponse)
+    axiosMock
+      .onGet('http://localhost/posts/1/comments')
+      .reply(200, commentsResponse)
 
     axiosMock.onPut().reply((config) => {
       expect(config.method).toEqual('put')
@@ -386,12 +390,16 @@ describe('Model methods', () => {
 
     post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
 
-    axiosMock.onGet(`http://localhost/posts/${post.someId}/comments`).reply(200, commentsResponse)
+    axiosMock
+      .onGet(`http://localhost/posts/${post.someId}/comments`)
+      .reply(200, commentsResponse)
 
     axiosMock.onPut().reply((config) => {
       expect(config.method).toEqual('put')
       expect(config.data).toEqual(JSON.stringify(comment))
-      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments/1`)
+      expect(config.url).toEqual(
+        `http://localhost/posts/${post.someId}/comments/1`
+      )
 
       return [200, {}]
     })
@@ -406,7 +414,6 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       const _post = post
-      delete _post._config
 
       expect(config.method).toEqual('patch')
       expect(config.data).toEqual(JSON.stringify(_post))
@@ -444,7 +451,6 @@ describe('Model methods', () => {
 
     axiosMock.onAny().reply((config) => {
       const _post = post
-      delete _post._config
 
       expect(config.method).toEqual('post')
       expect(config.data).toEqual(JSON.stringify(_post))
@@ -459,15 +465,15 @@ describe('Model methods', () => {
     expect(post).toEqual(_postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
 
   test('save() method makes a POST request when ID of object does not exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
     let post
-    const file = new File(["foo"], "foo.txt", {
-      type: "text/plain",
+    const file = new File(['foo'], 'foo.txt', {
+      type: 'text/plain'
     })
     const _postResponse = {
       id: 1,
@@ -509,8 +515,8 @@ describe('Model methods', () => {
 
   test('save() method makes a PUT request when ID of when ID of object exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
     let post
-    const file = new File(["foo"], "foo.txt", {
-      type: "text/plain",
+    const file = new File(['foo'], 'foo.txt', {
+      type: 'text/plain'
     })
     const _postResponse = {
       id: 1,
@@ -553,8 +559,8 @@ describe('Model methods', () => {
 
   test('patch() method makes a PATCH request when ID of when ID of object exists, with header "Content-Type: multipart/form-data" if the data has files', async () => {
     let post
-    const file = new File(["foo"], "foo.txt", {
-      type: "text/plain",
+    const file = new File(['foo'], 'foo.txt', {
+      type: 'text/plain'
     })
     const _postResponse = {
       id: 1,
@@ -564,7 +570,6 @@ describe('Model methods', () => {
     axiosMock.onAny().reply((config) => {
       let _data
       const _post = post
-      delete _post._config
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = Object.fromEntries(config.data)
@@ -599,8 +604,8 @@ describe('Model methods', () => {
 
   test('save() method can add header "Content-Type: multipart/form-data" when "headers" object is already defined', async () => {
     let post
-    const file = new File(["foo"], "foo.txt", {
-      type: "text/plain",
+    const file = new File(['foo'], 'foo.txt', {
+      type: 'text/plain'
     })
     const _postResponse = {
       id: 1,
@@ -626,7 +631,6 @@ describe('Model methods', () => {
     axiosMock.onAny().reply((config) => {
       let _data
       const _post = post
-      delete _post._config
 
       if (config.headers['Content-Type'] === 'multipart/form-data') {
         _data = JSON.stringify(Object.fromEntries(config.data))
@@ -635,7 +639,9 @@ describe('Model methods', () => {
       }
 
       expect(config.method).toEqual('post')
-      expect(config.headers['Content-Type']).toStrictEqual('multipart/form-data')
+      expect(config.headers['Content-Type']).toStrictEqual(
+        'multipart/form-data'
+      )
       expect(_data).toEqual(JSON.stringify(_post))
       expect(config.url).toEqual('http://localhost/posts')
 
@@ -648,7 +654,7 @@ describe('Model methods', () => {
     expect(post).toEqual(_postResponse)
     expect(post).toBeInstanceOf(Post)
     expect(post.user).toBeInstanceOf(User)
-    post.relationships.tags.forEach(tag => {
+    post.relationships.tags.forEach((tag) => {
       expect(tag).toBeInstanceOf(Tag)
     })
   })
@@ -666,11 +672,9 @@ describe('Model methods', () => {
 
     post = new Post({ id: null, title: 'Cool!' })
     await post.save()
-
   })
 
   test('a request from delete() method hits the right resource', async () => {
-
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('delete')
       expect(config.url).toBe('http://localhost/posts/1')
@@ -701,7 +705,6 @@ describe('Model methods', () => {
   })
 
   test('a request from delete() method when model has not ID throws a exception', async () => {
-
     errorModel = () => {
       let post = new Post()
       post.delete()
@@ -711,7 +714,9 @@ describe('Model methods', () => {
   })
 
   test('a request from delete() method hits the right resource (nested object)', async () => {
-    axiosMock.onGet('http://localhost/posts/1/comments').reply(200, commentsResponse)
+    axiosMock
+      .onGet('http://localhost/posts/1/comments')
+      .reply(200, commentsResponse)
 
     axiosMock.onDelete().reply((config) => {
       expect(config.method).toEqual('delete')
@@ -734,11 +739,15 @@ describe('Model methods', () => {
 
     post = new Post({ id: 1, someId: 'xs911-8cf12', title: 'Cool!' })
 
-    axiosMock.onGet(`http://localhost/posts/${post.someId}/comments`).reply(200, commentsResponse)
+    axiosMock
+      .onGet(`http://localhost/posts/${post.someId}/comments`)
+      .reply(200, commentsResponse)
 
     axiosMock.onDelete().reply((config) => {
       expect(config.method).toEqual('delete')
-      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments/1`)
+      expect(config.url).toEqual(
+        `http://localhost/posts/${post.someId}/comments/1`
+      )
 
       return [200, {}]
     })
@@ -748,25 +757,23 @@ describe('Model methods', () => {
   })
 
   test('a request with custom() method hits the right resource', async () => {
-
     axiosMock.onAny().reply((config) => {
       expect(config.url).toEqual(`http://localhost/postz`)
 
       return [200, {}]
     })
 
-    const post = await Post.custom('postz').first()
+    await Post.custom('postz').first()
   })
 
   test('custom() gracefully handles accidental / for string arguments', async () => {
-
     axiosMock.onAny().reply((config) => {
       expect(config.url).toBe('http://localhost/postz/recent')
 
       return [200, {}]
     })
 
-    const post = await Post.custom('/postz', 'recent').first()
+    await Post.custom('/postz', 'recent').first()
   })
 
   test('custom() called with multiple objects/strings gets the correct resource', async () => {
@@ -782,12 +789,11 @@ describe('Model methods', () => {
 
     user = new User({ id: 1 })
     comment = new Comment()
-    const result = await Comment.custom(user, 'postz', comment).get()
+    await Comment.custom(user, 'postz', comment).get()
   })
 
   test('a request from hasMany() method hits right resource', async () => {
     let user
-    let posts
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('get')
@@ -797,12 +803,11 @@ describe('Model methods', () => {
     })
 
     user = new User({ id: 1 })
-    posts = await user.posts().get()
+    await user.posts().get()
   })
 
   test('a request from hasMany() with a find() hits right resource', async () => {
     let user
-    let post
 
     axiosMock.onAny().reply((config) => {
       expect(config.method).toEqual('get')
@@ -811,17 +816,16 @@ describe('Model methods', () => {
     })
 
     user = new User({ id: 1 })
-    post = await user.posts().find(1)
+    await user.posts().find(1)
   })
 
   test('a request hasMany() method returns a array of Models', async () => {
-
     axiosMock.onGet('http://localhost/users/1/posts').reply(200, postsResponse)
 
     const user = new User({ id: 1 })
     const posts = await user.posts().get()
 
-    posts.forEach(post => {
+    posts.forEach((post) => {
       expect(post).toBeInstanceOf(Post)
     })
   })
@@ -839,7 +843,7 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().attach(comment)
+    post.comments().attach(comment)
   })
 
   test('attach() method hits right endpoint with a POST request (custom PK)', async () => {
@@ -851,14 +855,16 @@ describe('Model methods', () => {
 
     post = new Post({ id: 1, someId: 'gt123-9gh23' })
 
-    axiosMock.onAny().reply(config => {
+    axiosMock.onAny().reply((config) => {
       console.log(config)
     })
 
     axiosMock.onPost().reply((config) => {
       expect(config.method).toEqual('post')
       expect(config.data).toEqual(JSON.stringify(comment))
-      expect(config.url).toEqual(`http://localhost/posts/${post.someId}/comments`)
+      expect(config.url).toEqual(
+        `http://localhost/posts/${post.someId}/comments`
+      )
 
       return [200, {}]
     })
@@ -880,11 +886,10 @@ describe('Model methods', () => {
 
     const post = new Post({ id: 1 })
     comment = { text: 'hi!' }
-    let response = post.comments().sync(comment)
+    post.comments().sync(comment)
   })
 
   test('for() method setup the right resource', async () => {
-
     axiosMock.onPost().reply((config) => {
       expect(config.method).toEqual('post')
       expect(config.url).toEqual('http://localhost/users/1/posts')
@@ -906,63 +911,122 @@ describe('Model methods', () => {
       text: 'for() takes more than one argument now!'
     }).for(user, post)
 
-    expect(comment.endpoint()).toEqual(`http://localhost/users/${user.id}/posts/${post.id}/comments`)
+    expect(comment.endpoint()).toEqual(
+      `http://localhost/users/${user.id}/posts/${post.id}/comments`
+    )
   })
 
   test('it throws a error when for() method does not recieve a instance of Model', () => {
     errorModel = () => {
-      const post = new Post({ text: 'Hello' }).for()
+      new Post({ text: 'Hello' }).for()
     }
 
-    expect(errorModel).toThrow('The for() method takes a minimum of one argument.')
+    expect(errorModel).toThrow(
+      'The for() method takes a minimum of one argument.'
+    )
 
     errorModel = () => {
-      const post = new Post({ text: 'Hello' }).for({})
+      new Post({ text: 'Hello' }).for({})
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+    expect(errorModel).toThrow(
+      'The object referenced on for() method is not a valid Model.'
+    )
 
     errorModel = () => {
-      const post = new Post({ text: 'Hello' }).for('')
+      new Post({ text: 'Hello' }).for('')
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+    expect(errorModel).toThrow(
+      'The object referenced on for() method is not a valid Model.'
+    )
 
     errorModel = () => {
-      const post = new Post({ text: 'Hello' }).for(1)
+      new Post({ text: 'Hello' }).for(1)
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method is not a valid Model.')
+    expect(errorModel).toThrow(
+      'The object referenced on for() method is not a valid Model.'
+    )
   })
 
   test('it throws a error when for() when referenced object has not a valid id', () => {
     errorModel = () => {
       const user = new User({ name: 'Mary' })
-      const post = new Post({ text: 'Hello' }).for(user)
+      new Post({ text: 'Hello' }).for(user)
     }
 
-    expect(errorModel).toThrow('The object referenced on for() method has an invalid id.')
+    expect(errorModel).toThrow(
+      'The object referenced on for() method has an invalid id.'
+    )
   })
 
   test('it throws a error when a custom() parameter is not a valid Model or a string', () => {
-
     errorModel = () => {
-      const post = new Post({ text: 'Hello' }).custom()
+      new Post({ text: 'Hello' }).custom()
     }
 
-    expect(errorModel).toThrow('The custom() method takes a minimum of one argument.')
+    expect(errorModel).toThrow(
+      'The custom() method takes a minimum of one argument.'
+    )
 
     errorModel = () => {
       const user = new User({ name: 'Mary' })
-      const post = new Post({ text: 'Hello' }).custom(user, 'a-string', 42)
+      new Post({ text: 'Hello' }).custom(user, 'a-string', 42)
     }
 
-    expect(errorModel).toThrow('Arguments to custom() must be strings or instances of Model.')
+    expect(errorModel).toThrow(
+      'Arguments to custom() must be strings or instances of Model.'
+    )
+  })
+
+  test('it throws an error when CRUD and relationship operations are used in conjunction with custom()', () => {
+    errorModel = () => {
+      new Post({ text: 'Hello' }).custom('foo/bar').save()
+    }
+
+    expect(errorModel).toThrow(
+      'The save() method cannot be used in conjunction with the custom() method. Use for() instead.'
+    )
+
+    errorModel = () => {
+      new Post({ id: 1 }).custom('foo/bar').delete()
+    }
+
+    expect(errorModel).toThrow(
+      'The delete() method cannot be used in conjunction with the custom() method. Use for() instead.'
+    )
+
+    errorModel = () => {
+      const post = new Post({ id: 1 })
+      post.comments().custom('foo/bar').attach({
+        text: 'Awesome post!'
+      })
+    }
+
+    expect(errorModel).toThrow(
+      'The attach() method cannot be used in conjunction with the custom() method. Use for() instead.'
+    )
+
+    errorModel = () => {
+      const post = new Post({ id: 1 })
+      post.comments().custom('foo/bar').sync({
+        text: 'Awesome post!'
+      })
+    }
+
+    expect(errorModel).toThrow(
+      'The sync() method cannot be used in conjunction with the custom() method. Use for() instead.'
+    )
   })
 
   test('save() method makes a PUT request to the correct URL on nested object thas was fetched with find() method', async () => {
-    axiosMock.onGet('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
-    axiosMock.onPut('http://localhost/posts/1/comments/1').reply(200, commentsResponse[0])
+    axiosMock
+      .onGet('http://localhost/posts/1/comments/1')
+      .reply(200, commentsResponse[0])
+    axiosMock
+      .onPut('http://localhost/posts/1/comments/1')
+      .reply(200, commentsResponse[0])
 
     const post = new Post({ id: 1 })
     const comment = await post.comments().find(1)
@@ -976,5 +1040,50 @@ describe('Model methods', () => {
 
     comment.text = 'Hola!'
     await comment.save()
+  })
+
+  test('config() method can change request config', async () => {
+    axiosMock.onGet('http://localhost/posts').reply((config) => {
+      expect(config.params).toEqual({
+        foo: 'bar'
+      })
+
+      return [200, postsResponse]
+    })
+
+    const posts = await Post.config({
+      params: {
+        foo: 'bar'
+      }
+    }).get()
+
+    posts.forEach((post) => {
+      expect(post).toBeInstanceOf(Post)
+      expect(post.user).toBeInstanceOf(User)
+      post.relationships.tags.forEach((tag) => {
+        expect(tag).toBeInstanceOf(Tag)
+      })
+    })
+  })
+
+  test('config() method can merge request config recursively', async () => {
+    let post
+
+    axiosMock.onAny().reply((config) => {
+      const _post = { ...post, foo: 'bar' }
+
+      expect(config.data).toEqual(JSON.stringify(_post))
+
+      return [200, {}]
+    })
+
+    post = new Post({ id: 1, title: 'Cool!' })
+    await post
+      .config({
+        data: {
+          foo: 'bar'
+        }
+      })
+      .save()
   })
 })

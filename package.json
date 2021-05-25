@@ -11,12 +11,9 @@
   "scripts": {
     "build": "babel src -d build",
     "lint": "eslint --ext .js .",
-    "test": "jest --coverage",
-    "test-watch": "jest --watch --coverage"
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -61,13 +58,20 @@
     "axios-mock-adapter": "^1.18.1",
     "babel-eslint": "^10.1.0",
     "codecov": "^3.6.5",
-    "eslint": "^6.8.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^24.1.0",
+    "prettier": "^2.2.1",
     "semantic-release": "^17.2.2"
   },
   "dependencies": {
     "dotprop": "^1.2.0",
     "dset": "^2.0.1",
+    "merge": "^2.1.1",
     "object-to-formdata": "^4.1.0",
     "qs": "^6.9.4"
   }
