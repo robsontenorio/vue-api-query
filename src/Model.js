@@ -306,41 +306,44 @@ export default class Model extends StaticModel {
   }
 
   _reqConfig(config, options = { forceMethod: false }) {
-    // Merge cloned config to prevent changing the original config objects
-    const _config = merge.recursive({ ...config }, { ...this._config })
+    // Preserve default method
+    const defaultMethod = config.method
+
+    // Merge default config with the config defined by the user at query builder.
+    merge.recursive(config, this._config)
 
     // Prevent default request method from being overridden
     if (options.forceMethod) {
-      _config.method = config.method
+      config.method = defaultMethod
     }
 
     // Check if config has data
-    if ('data' in _config) {
-      const _hasFiles = Object.keys(_config.data).some((property) => {
-        if (Array.isArray(_config.data[property])) {
-          return _config.data[property].some((value) => value instanceof File)
+    if ('data' in config) {
+      const _hasFiles = Object.keys(config.data).some((property) => {
+        if (Array.isArray(config.data[property])) {
+          return config.data[property].some((value) => value instanceof File)
         }
 
-        return _config.data[property] instanceof File
+        return config.data[property] instanceof File
       })
 
       // Check if the data has files
       if (_hasFiles) {
         // Check if `config` has `headers` property
-        if (!('headers' in _config)) {
+        if (!('headers' in config)) {
           // If not, then set an empty object
-          _config.headers = {}
+          config.headers = {}
         }
 
         // Set header Content-Type
-        _config.headers['Content-Type'] = 'multipart/form-data'
+        config.headers['Content-Type'] = 'multipart/form-data'
 
         // Convert object to form data
-        _config.data = serialize(_config.data, this.formData())
+        config.data = serialize(config.data, this.formData())
       }
     }
 
-    return _config
+    return config
   }
 
   first() {
