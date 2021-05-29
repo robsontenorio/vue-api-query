@@ -1,6 +1,6 @@
+import defu from 'defu'
 import getProp from 'dotprop'
 import setProp from 'dset'
-import merge from 'merge'
 import { serialize } from 'object-to-formdata'
 
 import Builder from './Builder'
@@ -306,8 +306,8 @@ export default class Model extends StaticModel {
   }
 
   _reqConfig(config, options = { forceMethod: false }) {
-    // Merge cloned config to prevent changing the original config objects
-    const _config = merge.recursive({ ...config }, { ...this._config })
+    // Merge config, recursively. Leftmost arguments have more priority.
+    const _config = defu(this._config, config)
 
     // Prevent default request method from being overridden
     if (options.forceMethod) {
