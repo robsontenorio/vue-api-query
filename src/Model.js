@@ -1,6 +1,6 @@
 import defu from 'defu'
 import getProp from 'dotprop'
-import setProp from 'dset'
+import { dset as setProp } from 'dset'
 import { serialize } from 'object-to-formdata'
 
 import Builder from './Builder'

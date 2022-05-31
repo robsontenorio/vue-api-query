@@ -71,7 +71,7 @@
   "dependencies": {
     "defu": "^5.0.0",
     "dotprop": "^1.2.0",
-    "dset": "^2.0.1",
+    "dset": "^3.1.2",
     "object-to-formdata": "^4.1.0",
     "qs": "^6.9.4"
   }
