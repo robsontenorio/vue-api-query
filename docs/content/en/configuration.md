@@ -85,6 +85,8 @@ export default class User extends Model {
 
 ### Typescript
 
+<alert type="success">Available in version >= v1.9.0</alert>
+
 If we are working on a Typescript project, we can infer the types of the fields, so we have intellisense.
 
 #### Directly in Model
