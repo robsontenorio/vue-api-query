@@ -100,7 +100,7 @@ export default class Builder {
   }
 
   where(key, value) {
-    if (key === undefined || value === undefined) {
+    if (key === undefined || (typeof key !== 'object' && value === undefined)) {
       throw new Error('The KEY and VALUE are required on where() method.')
     }
 
@@ -112,6 +112,11 @@ export default class Builder {
       const [_key, _value] = this._nestedFilter(key, value)
 
       this.filters[_key] = { ...this.filters[_key], ..._value }
+    } else if (typeof key === 'object') {
+      this.filters = {
+        ...this.filters,
+        ...key
+      }
     } else {
       this.filters[key] = value
     }
@@ -120,7 +125,7 @@ export default class Builder {
   }
 
   whereIn(key, array) {
-    if (!Array.isArray(array)) {
+    if (typeof key !== 'object' && !Array.isArray(array)) {
       throw new Error(
         'The second argument on whereIn() method must be an array.'
       )
@@ -130,6 +135,11 @@ export default class Builder {
       const [_key, _value] = this._nestedFilter(key, array)
 
       this.filters[_key] = { ...this.filters[_key], ..._value }
+    } else if (typeof key === 'object') {
+      this.filters = {
+        ...this.filters,
+        ...key
+      }
     } else {
       this.filters[key] = array
     }

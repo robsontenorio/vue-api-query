@@ -276,6 +276,34 @@ So we can filter our **Posts** to only get results where `status` of `user` is `
   </code-block>
 </code-group>
 
+#### Using an Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+Now is also possible to pass an object.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where({
+    status: 'published',
+    user: {
+      status: 'active'
+    }
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[status]=published&filter[user][status]=active
+  ```
+
+  </code-block>
+</code-group>
+
 ### Evaluating Multiple Values
 
 See the [API reference](/api/query-builder-methods#wherein)
@@ -327,6 +355,34 @@ So we can filter our **Posts** to only get results where `status` of `user` is `
 
   ```http request
   GET /posts?filter[user][status]=active,inactive
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+Now is also possible to pass an object.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where({
+    status: ['published', 'archived'],
+    user: {
+      status: ['active', 'inactive']
+    }
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[status]=published,archived&filter[user][status]=active,inactive
   ```
 
   </code-block>

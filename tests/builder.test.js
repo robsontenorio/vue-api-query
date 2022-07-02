@@ -133,6 +133,18 @@ describe('Query builder', () => {
     expect(post._builder.query()).toEqual(
       '?filter[schedule][start]=2020-11-27&filter[schedule][end]=2020-11-28'
     )
+
+    post = Post.where({ id: 1, title: 'Cool' }).when(true, (query) =>
+      query.where({ user: { status: 'active' } })
+    )
+
+    expect(post._builder.filters).toEqual({
+      id: 1,
+      title: 'Cool',
+      user: {
+        status: 'active'
+      }
+    })
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -189,6 +201,17 @@ describe('Query builder', () => {
     expect(post._builder.query()).toEqual(
       '?filter[schedule][start]=2020-11-27,2020-11-28&filter[schedule][end]=2020-11-28,2020-11-29'
     )
+
+    post = Post.where({ status: ['ACTIVE', 'ARCHIVED'] }).when(true, (query) =>
+      query.where({ user: { status: ['active', 'inactive'] } })
+    )
+
+    expect(post._builder.filters).toEqual({
+      status: ['ACTIVE', 'ARCHIVED'],
+      user: {
+        status: ['active', 'inactive']
+      }
+    })
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {

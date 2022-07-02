@@ -151,6 +151,17 @@ declare class StaticModel {
   ): InstanceType<M>
 
   /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  static where<M extends typeof Model> (
+    this: M,
+    filter: Record<string, any>
+  ): InstanceType<M>
+
+  /**
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
@@ -160,6 +171,17 @@ declare class StaticModel {
     this: M,
     field: string | string[],
     values: (string | number | boolean)[]
+  ): InstanceType<M>
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  static whereIn<M extends typeof Model> (
+    this: M,
+    filter: Record<string, any>
   ): InstanceType<M>
 
   /**
@@ -520,12 +542,28 @@ export class Model extends StaticModel {
   where (field: string | string[], value: string | number | boolean): this
 
   /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  where (filter: Record<string, any>): this
+
+  /**
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
    */
   whereIn (field: string | string[], array: (string | number | boolean)[]): this
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  whereIn (filter: Record<string, any>): this
 
   /**
    * Add an "order by" clause to the query.
@@ -814,12 +852,28 @@ declare class Builder {
   where (field: string | string[], value: string | number | boolean): this
 
   /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  where (filter: Record<string, any>): this
+
+  /**
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
    */
   whereIn (field: string | string[], array: (string | number | boolean)[]): this
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  whereIn (filter: Record<string, any>): this
 
   /**
    * Add an "order by" clause to the query.
