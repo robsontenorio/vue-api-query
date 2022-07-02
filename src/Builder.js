@@ -2,7 +2,7 @@
  * Prepare attributes to be parsed
  */
 
-import setProp from 'dset'
+import { dset as setProp } from 'dset'
 
 import Parser from './Parser'
 
