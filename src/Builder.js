@@ -86,13 +86,13 @@ export default class Builder {
 
     // single entity .select(['age', 'firstname'])
     if (typeof fields[0] === 'string' || Array.isArray(fields[0])) {
-      this.fields[this.model.resource()] = fields.join(',')
+      this.fields[this.model.resource()] = fields
     }
 
     // related entities .select({ posts: ['title', 'content'], user: ['age', 'firstname']} )
     if (typeof fields[0] === 'object') {
       Object.entries(fields[0]).forEach(([key, value]) => {
-        this.fields[key] = value.join(',')
+        this.fields[key] = value
       })
     }
 
@@ -127,11 +127,11 @@ export default class Builder {
     }
 
     if (Array.isArray(key)) {
-      const [_key, _value] = this._nestedFilter(key, array.join(','))
+      const [_key, _value] = this._nestedFilter(key, array)
 
       this.filters[_key] = { ...this.filters[_key], ..._value }
     } else {
-      this.filters[key] = array.join(',')
+      this.filters[key] = array
     }
 
     return this

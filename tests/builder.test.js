@@ -164,12 +164,12 @@ describe('Query builder', () => {
   test('whereIn() sets properly the builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
-    expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
+    expect(post._builder.filters).toEqual({ status: ['ACTIVE', 'ARCHIVED'] })
 
     post = Post.whereIn(['user', 'status'], ['active', 'inactive'])
 
     expect(post._builder.filters).toEqual({
-      user: { status: 'active,inactive' }
+      user: { status: ['active', 'inactive'] }
     })
     expect(post._builder.query()).toEqual(
       '?filter[user][status]=active,inactive'
@@ -181,7 +181,10 @@ describe('Query builder', () => {
     ).whereIn(['schedule', 'end'], ['2020-11-28', '2020-11-29'])
 
     expect(post._builder.filters).toEqual({
-      schedule: { start: '2020-11-27,2020-11-28', end: '2020-11-28,2020-11-29' }
+      schedule: {
+        start: ['2020-11-27', '2020-11-28'],
+        end: ['2020-11-28', '2020-11-29']
+      }
     })
     expect(post._builder.query()).toEqual(
       '?filter[schedule][start]=2020-11-27,2020-11-28&filter[schedule][end]=2020-11-28,2020-11-29'
@@ -241,7 +244,7 @@ describe('Query builder', () => {
   test('select() for single entity', () => {
     let post = Post.select('age', 'firstname')
 
-    expect(post._builder.fields.posts).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual(['age', 'firstname'])
   })
 
   test('select() for related entities', () => {
@@ -250,14 +253,19 @@ describe('Query builder', () => {
       user: ['age', 'firstname']
     })
 
-    expect(post._builder.fields.posts).toEqual('title,content')
-    expect(post._builder.fields.user).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual(['title', 'content'])
+    expect(post._builder.fields.user).toEqual(['age', 'firstname'])
   })
 
   test('params() sets properly the builder', () => {
     let post = Post.params({ doSomething: 'yes' })
 
     expect(post._builder.payload).toEqual({ doSomething: 'yes' })
+
+    post = Post.params({ foo: 'bar', baz: ['a', 'b'] })
+
+    expect(post._builder.payload).toEqual({ foo: 'bar', baz: ['a', 'b'] })
+    expect(post._builder.query()).toEqual('?foo=bar&baz=a,b')
   })
 
   test('params() throws a exception when the payload is not an object', () => {
