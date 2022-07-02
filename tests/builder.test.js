@@ -276,6 +276,28 @@ describe('Query builder', () => {
     expect(errorModel).toThrow('You must pass a payload/object as param.')
   })
 
+  test('when() sets properly the builder', () => {
+    let search = ''
+    let post = Post.when(search, (query, value) => query.where('title', value))
+
+    expect(post._builder.filters).toEqual({})
+
+    search = 'foo'
+    post = Post.when(search, (query, value) => query.where('title', value))
+
+    expect(post._builder.filters).toEqual({ title: 'foo' })
+  })
+
+  test('when() throws a exception when callback is not a function', () => {
+    errorModel = () => {
+      Post.when()
+    }
+
+    expect(errorModel).toThrow(
+      'The CALLBACK is required and must be a function on when() method.'
+    )
+  })
+
   test('it resets the uri upon query generation when the query is regenerated a second time', () => {
     const post = Post.where('title', 'Cool').page(4)
 

@@ -250,6 +250,12 @@ export default class Model extends StaticModel {
     return this
   }
 
+  when(value, callback) {
+    this._builder.when(value, callback)
+
+    return this
+  }
+
   /**
    * Result
    */

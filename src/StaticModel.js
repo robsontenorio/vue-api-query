@@ -81,6 +81,13 @@ export default class StaticModel {
     return self
   }
 
+  static when(value, callback) {
+    let self = this.instance()
+    self.when(value, callback)
+
+    return self
+  }
+
   static custom(...args) {
     let self = this.instance()
     self.custom(...args)

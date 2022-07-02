@@ -162,6 +162,20 @@ Add custom parameters to the query.
   </code-block>
 </code-group>
 
+## `when`
+<alert type="success">Available in version >= v1.10.0</alert>
+
+- Arguments: `(value, callback)`
+- Returns: `self`
+
+Add a conditional clause to the query.
+
+```js
+const search = 'foo'
+
+await Model.when(search, (query, value) => query.where('search', value))
+```
+
 ## `custom`
 - Arguments: `(...args)`
 - Returns: `self`

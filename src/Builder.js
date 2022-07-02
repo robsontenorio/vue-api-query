@@ -173,4 +173,18 @@ export default class Builder {
 
     return this
   }
+
+  when(value, callback) {
+    if (typeof callback !== 'function') {
+      throw new Error(
+        'The CALLBACK is required and must be a function on when() method.'
+      )
+    }
+
+    if (value) {
+      callback(this, value)
+    }
+
+    return this
+  }
 }
