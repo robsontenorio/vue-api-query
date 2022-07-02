@@ -202,8 +202,8 @@ describe('Query builder', () => {
       '?filter[schedule][start]=2020-11-27,2020-11-28&filter[schedule][end]=2020-11-28,2020-11-29'
     )
 
-    post = Post.where({ status: ['ACTIVE', 'ARCHIVED'] }).when(true, (query) =>
-      query.where({ user: { status: ['active', 'inactive'] } })
+    post = Post.whereIn({ status: ['ACTIVE', 'ARCHIVED'] }).when(true, (query) =>
+      query.whereIn({ user: { status: ['active', 'inactive'] } })
     )
 
     expect(post._builder.filters).toEqual({
