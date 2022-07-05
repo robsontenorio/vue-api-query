@@ -80,6 +80,14 @@ await Model.where('status', 'active')
 await Model.where(['user', 'status'], 'active')
 ```
 
+#### Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+```js
+await Model.where({ user: { status: 'active' } })
+```
+
 ## `whereIn`
 - Arguments: `(field, array)`
 - Returns: `self`
@@ -96,6 +104,14 @@ await Model.whereIn('id', [1, 2, 3])
 
 ```js
 await Model.whereIn(['user', 'id'], [1, 2, 3])
+```
+
+#### Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+```js
+await Model.where({ user: { id: [1, 2, 3] } })
 ```
 
 ## `orderBy`
@@ -161,6 +177,20 @@ Add custom parameters to the query.
 
   </code-block>
 </code-group>
+
+## `when`
+<alert type="success">Available in version >= v1.10.0</alert>
+
+- Arguments: `(value, callback)`
+- Returns: `self`
+
+Add a conditional clause to the query.
+
+```js
+const search = 'foo'
+
+await Model.when(search, (query, value) => query.where('search', value))
+```
 
 ## `custom`
 - Arguments: `(...args)`

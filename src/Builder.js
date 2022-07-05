@@ -2,7 +2,7 @@
  * Prepare attributes to be parsed
  */
 
-import setProp from 'dset'
+import { dset as setProp } from 'dset'
 
 import Parser from './Parser'
 
@@ -86,13 +86,13 @@ export default class Builder {
 
     // single entity .select(['age', 'firstname'])
     if (typeof fields[0] === 'string' || Array.isArray(fields[0])) {
-      this.fields[this.model.resource()] = fields.join(',')
+      this.fields[this.model.resource()] = fields
     }
 
     // related entities .select({ posts: ['title', 'content'], user: ['age', 'firstname']} )
     if (typeof fields[0] === 'object') {
       Object.entries(fields[0]).forEach(([key, value]) => {
-        this.fields[key] = value.join(',')
+        this.fields[key] = value
       })
     }
 
@@ -100,7 +100,7 @@ export default class Builder {
   }
 
   where(key, value) {
-    if (key === undefined || value === undefined) {
+    if (key === undefined || (typeof key !== 'object' && value === undefined)) {
       throw new Error('The KEY and VALUE are required on where() method.')
     }
 
@@ -112,6 +112,11 @@ export default class Builder {
       const [_key, _value] = this._nestedFilter(key, value)
 
       this.filters[_key] = { ...this.filters[_key], ..._value }
+    } else if (typeof key === 'object') {
+      this.filters = {
+        ...this.filters,
+        ...key
+      }
     } else {
       this.filters[key] = value
     }
@@ -120,18 +125,23 @@ export default class Builder {
   }
 
   whereIn(key, array) {
-    if (!Array.isArray(array)) {
+    if (typeof key !== 'object' && !Array.isArray(array)) {
       throw new Error(
         'The second argument on whereIn() method must be an array.'
       )
     }
 
     if (Array.isArray(key)) {
-      const [_key, _value] = this._nestedFilter(key, array.join(','))
+      const [_key, _value] = this._nestedFilter(key, array)
 
       this.filters[_key] = { ...this.filters[_key], ..._value }
+    } else if (typeof key === 'object') {
+      this.filters = {
+        ...this.filters,
+        ...key
+      }
     } else {
-      this.filters[key] = array.join(',')
+      this.filters[key] = array
     }
 
     return this
@@ -170,6 +180,20 @@ export default class Builder {
     }
 
     this.payload = payload
+
+    return this
+  }
+
+  when(value, callback) {
+    if (typeof callback !== 'function') {
+      throw new Error(
+        'The CALLBACK is required and must be a function on when() method.'
+      )
+    }
+
+    if (value) {
+      callback(this, value)
+    }
 
     return this
   }

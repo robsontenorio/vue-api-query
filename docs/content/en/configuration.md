@@ -83,6 +83,44 @@ export default class User extends Model {
 }
 ```
 
+### Typescript
+
+<alert type="success">Available in version >= v1.9.0</alert>
+
+If we are working on a Typescript project, we can infer the types of the fields, so we have intellisense.
+
+#### Directly in Model
+```ts{}[~/models/User.ts]
+import Model from './Model'
+
+export default class User extends Model {
+  firstName: string
+  lastName: string
+  age: number
+
+  ...
+}
+```
+
+#### Using an Interface
+```ts{}[~/models/User.ts]
+import Model from './Model'
+
+interface User {
+  firstName: string
+  lastName: string
+  age: number
+}
+
+class User extends Model {
+  ...
+}
+
+export default User
+```
+
+<alert type="info">You can use `!` operator to make non-null assertion.</alert>
+
 ## Changing the Primary Key
 
 <alert type="info">By default, the `primaryKey` is set to `id`.</alert>

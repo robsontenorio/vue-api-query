@@ -151,6 +151,17 @@ declare class StaticModel {
   ): InstanceType<M>
 
   /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  static where<M extends typeof Model> (
+    this: M,
+    filter: Record<string, any>
+  ): InstanceType<M>
+
+  /**
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
@@ -160,6 +171,17 @@ declare class StaticModel {
     this: M,
     field: string | string[],
     values: (string | number | boolean)[]
+  ): InstanceType<M>
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  static whereIn<M extends typeof Model> (
+    this: M,
+    filter: Record<string, any>
   ): InstanceType<M>
 
   /**
@@ -201,6 +223,14 @@ declare class StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#applying-custom-parameters|Building the Query}
    */
   static params<M extends typeof Model> (this: M, payload: Record<string, string | number | boolean>): InstanceType<M>
+
+  /**
+   * Add a conditional clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#when|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#conditional|Building the Query}
+   */
+  static when<M extends typeof Model, T = any> (this: M, value: T, callback: (query: Builder, value: T) => any): InstanceType<M>
 
   /**
    * Build custom endpoints.
@@ -512,12 +542,28 @@ export class Model extends StaticModel {
   where (field: string | string[], value: string | number | boolean): this
 
   /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  where (filter: Record<string, any>): this
+
+  /**
    * Add a "where in" clause to the query.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
    */
   whereIn (field: string | string[], array: (string | number | boolean)[]): this
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  whereIn (filter: Record<string, any>): this
 
   /**
    * Add an "order by" clause to the query.
@@ -558,6 +604,14 @@ export class Model extends StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#applying-custom-parameters|Building the Query}
    */
   params (payload: Record<string, string | number | boolean>): this
+
+  /**
+   * Add a conditional clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#when|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#conditional|Building the Query}
+   */
+  when<T = any>(value: T, callback: (query: Builder, value: T) => any): this
 
   /**
    * Build custom endpoints.
@@ -704,4 +758,173 @@ export class Model extends StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/performing-operations#syncing-a-model|Performing Operations}
    */
   sync (params: Record<string, any>): Promise<any>
+}
+
+declare class Builder {
+  /**
+   * Query
+   */
+
+  /**
+   * Eager load relationships.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
+   */
+  include (...relationships: string[]): this
+
+  /**
+   * Eager load relationships.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
+   */
+  include (relationships: string[]): this
+
+  /**
+   * Eager load relationships.
+   *
+   * Alias for the [include()]{@link include} method.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
+   */
+  with (...relationships: string[]): this
+
+  /**
+   * Eager load relationships.
+   *
+   * Alias for the [include()]{@link include} method.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#include|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#including-relationships|Building the Query}
+   */
+  with (relationships: string[]): this
+
+  /**
+   * Append attributes.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
+   */
+  append (...attributes: string[]): this
+
+  /**
+   * Append attributes.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#append|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#appending-attributes|Building the Query}
+   */
+  append (attributes: string[]): this
+
+  /**
+   * Set the columns to be selected.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
+   */
+  select (...columns: string[]): this
+
+  /**
+   * Set the columns to be selected.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
+   */
+  select (columns: string[]): this
+
+  /**
+   * Set the columns to be selected.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#select|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#selecting-fields|Building the Query}
+   */
+  select (columns: {
+    [related: string]: string[]
+  }): this
+
+  /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  where (field: string | string[], value: string | number | boolean): this
+
+  /**
+   * Add a basic where clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#where|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-a-single-value|Building the Query}
+   */
+  where (filter: Record<string, any>): this
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  whereIn (field: string | string[], array: (string | number | boolean)[]): this
+
+  /**
+   * Add a "where in" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wherein|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#evaluating-multiple-values|Building the Query}
+   */
+  whereIn (filter: Record<string, any>): this
+
+  /**
+   * Add an "order by" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
+   */
+  orderBy (...columns: string[]): this
+
+  /**
+   * Add an "order by" clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#orderby|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#sorting|Building the Query}
+   */
+  orderBy (columns: string[]): this
+
+  /**
+   * Set the current page.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#page|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
+   */
+  page (number: number): this
+
+  /**
+   * Set the page limit.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#limit|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
+   */
+  limit (number: number): this
+
+  /**
+   * Add custom parameters to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#params|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#applying-custom-parameters|Building the Query}
+   */
+  params (payload: Record<string, string | number | boolean>): this
+
+  /**
+   * Add a conditional clause to the query.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#when|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#conditional|Building the Query}
+   */
+  when<T = any>(value: T, callback: (query: this, value: T) => any): this
+
+  /**
+   * Return parsed query string.
+   */
+  query(): string
 }

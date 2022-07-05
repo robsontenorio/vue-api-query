@@ -66,12 +66,12 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^24.1.0",
     "prettier": "^2.2.1",
-    "semantic-release": "^17.2.2"
+    "semantic-release": "^19.0.3"
   },
   "dependencies": {
+    "defu": "^5.0.0",
     "dotprop": "^1.2.0",
-    "dset": "^2.0.1",
-    "merge": "^2.1.1",
+    "dset": "^3.1.2",
     "object-to-formdata": "^4.1.0",
     "qs": "^6.9.4"
   }

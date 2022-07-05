@@ -133,6 +133,18 @@ describe('Query builder', () => {
     expect(post._builder.query()).toEqual(
       '?filter[schedule][start]=2020-11-27&filter[schedule][end]=2020-11-28'
     )
+
+    post = Post.where({ id: 1, title: 'Cool' }).when(true, (query) =>
+      query.where({ user: { status: 'active' } })
+    )
+
+    expect(post._builder.filters).toEqual({
+      id: 1,
+      title: 'Cool',
+      user: {
+        status: 'active'
+      }
+    })
   })
 
   test('where() throws a exception when doest not have params or only first param', () => {
@@ -164,12 +176,12 @@ describe('Query builder', () => {
   test('whereIn() sets properly the builder', () => {
     let post = Post.whereIn('status', ['ACTIVE', 'ARCHIVED'])
 
-    expect(post._builder.filters).toEqual({ status: 'ACTIVE,ARCHIVED' })
+    expect(post._builder.filters).toEqual({ status: ['ACTIVE', 'ARCHIVED'] })
 
     post = Post.whereIn(['user', 'status'], ['active', 'inactive'])
 
     expect(post._builder.filters).toEqual({
-      user: { status: 'active,inactive' }
+      user: { status: ['active', 'inactive'] }
     })
     expect(post._builder.query()).toEqual(
       '?filter[user][status]=active,inactive'
@@ -181,11 +193,26 @@ describe('Query builder', () => {
     ).whereIn(['schedule', 'end'], ['2020-11-28', '2020-11-29'])
 
     expect(post._builder.filters).toEqual({
-      schedule: { start: '2020-11-27,2020-11-28', end: '2020-11-28,2020-11-29' }
+      schedule: {
+        start: ['2020-11-27', '2020-11-28'],
+        end: ['2020-11-28', '2020-11-29']
+      }
     })
     expect(post._builder.query()).toEqual(
       '?filter[schedule][start]=2020-11-27,2020-11-28&filter[schedule][end]=2020-11-28,2020-11-29'
     )
+
+    post = Post.whereIn({ status: ['ACTIVE', 'ARCHIVED'] }).when(
+      true,
+      (query) => query.whereIn({ user: { status: ['active', 'inactive'] } })
+    )
+
+    expect(post._builder.filters).toEqual({
+      status: ['ACTIVE', 'ARCHIVED'],
+      user: {
+        status: ['active', 'inactive']
+      }
+    })
   })
 
   test('whereIn() throws a exception when second parameter is not a array', () => {
@@ -241,7 +268,7 @@ describe('Query builder', () => {
   test('select() for single entity', () => {
     let post = Post.select('age', 'firstname')
 
-    expect(post._builder.fields.posts).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual(['age', 'firstname'])
   })
 
   test('select() for related entities', () => {
@@ -250,14 +277,19 @@ describe('Query builder', () => {
       user: ['age', 'firstname']
     })
 
-    expect(post._builder.fields.posts).toEqual('title,content')
-    expect(post._builder.fields.user).toEqual('age,firstname')
+    expect(post._builder.fields.posts).toEqual(['title', 'content'])
+    expect(post._builder.fields.user).toEqual(['age', 'firstname'])
   })
 
   test('params() sets properly the builder', () => {
     let post = Post.params({ doSomething: 'yes' })
 
     expect(post._builder.payload).toEqual({ doSomething: 'yes' })
+
+    post = Post.params({ foo: 'bar', baz: ['a', 'b'] })
+
+    expect(post._builder.payload).toEqual({ foo: 'bar', baz: ['a', 'b'] })
+    expect(post._builder.query()).toEqual('?foo=bar&baz=a,b')
   })
 
   test('params() throws a exception when the payload is not an object', () => {
@@ -266,6 +298,28 @@ describe('Query builder', () => {
     }
 
     expect(errorModel).toThrow('You must pass a payload/object as param.')
+  })
+
+  test('when() sets properly the builder', () => {
+    let search = ''
+    let post = Post.when(search, (query, value) => query.where('title', value))
+
+    expect(post._builder.filters).toEqual({})
+
+    search = 'foo'
+    post = Post.when(search, (query, value) => query.where('title', value))
+
+    expect(post._builder.filters).toEqual({ title: 'foo' })
+  })
+
+  test('when() throws a exception when callback is not a function', () => {
+    errorModel = () => {
+      Post.when()
+    }
+
+    expect(errorModel).toThrow(
+      'The CALLBACK is required and must be a function on when() method.'
+    )
   })
 
   test('it resets the uri upon query generation when the query is regenerated a second time', () => {

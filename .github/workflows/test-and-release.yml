@@ -53,7 +53,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 12.x, 14.x ]
+        node-version: [ 14.x, 16.x, 18.x ]
       fail-fast: true
 
     steps:
@@ -61,7 +61,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -140,7 +140,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 12.x ]
+        node-version: [ 16.x ]
       fail-fast: true
 
     steps:
@@ -148,7 +148,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
 

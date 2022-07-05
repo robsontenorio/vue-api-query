@@ -276,6 +276,34 @@ So we can filter our **Posts** to only get results where `status` of `user` is `
   </code-block>
 </code-group>
 
+#### Using an Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+Now is also possible to pass an object.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where({
+    status: 'published',
+    user: {
+      status: 'active'
+    }
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[status]=published&filter[user][status]=active
+  ```
+
+  </code-block>
+</code-group>
+
 ### Evaluating Multiple Values
 
 See the [API reference](/api/query-builder-methods#wherein)
@@ -327,6 +355,34 @@ So we can filter our **Posts** to only get results where `status` of `user` is `
 
   ```http request
   GET /posts?filter[user][status]=active,inactive
+  ```
+
+  </code-block>
+</code-group>
+
+#### Using an Object
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+Now is also possible to pass an object.
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const posts = await Post.where({
+    status: ['published', 'archived'],
+    user: {
+      status: ['active', 'inactive']
+    }
+  }).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[status]=published,archived&filter[user][status]=active,inactive
   ```
 
   </code-block>
@@ -597,11 +653,38 @@ Let's say we are at page 1, and we want 20 **Posts** per page:
   </code-block>
 </code-group>
 
+## Conditional
+
+<alert type="success">Available in version >= v1.10.0</alert>
+
+We may need to add a clause based on a condition, and we can do so by using the `when` method.
+The first argument is the flag, and the second argument is the callback with the clause we want.
+
+
+<code-group>
+  <code-block label="Query" active>
+
+  ```js
+  const search = 'foo'
+  const posts = await Post.when(search, (query, value) => query.where('title', value)).get()
+  ```
+
+  </code-block>
+  <code-block label="Request">
+
+  ```http request
+  GET /posts?filter[title]=foo
+  ```
+
+  </code-block>
+</code-group>
+
+
 ## Applying Custom Parameters
 
 See the [API reference](/api/query-builder-methods#params)
 
-We may need to use parameters that are not provided by [vue-api-query](https://github.com/robsontenorio/vue-api-query),
+We may also need to use parameters that are not provided by [vue-api-query](https://github.com/robsontenorio/vue-api-query),
 and that's when the `params` method comes in to help.
 
 The argument is an object of the parameters to add to the query.
