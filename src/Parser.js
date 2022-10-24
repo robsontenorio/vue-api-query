@@ -165,7 +165,7 @@ export default class Parser {
       this.prepend() +
       qs.stringify(this.builder.payload, {
         encode: false,
-        arrayFormat: 'comma'
+        arrayFormat: this.builder.model.parserOptions().arrayFormat
       })
   }
 }
