@@ -58,11 +58,12 @@ describe('Query builder', () => {
   })
 
   test('it can change default array format option', () => {
-    const post = PostWithOptions.include('user')
-      .whereIn('title', ['Cool', 'Lame'])
+    const post = PostWithOptions.include('user').whereIn('title', [
+      'Cool',
+      'Lame'
+    ])
 
-    const query =
-      '?include=user&filter[title][0]=Cool&filter[title][1]=Lame'
+    const query = '?include=user&filter[title][0]=Cool&filter[title][1]=Lame'
 
     expect(post._builder.query()).toEqual(query)
 

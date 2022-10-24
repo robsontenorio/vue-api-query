@@ -190,7 +190,7 @@ export default class Model extends StaticModel {
 
   parserOptions() {
     return {
-      arrayFormat: 'comma',
+      arrayFormat: 'comma'
     }
   }
 
