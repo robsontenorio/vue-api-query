@@ -444,6 +444,16 @@ export class Model extends StaticModel {
   }
 
   /**
+   * This method can be overridden in the model to customize the the array format encoding options.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/model-options#parseroptions|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/configuration#customizing-query-parameters|Configuration}
+   */
+   protected parserOptions (): {
+    arrayFormat: string
+  }
+
+  /**
    * Query
    */
 

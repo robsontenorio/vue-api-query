@@ -111,6 +111,27 @@ formData() {
 }
 ```
 
+### `parserOptions`
+- Returns: `object`
+
+This method can be overridden in the model to customize the the array format encoding options.
+
+Possible values are: indices, brackets, repeat, comma.
+
+See [Configuration](/configuration#customizing-query-parameters)
+
+```js
+parserOptions() {
+  return {
+    arrayFormat: 'comma',
+  }
+}
+```
+
+#### `arrayFormat`
+- Default: `comma`
+- Returns: `string`
+
 ## Model Options
 
 These are model-related options.

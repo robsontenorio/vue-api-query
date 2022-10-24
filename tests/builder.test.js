@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { Model } from '../src'
 import ModelWithParamNames from './dummy/models/ModelWithParamNames'
 import Post from './dummy/models/Post'
+import PostWithOptions from './dummy/models/PostWithOptions'
 
 describe('Query builder', () => {
   let errorModel = {}
@@ -54,6 +55,20 @@ describe('Query builder', () => {
       '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
 
     expect(post._builder.query()).toEqual(query)
+  })
+
+  test('it can change default array format option', () => {
+    const post = PostWithOptions.include('user')
+      .whereIn('title', ['Cool', 'Lame'])
+
+    const query =
+      '?include=user&filter[title][0]=Cool&filter[title][1]=Lame'
+
+    expect(post._builder.query()).toEqual(query)
+
+    expect(post._builder.filters).toEqual({
+      title: ['Cool', 'Lame']
+    })
   })
 
   test('include() sets properly the builder', () => {

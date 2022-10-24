@@ -106,7 +106,7 @@ export default class Parser {
     let fields = { [this.parameterNames().fields]: this.builder.fields }
     this.uri +=
       this.prepend() +
-      qs.stringify(fields, { encode: false, arrayFormat: 'comma' })
+      qs.stringify(fields, { encode: false, arrayFormat: this.builder.model.parserOptions().arrayFormat })
   }
 
   filters() {
@@ -117,7 +117,7 @@ export default class Parser {
     let filters = { [this.parameterNames().filter]: this.builder.filters }
     this.uri +=
       this.prepend() +
-      qs.stringify(filters, { encode: false, arrayFormat: 'comma' })
+      qs.stringify(filters, { encode: false, arrayFormat: this.builder.model.parserOptions().arrayFormat })
   }
 
   sorts() {
