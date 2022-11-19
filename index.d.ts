@@ -1,3 +1,5 @@
+import type { IStringifyOptions } from 'qs'
+
 type Method =
   | 'get'
   | 'GET'
@@ -442,6 +444,14 @@ export class Model extends StaticModel {
     page: string,
     limit: string
   }
+
+  /**
+   * This method can be overridden in the model to configure `qs`.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/model-options#stringifyOptions|API Reference}
+   * @see {@link https://github.com/ljharb/qs#stringifying|qs}
+   */
+  protected stringifyOptions(): IStringifyOptions
 
   /**
    * Query
