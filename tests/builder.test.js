@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { Model } from '../src'
 import ModelWithParamNames from './dummy/models/ModelWithParamNames'
 import Post from './dummy/models/Post'
+import PostWithOptions from './dummy/models/PostWithOptions'
 
 describe('Query builder', () => {
   let errorModel = {}
@@ -54,6 +55,36 @@ describe('Query builder', () => {
       '?include_custom=user&append_custom=likes&fields_custom[posts]=title,content&fields_custom[user]=age,firstname&filter_custom[title]=Cool&filter_custom[status]=ACTIVE&sort_custom=created_at&page_custom=3&limit_custom=10'
 
     expect(post._builder.query()).toEqual(query)
+  })
+
+  test('it can change default array format option', () => {
+    let post = PostWithOptions.include('user').whereIn('status', [
+      'published',
+      'archived'
+    ])
+
+    expect(post._builder.query()).toEqual(
+      '?include=user&filter[status][0]=published&filter[status][1]=archived'
+    )
+
+    expect(post._builder.filters).toEqual({
+      status: ['published', 'archived']
+    })
+
+    post = PostWithOptions.include('user').whereIn(
+      ['user', 'status'],
+      ['active', 'inactive']
+    )
+
+    expect(post._builder.query()).toEqual(
+      '?include=user&filter[user][status][0]=active&filter[user][status][1]=inactive'
+    )
+
+    expect(post._builder.filters).toEqual({
+      user: {
+        status: ['active', 'inactive']
+      }
+    })
   })
 
   test('include() sets properly the builder', () => {

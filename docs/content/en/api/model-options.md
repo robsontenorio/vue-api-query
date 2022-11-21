@@ -111,6 +111,23 @@ formData() {
 }
 ```
 
+### `stringifyOptions`
+- Default: `{ encode: false, arrayFormat: 'comma' }`
+- Returns: `object`
+
+This method can be overridden in the model to configure `qs`.
+
+See [qs](https://github.com/ljharb/qs#stringifying)
+
+```js
+stringifyOptions() {
+  return {
+    encode: false,
+    arrayFormat: 'comma',
+  }
+}
+```
+
 ## Model Options
 
 These are model-related options.

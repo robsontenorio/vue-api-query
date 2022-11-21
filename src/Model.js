@@ -188,6 +188,12 @@ export default class Model extends StaticModel {
     }
   }
 
+  stringifyOptions() {
+    return {
+      arrayFormat: 'comma'
+    }
+  }
+
   /**
    *  Query
    */
