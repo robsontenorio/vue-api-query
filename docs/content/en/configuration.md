@@ -296,6 +296,52 @@ export default class Model extends BaseModel {
 }
 ```
 
+## Configuring Query Parameters Parser
+
+See the [API reference](/api/model-options#stringifyOptions) and [qs](https://github.com/ljharb/qs#stringifying)
+
+We may also need to configure the parser to match our needs. By default, it is configured to match 
+`spatie/laravel-query-builder`, which uses `comma` array format.
+
+If we want, for example, to change this behaviour to `indices`, we can configure the stringify options of `qs` 
+by overriding the `stringifyOptions` method.
+
+We can globally configure this in the [Base Model](/configuration#creating-a-base-model):
+
+```js{}[~/models/Model.js]
+import { Model as BaseModel } from 'vue-api-query'
+
+export default class Model extends BaseModel {
+
+  // Define a base url for a REST API
+  baseURL() {
+    return 'http://my-api.com'
+  }
+
+  // Implement a default request method
+  request(config) {
+    return this.$http.request(config)
+  }
+
+  // Override default query parameter names
+  parameterNames() {
+    const defaultParams = super.parameterNames()
+    const customParams = {
+      include: 'include_custom'
+    }
+    
+    return { ...defaultParams, ...customParams }
+  }
+  
+  // Configure qs
+  stringifyOptions() {
+    return {
+      arrayFormat: 'indices'
+    }
+  }
+}
+```
+
 ## Configuring FormData
 
 See the [API reference](/api/model-options#formdata) and [object-to-formdata](https://github.com/therealparmesh/object-to-formdata#usage)
@@ -329,6 +375,13 @@ export default class Model extends BaseModel {
     }
     
     return { ...defaultParams, ...customParams }
+  }
+  
+  // Configure qs
+  stringifyOptions() {
+    return {
+      arrayFormat: 'indices'
+    }
   }
   
   // Configure object-to-formadata

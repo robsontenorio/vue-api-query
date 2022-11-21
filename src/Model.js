@@ -1,4 +1,4 @@
-import defu from 'defu'
+import { defu } from 'defu'
 import getProp from 'dotprop'
 import { dset as setProp } from 'dset'
 import { serialize } from 'object-to-formdata'
@@ -185,6 +185,12 @@ export default class Model extends StaticModel {
       append: 'append',
       page: 'page',
       limit: 'limit'
+    }
+  }
+
+  stringifyOptions() {
+    return {
+      arrayFormat: 'comma'
     }
   }
 
