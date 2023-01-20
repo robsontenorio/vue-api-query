@@ -425,6 +425,28 @@ export default class Model extends StaticModel {
     })
   }
 
+  file() {
+    let base = this._fromResource || `${this.baseURL()}/${this.resource()}`
+    base = this._customResource
+      ? `${this.baseURL()}/${this._customResource}`
+      : base
+
+    let url = `${base}${this._builder.query()}`
+
+    return this.request(
+      this._reqConfig({
+        url,
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+          accept: 'application/octet-stream'
+        }
+      })
+    ).then((response) => {
+      return response.data
+    })
+  }
+
   $get() {
     return this.get().then((response) => response.data || response)
   }

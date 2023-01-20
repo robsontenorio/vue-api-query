@@ -316,3 +316,21 @@ await Model.$find(1)
 
 <alert type="info">These `$`-prefixed convenience methods always return the requested content. 
 They handle and unwrap responses within "data".</alert>
+
+## `file`
+- Returns: `Binary`
+
+Execute the query with $http.responseType as `blob` and returns a binary
+
+```js
+// get the blob
+const data = await Model.file()
+
+// force file download
+const url = window.URL.createObjectURL(new Blob([data]));
+const link = document.createElement('a');
+link.href = url;
+link.setAttribute('download', 'model.xlsx'); //or any other extension
+document.body.appendChild(link);
+link.click();
+```
