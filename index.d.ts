@@ -674,6 +674,8 @@ export class Model extends StaticModel {
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#retrieving-a-list-of-records|Building the Query}
    */
   get (): QueryPromise<this[]>
+  
+  file (): QueryPromise<void>
 
   /**
    * Execute the query and get all results.
