@@ -243,6 +243,7 @@ Configuration of HTTP Instance.
 ```js
 await Model.config({
   method: 'PATCH',
+  url: 'foo-bar',
   header: { /* ... */ },
   data: { foo: 'bar' }
 }).save()
