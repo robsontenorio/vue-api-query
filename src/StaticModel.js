@@ -88,6 +88,20 @@ export default class StaticModel {
     return self
   }
 
+  static wrappedBy(value) {
+    let self = this.instance()
+    self.wrappedBy(value)
+
+    return self
+  }
+
+  static nowrap() {
+    let self = this.instance()
+    self.nowrap()
+
+    return self
+  }
+
   static custom(...args) {
     let self = this.instance()
     self.custom(...args)

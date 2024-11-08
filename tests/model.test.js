@@ -55,7 +55,7 @@ describe('Model methods', () => {
     })
   })
 
-  test('$first() returns first object in array as instance of such Model', async () => {
+  test('$first() returns first object in array as instance of such Model with "data" wrapper', async () => {
     axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
 
     const post = await Post.$first()
@@ -283,6 +283,83 @@ describe('Model methods', () => {
     const postsGet = await Post.$get()
 
     expect(postsAll).toStrictEqual(postsGet)
+  })
+
+  test('find() handles request with "data" wrapper when wrap() is set to "data"', async () => {
+    // Set the wrap method to 'data'
+    Post.prototype['wrap'] = () => {
+      return 'data'
+    }
+
+    axiosMock.onGet('http://localhost/posts/1').reply(200, postEmbedResponse)
+
+    const post = await Post.find(1)
+
+    expect(post).toEqual(postEmbedResponse.data)
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.data.forEach((tag) => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
+
+  test('get() handles request with "data" wrapper when wrap() is set to "data"', async () => {
+    // Set the wrap method to 'data'
+    Post.prototype['wrap'] = () => {
+      return 'data'
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.get()
+
+    expect(posts).toEqual(postsEmbedResponse.data)
+  })
+
+  test('first() returns first object in array as instance of such Model with "data" wrapper when wrap() is set to "data"', async () => {
+    // Set the wrap method to 'data'
+    Post.prototype['wrap'] = () => {
+      return 'data'
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const post = await Post.first()
+
+    expect(post).toEqual(postsEmbedResponse.data[0])
+    expect(post).toBeInstanceOf(Post)
+    expect(post.user).toBeInstanceOf(User)
+    post.relationships.tags.forEach((tag) => {
+      expect(tag).toBeInstanceOf(Tag)
+    })
+  })
+
+  test('nowrap().get() returns the full response with the "data" wrapper even though the wrap method is set', async () => {
+    // Set the wrap method to 'data'
+    Post.prototype['wrap'] = () => {
+      return 'data'
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.nowrap().get()
+
+    expect(posts).toEqual(postsEmbedResponse)
+    expect(posts.data[0]).toEqual(postsEmbedResponse.data[0])
+  })
+
+  test('wrappedBy().get() returns the full response with the "data" wrapper even though the wrap method is set to `test`', async () => {
+    // Set the wrap method to 'data'
+    Post.prototype['wrap'] = () => {
+      return 'test'
+    }
+
+    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
+
+    const posts = await Post.wrappedBy('data').get()
+
+    expect(posts).toEqual(postsEmbedResponse.data)
+    expect(posts[0]).toEqual(postsEmbedResponse.data[0])
   })
 
   test('save() method makes a POST request when ID of object does not exists', async () => {

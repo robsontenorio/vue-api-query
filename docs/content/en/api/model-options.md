@@ -7,10 +7,11 @@ category: API
 
 ## Global Options
 
-It's recommended to define the global options in your [Base Model](/configuration#creating-a-base-model), 
+It's recommended to define the global options in your [Base Model](/configuration#creating-a-base-model),
 in order to abstract configuration from your models.
 
 ### `$http`
+
 - Returns: `HTTP Client Instance`
 
 Instance of the HTTP client which is used to make requests.
@@ -18,6 +19,7 @@ Instance of the HTTP client which is used to make requests.
 See [Installation](/installation)
 
 ### `baseURL`
+
 - Returns: `string`
 
 Base URL which is used and prepended to make requests.
@@ -31,6 +33,7 @@ baseURL() {
 ```
 
 ### `request`
+
 - Arguments: `(config)`
 - Returns: `HTTP Client Request`
 
@@ -45,6 +48,7 @@ request(config) {
 ```
 
 ### `parameterNames`
+
 - Returns: `object`
 
 This method can be overridden in the model to customize the name of the query parameters.
@@ -66,34 +70,42 @@ parameterNames() {
 ```
 
 #### `include`
+
 - Default: `include`
 - Returns: `string`
 
 #### `filter`
+
 - Default: `filter`
 - Returns: `string`
 
 #### `sort`
+
 - Default: `sort`
 - Returns: `string`
 
 #### `fields`
+
 - Default: `fields`
 - Returns: `string`
 
 #### `append`
+
 - Default: `append`
 - Returns: `string`
 
 #### `page`
+
 - Default: `page`
 - Returns: `string`
 
 #### `limit`
+
 - Default: `limit`
 - Returns: `string`
 
 ### `formData`
+
 - Returns: `object`
 
 This method can be overridden in the model to configure `object-to-formdata`.
@@ -112,6 +124,7 @@ formData() {
 ```
 
 ### `stringifyOptions`
+
 - Default: `{ encode: false, arrayFormat: 'comma' }`
 - Returns: `object`
 
@@ -133,6 +146,7 @@ stringifyOptions() {
 These are model-related options.
 
 ### `resource`
+
 - Returns: `string`
 
 Resource route of the model which is used to build the query.
@@ -146,6 +160,7 @@ resource() {
 ```
 
 ### `primaryKey`
+
 - Default: `id`
 - Returns: `string`
 
@@ -159,10 +174,26 @@ primaryKey() {
 }
 ```
 
+### `wrap`
+
+- Default: `null`
+- Returns: `string`
+
+The "data" wrapper that should be checked when retrieving models.
+
+See [Configuration](/configuration#changing-the-wrapper)
+
+```js
+wrap() {
+  return 'data'
+}
+```
+
 ### `relations`
+
 - Returns: `object`
 
-This method can be implemented in the model to apply model instances to eager loaded relationships. 
+This method can be implemented in the model to apply model instances to eager loaded relationships.
 It works for collections too.
 
 It must return an object, which the key is the property of the relationship, and the value is the
@@ -179,6 +210,7 @@ relations() {
 ```
 
 ### `hasMany`
+
 - Arguments: `(model)`
 - Returns: `Model`
 

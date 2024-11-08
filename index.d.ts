@@ -369,6 +369,14 @@ export class Model extends StaticModel {
   primaryKey (): string
 
   /**
+   * The "data" wrapper that should be checked when retrieving models
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/model-options#wrap|API Reference}
+   * @see {@link https://robsontenorio.github.io/vue-api-query/configuration#changing-the-wrapper|Configuration}
+   */
+  wrap (): string
+
+  /**
    * This method can be used to lazy load relationships of a model and apply model instances to them.
    *
    * @see {@link https://robsontenorio.github.io/vue-api-query/api/model-options#hasmany|API Reference}
@@ -916,6 +924,20 @@ declare class Builder {
    * @see {@link https://robsontenorio.github.io/vue-api-query/building-the-query#paginating|Building the Query}
    */
   limit (number: number): this
+
+  /**
+   * Change the `wrap()` data wrapper for this request.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#wrappedBy|API Reference}
+   */
+  wrappedBy (attributes: string[]): this
+
+  /**
+   * Remove the `wrap()` data wrapper for this request to return the raw response.
+   *
+   * @see {@link https://robsontenorio.github.io/vue-api-query/api/query-builder-methods#nowrap|API Reference}
+   */
+  nowrap (attributes: string[]): this
 
   /**
    * Add custom parameters to the query.

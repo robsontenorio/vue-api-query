@@ -12,6 +12,8 @@ export default class Model extends StaticModel {
 
     if (attributes.length === 0) {
       this._builder = new Builder(this)
+      // Set the default data wrapper
+      this._wrapper = this.wrap()
     } else {
       Object.assign(this, ...attributes)
       this._applyRelations(this)
@@ -54,6 +56,28 @@ export default class Model extends StaticModel {
 
   primaryKey() {
     return 'id'
+  }
+
+  /**
+   * The "data" wrapper that should be checked when retrieving models
+   *
+   * @return {string|null}
+   */
+  wrap() {
+    return null
+  }
+
+  /**
+   * Unwrap the response using the property defined in the wrap() method
+   *
+   * @return {object|array} The unwraped response
+   */
+  _unwrap(response) {
+    if (this._wrapper) {
+      return response[this._wrapper] || response
+    } else {
+      return response
+    }
   }
 
   getPrimaryKey() {
@@ -263,6 +287,26 @@ export default class Model extends StaticModel {
   }
 
   /**
+   * The "data" wrapper that will override the wrap() method
+   *
+   * @param {string} wrap The new wrapper for this one request
+   *
+   * @return {string|null}
+   */
+  wrappedBy(wrap) {
+    this._wrapper = wrap
+    return this
+  }
+
+  /**
+   * Disable wrapping for this one request
+   */
+  nowrap() {
+    this._wrapper = null
+    return this
+  }
+
+  /**
    * Result
    */
 
@@ -365,7 +409,7 @@ export default class Model extends StaticModel {
         item = response[0]
       }
 
-      return item || {}
+      return this._unwrap(item || {})
     })
   }
 
@@ -386,7 +430,7 @@ export default class Model extends StaticModel {
         method: 'GET'
       })
     ).then((response) => {
-      return this._applyInstance(response.data)
+      return this._applyInstance(this._unwrap(response.data))
     })
   }
 
@@ -421,7 +465,7 @@ export default class Model extends StaticModel {
         response.data = collection
       }
 
-      return response.data
+      return this._unwrap(response.data)
     })
   }
 
