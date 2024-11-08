@@ -9,11 +9,12 @@ category: Getting Started
 
 See the [API reference](/api/model-options) for a list of available options.
 
-The first step is to create a base model to define the default options, in order to abstract configuration 
-from your models. It should extend the 
+The first step is to create a base model to define the default options, in order to abstract configuration
+from your models. It should extend the
 [Base Model](https://github.com/robsontenorio/vue-api-query/blob/master/src/Model.js) of [vue-api-query](https://github.com/robsontenorio/vue-api-query).
 
 The base model must implement two methods:
+
 - `baseURL` - The base url of your REST API.
 - `request` - The default request method.
 
@@ -43,9 +44,11 @@ export default class Model extends BaseModel {
 Now let's create our domain models that extends the base model. We can create as many models as we like.
 
 Each model must implement:
+
 - `resource` - The resource route of the model.
 
 We can create a **User** model like this:
+
 ```js{}[~/models/User.js]
 import Model from './Model'
 
@@ -71,7 +74,7 @@ export default class User extends Model {
   }
 
   // Computed properties are reactive -> user.fullName
-  // Make sure to use "get" prefix 
+  // Make sure to use "get" prefix
   get fullName () {
     return `${this.firstname} ${this.lastname}`
   }
@@ -90,6 +93,7 @@ export default class User extends Model {
 If we are working on a Typescript project, we can infer the types of the fields, so we have intellisense.
 
 #### Directly in Model
+
 ```ts{}[~/models/User.ts]
 import Model from './Model'
 
@@ -103,6 +107,7 @@ export default class User extends Model {
 ```
 
 #### Using an Interface
+
 ```ts{}[~/models/User.ts]
 import Model from './Model'
 
@@ -149,6 +154,36 @@ export default class Post extends Model {
 
 This **Post** model will build the query using the `slug` as primary key: `/posts/{slug}`
 
+## Changing the Wrapper
+
+<alert type="success">Available in version >= v1.12.0</alert>
+
+<alert type="info">By default, the `wrap` is set to `null`.</alert>
+
+See the [API reference](/api/model-options#wrap)
+
+It's possible to change the wrapper of a model response by implementing the `wrap` method.
+This way, the specified key will be used to unwrap the data.
+
+Let's create a **Post** model and set its wrap key to `data`.
+
+```js{}[~/models/Post.js]
+import Model from './Model'
+
+export default class Post extends Model {
+  // Set the resource route of the model
+  resource() {
+    return 'posts'
+  }
+
+  // Define the response wrapper
+  wrap() {
+    return 'data'
+  }
+```
+
+This **Post** model will now look inside the API response top level `data` property when retrieving data and initializing your models.
+
 ## Defining Relationships
 
 It's also possible to define the relationships of our models. By doing this, model instances will be automatically
@@ -158,7 +193,7 @@ applied to relationships, giving you access to all of their features.
 
 See the [API reference](/api/model-options#relations)
 
-For relationships that have been eager loaded, we only need to implement the `relations` method 
+For relationships that have been eager loaded, we only need to implement the `relations` method
 to apply their model instances. It works for collections too.
 
 The `relations` method must return an object, which the key is the property of the relationship, and the value is the
@@ -191,7 +226,7 @@ export default class Post extends Model {
   }
 ```
 
-Now we can easily access an instance of the **User** model containing the eager loaded data 
+Now we can easily access an instance of the **User** model containing the eager loaded data
 using the specified key: `post.user`
 
 The `relations` method also support nested keys, by dot notation:
@@ -247,7 +282,7 @@ export default class User extends Model {
   }
 
   // Computed properties are reactive -> user.fullName
-  // Make sure to use "get" prefix 
+  // Make sure to use "get" prefix
   get fullName () {
     return `${this.firstname} ${this.lastname}`
   }
@@ -290,7 +325,7 @@ export default class Model extends BaseModel {
     const customParams = {
       include: 'include_custom'
     }
-    
+
     return { ...defaultParams, ...customParams }
   }
 }
@@ -300,10 +335,10 @@ export default class Model extends BaseModel {
 
 See the [API reference](/api/model-options#stringifyOptions) and [qs](https://github.com/ljharb/qs#stringifying)
 
-We may also need to configure the parser to match our needs. By default, it is configured to match 
+We may also need to configure the parser to match our needs. By default, it is configured to match
 `spatie/laravel-query-builder`, which uses `comma` array format.
 
-If we want, for example, to change this behaviour to `indices`, we can configure the stringify options of `qs` 
+If we want, for example, to change this behaviour to `indices`, we can configure the stringify options of `qs`
 by overriding the `stringifyOptions` method.
 
 We can globally configure this in the [Base Model](/configuration#creating-a-base-model):
@@ -329,10 +364,10 @@ export default class Model extends BaseModel {
     const customParams = {
       include: 'include_custom'
     }
-    
+
     return { ...defaultParams, ...customParams }
   }
-  
+
   // Configure qs
   stringifyOptions() {
     return {
@@ -373,17 +408,17 @@ export default class Model extends BaseModel {
     const customParams = {
       include: 'include_custom'
     }
-    
+
     return { ...defaultParams, ...customParams }
   }
-  
+
   // Configure qs
   stringifyOptions() {
     return {
       arrayFormat: 'indices'
     }
   }
-  
+
   // Configure object-to-formadata
   formData() {
     return {
