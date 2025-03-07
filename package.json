@@ -54,7 +54,7 @@
     "@babel/plugin-transform-runtime": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
     "@babel/runtime": "^7.26.0",
-    "axios": "^0.21.4",
+    "axios": "^1.8.2",
     "axios-mock-adapter": "^1.22.0",
     "babel-eslint": "^10.1.0",
     "codecov": "^3.8.3",
